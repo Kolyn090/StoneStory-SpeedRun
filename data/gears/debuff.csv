@@ -1,0 +1,31 @@
+name,debuff_type,strength,stack,duration,cooldown,chance
+Cultist Mask,feeble,2,6,1.5,20,1
+Poison Crossbow 2,feeble,4,1,3,0,1
+Vigor Crossbow 2,life_steal,1,1,0,0,0.24
+Aether Crossbow 2,unmake,1,1,0,0,0.34
+Fire Crossbow 2,burn,195,1,999,0,1
+Ice Crossbow 2,chill,1,1,18.6,0,1
+Poison Hammer,stun,1,1,0.4,0,1
+Vigor Hammer,stun,1,1,1.03,0,1
+Aether Hammer,stun,1,1,0.4,0,1
+Fire Hammer,stun,1,1,0.4,0,1
+Ice Hammer,stun,1,1,0.4,0,1
+Big Vigor Sword,life_steal,1,1,0,0,1.09
+Big Aether Sword,unmake,1,1,0,0,0.65
+Big Ice Sword,chill,1,1,18.6,0,1
+Bashing Shield,stun,1,1,3.3,9,1
+Aether Tailsman,unmake,1,1,0,0,0.2
+Fire Tailsman,burn,4,20,999,0,1
+Fire Shield,burn,260,1,999,0,1
+Ice Shield,chill,1,1,31.8,0,1
+Infernal Staff,burn,92,1,999,0,1
+Infernal Staff,burn,25,5,10,30,1
+Eternity Staff,chill,1,1,15,0,1
+Berserker Staff,feeble,4,1,3,0,1
+Vigor Staff,life_steal,1,1,0,0,1.09
+Aether Staff,unmake,1,1,0,0,0.65
+Calamity Wand,unmake,1,1,0,0,0.13
+Explosive Wand,burn,69,1,999,0,1
+Frost Wand,chill,1,1,6,0,1
+Plague Wand,feeble,4,1,3,0,1
+Reset Wand,life_steal,1,1,0,0,0.24

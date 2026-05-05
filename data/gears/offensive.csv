@@ -1,0 +1,47 @@
+name,element,damage,dps,range,crit,c_mul,ele_dmg,armor_mul
+Quaterstaff,,16,34.29,5,0,0,0,0
+Poison Crossbow 1,Poison,80,88.89,22,0.75,12,6,0
+Poison Crossbow 2,Poison,17,85,22,0.33,6,93,0
+Vigor Crossbow 1,Vigor,80,88.89,22,0.75,12,6,0
+Vigor Crossbow 2,Vigor,17,85,22,0.33,6,93,0
+Aether Crossbow 1,Aether,80,88.89,22,0.75,12,6,0
+Aether Crossbow 2,Aether,17,85,22,0.33,6,6,0
+Fire Crossbow 1,Fire,80,88.89,22,0.75,12,6,0
+Fire Crossbow 2,Fire,17,85,22,0.33,6,6,0
+Ice Crossbow 1,Ice,80,88.89,22,0.75,12,6,0
+Ice Crossbow 2,Ice,17,85,22,0.33,6,6,0
+Poison Hammer,Poison,28,38.18,5,0,0,105,6.6
+Vigor Hammer,Vigor,100,136.36,5,0,0,24,2.4
+Aether Hammer,Aether,28,38.18,5,0,0,105,6.6
+Fire Hammer,Fire,28,84,5,0,0,24,6.6
+Ice Hammer,Ice,28,38.18,5,0,0,105,6.6
+Big Vigor Sword,Vigor,28,120,6,0,0,9,0
+Big Aether Sword,Aether,28,120,6,0,0,9,0
+Big Ice Sword,Ice,28,120,6,0,0,9,0
+Repeating Crossbow,,20,200,22,1,6,0,0
+Grasping Staff,Aether,78,167.14,20,0,0,0,0
+Infernal Staff,Fire,78,167.14,20,0,0,0,9
+Eternity Staff,Ice,78,167.14,20,0,0,0,9
+Berserker Staff,Poison,78,167.14,20,0,0,0,9
+Prevention Staff,Vigor,78,167.14,20,0,0,0,9
+Poison Sword,Poison,18,108,5,0.13,4,0,85
+Vigor Sword,Vigor,18,108,5,0.13,4,0,9
+Aether Sword,Aether,18,108,5,0.13,4,0,9
+Fire Sword,Fire,18,108,5,0.13,4,0,85
+Ice Sword,Ice,18,108,5,0.13,4,0,85
+Bardiche,,168,168,9,0.35,13.5,0,0
+BoG,,500,275,11,0,0,0,0
+Heavy Hammer,,69,69,7,0,0,2.8,0
+Lollipop Wand,,20,28.57,19,0,0,0,0
+Skeleton Arm,,80,300,6,0,0,0,0
+Stone Sword,,70,150,5,0.25,12,0,0
+Poison Wand,Poison,20,100,20,0,0,0,100
+Vigor Wand,Vigor,20,100,20,0,0,0,100
+Aether Wand,Aether,20,100,20,0,0,0,100
+Ice Wand,Ice,20,100,20,0,0,0,100
+Fire Wand,Fire,20,100,20,0,0,0,100
+Calamity Wand,Aether,80,114.29,20,0,0,0,6
+Explosive Wand,Fire,80,114.29,20,0,0,0,6
+Frost Wand,Ice,80,114.29,20,0,0,0,6
+Plague Wand,Poison,80,114.29,20,0,0,0,6
+Reset Wand,Vigor,80,114.29,20,0,0,0,6

@@ -1,0 +1,21 @@
+name,element,armor_gen,armor,can_dash,dash_cooldown,evade,engaging,note
+Compound Shield,,1.75,35,False,0,0,0,
+Quaterstaff,,1.75,13.4,True,4.4,0,0,mini-dash
+Bashing Shield,,0.72,7,True,9,0,3.3,engaging by attack
+Poison Shield 1,Poison,0.7,7,False,0,0.15,1.8,+dmg when attacked
+Poison Shield 2,Poison,0.7,7,False,0,0.3,7.2,
+Vigor Shield 1,Vigor,0.7,7,False,0,0.3,1.8,heal when attacked
+Vigor Shield 2,Vigor,0.7,7,False,0,0.3,7.2,
+Aether Shield 1,Aether,0.7,7,False,0,0.15,1.8,unmake attacker
+Aether Shield 2,Aether,0.7,7,False,0,0.3,7.2,
+Fire Shield 1,Fire,0.7,7,False,0,0.15,1.8,attacker burn 260
+Fire Shield 2,Fire,0.7,7,False,0,0.3,7.2,
+Ice Shield 1,Ice,0.7,7,False,0,0.15,1.8,reduce attack speed
+Ice Shield 2,Ice,0.7,7,False,0,0.3,7.2,
+Grasping Staff,Aether,0.7,6,False,0,0,0.75,inc range
+Infernal Staff,Fire,0.7,6,False,0,0,0,attacker burn 92
+Eternity Staff,Ice,0.7,6,False,0,0,0,reduce attack speed
+Berserker Staff,Poison,0.7,6,False,0,0,0,+30% dmg
+Prevention Staff,Vigor,0.7,6,False,0,0,0,prevent debuff
+Dashing Shield,,1.75,17.5,True,0,0,0,
+Towering Shield,,1.75,14,False,0,0,0,slow you down
