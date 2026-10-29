@@ -1,5 +1,7 @@
 # Basic automation candidate
 
+Current policy revision: **B2.1-NR** removes optional resource harvesting. Resources are incidental; movement, combat, boss completion and run time take priority. Earlier B2/B2.1 reports are historical. See [RESOURCE_POLICY.md](RESOURCE_POLICY.md) for the source audit, backup/deployment evidence and progression test gate. Mandatory interactions remain in scope; no blanket native-interaction suppression is applied.
+
 Status: source-reviewed, not parsed or executed in-game. Priority is broad basic coverage and reliability; speed optimizations, AAC, dash sequences and boss timing are deferred. See [coverage matrix](LOCATION_COVERAGE.md).
 
 Current stabilization build: **B2**. Follow [BASIC_TEST_PLAN.md](BASIC_TEST_PLAN.md), starting with Rocky Plateau; record results in [BASIC_TEST_RESULTS.md](BASIC_TEST_RESULTS.md). No completion status changes without explicit owner confirmation. See [SELECTOR_API_AUDIT.md](SELECTOR_API_AUDIT.md) for API and selector review.
@@ -11,11 +13,11 @@ Correction **B2.1** supersedes the B2 diagnostic header: `Harvest()` was rejecte
 The original `scripts/main.txt` and `scripts/metrics/RunMetrics.txt` remain unchanged. The alternative entry is `scripts/basic/main.txt`, installed as `SpeedRunBasic/main.txt`. It reuses the original `SpeedRun/metrics/RunMetrics` object and reproduces the same entry/loop/attachment ordering around it. Original observer loading is user-verified; the new composition and all observer correctness cases still need tests.
 
 - `config/Settings.txt`: flags, HP/distance thresholds, explicit inventory search criteria.
-- `equipment/Catalog.txt`: initialization-time availability searches and bounded elemental arrays; one-handed equipment application and optional shovel. Refreshes on fresh manual entry, not loops. Restart manually after inventory/config changes.
+- `equipment/Catalog.txt`: initialization-time availability searches and bounded elemental arrays; one-handed equipment application. No shovel lookup or optional collection tool. Refreshes on fresh manual entry, not loops. Restart manually after inventory/config changes.
 - `locations/Dispatcher.txt`: caches classification by `loc.id` and quest status; eight main location aliases share the generic handler. Quest and unknown locations perform no automation.
 - `combat/Generic.txt`: selects one ordinary loadout per frame, with no cancellation swaps or resource abilities. Native game AI performs attacks/movement.
 
-These are project helpers, not new native APIs. Per-frame work is bounded: location/quest checks, necessary foe/HP queries, one policy pass, equipment application, measurement latch, and optional prints. No inventory loop runs per combat frame. B2 clears current-frame requests before policy evaluation; two-handed harvesting does not falsely request a shield. Missing core sword/wand/shield families suppress automation and show a warning, while native game AI remains active. Existing equip requests are reapplied to let native selection resolve them; this is not an exact-item handle cache. No CPU/performance gain has been measured.
+These are project helpers, not new native APIs. Per-frame work is bounded: location/quest checks, necessary foe/HP queries, one policy pass, equipment application, measurement latch, and optional prints. No inventory loop runs per combat frame. Current-frame requests are cleared before policy evaluation. Missing core sword/wand/shield families suppress automation and show a warning, while native game AI remains active. Existing equip requests are reapplied to let native selection resolve them; this is not an exact-item handle cache. No CPU/performance gain has been measured.
 
 ## Policy and equipment rationale
 
@@ -31,7 +33,7 @@ Inventory CSVs were reviewed but not changed. Their DPS, effect probabilities, a
 | Physical/ranged immunity | Physical immunity forces wand; ranged immunity forces melee. Conflicting flags report manual intervention rather than claiming a solution |
 | Low HP | At less than 40% HP, choose a cached vigor `dL` sword only in melee. Healing is not guaranteed to outpace damage |
 | Potion | Disabled by default. If explicitly enabled, consume the current nonempty potion below 25% HP when activations are allowed. No automatic identification of potion effect, brewing or refill |
-| Travel/harvest | Sword + shield while no target is within 22 units; nearby harvest target permits cached shovel. No dash, movement-speed item or pickup optimization |
+| Travel | Sword + shield while no target is within 22 units, including near optional boulders/trees. No collection-only equipment swaps, detours or resource abilities; required traversal exceptions need location-specific evidence |
 | Suspended AI | Skip equipment and potion decisions while disabled/paused |
 
 The elemental weakness cycle is a community-derived policy, not a new native API. Current setup has five-element candidates and no special air matchup. An undamageable target reports a wait strategy; it does not dodge or force a phase transition. Missing item families produce diagnostics and may leave previous equipment in a slot. **Do not continue unattended with missing gear or a manual-intervention strategy.**

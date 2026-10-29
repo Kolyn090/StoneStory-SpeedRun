@@ -12,7 +12,7 @@ Each named route is implemented in `scripts/basic/locations/Dispatcher.txt` and 
 
 | Location / route | Implementation | Automated completion tests | Difficulties verified | Specialized logic to investigate if generic fails |
 |---|---|---|---|---|
-| Rocky Plateau / rocky | Generic + available shovel during safe harvesting | NOT RUN | None | Dysangelos phases, changing resistances, blocks/dodges |
+| Rocky Plateau / rocky | Generic combat/travel; no optional shovel harvesting | NOT RUN | None | Verify passage past objects without collection; Dysangelos phases, changing resistances, blocks/dodges |
 | Deadwood Canyon / deadwood | Generic | NOT RUN | None | Wasp nest, Xylo root, Poena reflection/protection |
 | Caves of Fear / caves | Generic | NOT RUN | None | Ceiling decorator and Bolesh damage/positioning windows |
 | Mushroom Forest / mushroom | Generic | NOT RUN | None | Explosive enemies, Mushroom phase attacks |

@@ -1,6 +1,12 @@
 # StoneStory-SpeedRun development instructions
 
-## Objective
+## Permanent rule: do not prioritize resource collection
+
+The owner has effectively unlimited resources. Optimize reliable location progression, movement, combat, boss completion and total run time. Never add farming, optional harvesting, resource-accumulation targets, collection detours, or equipment/ability swaps solely to obtain resources. Resource collection is an incidental byproduct of completing a location, never an optimization objective.
+
+Preserve interactions and tool use genuinely required to progress (for example a confirmed blocking object or mandatory traversal interaction). Classify these by explicit location/phase evidence; the presence of a `harvest` target alone is not proof of a progression requirement. Do not globally disable native interactions or remove required utility items to suppress optional gathering. Any future progression-tool handler must be narrow, restore combat equipment, and be tested for passage/completion. Do not reintroduce generic harvesting as a fallback.
+
+## Performance objective
 
 Current priority: broad basic automation coverage, correctness, and reliability before advanced speed optimization. Long term, minimize Stone Story RPG completion time while maintaining an explicitly agreed reliability target. Optimize measured in-game results, with maintainable code that supports continued tuning.
 

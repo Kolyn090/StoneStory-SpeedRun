@@ -1,5 +1,7 @@
 # B2 selector and API review
 
+Current B2.1-NR delta: optional `harvest` queries and shovel selectors/commands are removed from basic automation. Entries below mentioning them describe historical API review, not active behavior. No new native API is introduced. Standalone selector-validation shovel probes remain diagnostic-only and are not a farming policy.
+
 Reviewed 2026-10-29 against the [official manual](https://stonestoryrpg.com/stonescript/manual.html), displayed v4.35.2 (2026-09-25). This verifies documented forms/APIs, not parser execution of B2 or availability/quality of inventory items.
 
 | Used forms / API | Manual section | Review |

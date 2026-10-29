@@ -1,5 +1,7 @@
 # B2 equipment switching: reserved helper name
 
+Historical correction: current B2.1-NR removes the optional harvesting path and its helper entirely. The trace and shovel test below describe the earlier B2.1 revision; use [RESOURCE_POLICY.md](RESOURCE_POLICY.md) and the current basic test plan for current expected behavior.
+
 Status: confirmed B2 module-load defect; minimal B2.1 correction deployed for retesting. **Not fully resolved until the owner confirms in-game switching.**
 
 ## Evidence and root cause

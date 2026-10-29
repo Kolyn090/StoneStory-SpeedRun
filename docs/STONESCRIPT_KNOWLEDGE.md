@@ -2,6 +2,12 @@
 
 Reviewed: 2026-10-29. Official manual displayed v4.35.2, dated 2026-09-25. The installed game version has not been established. Loading/import execution and visible diagnostics are user-verified in-game; observer correctness remains pending.
 
+## Permanent project policy: resources are incidental
+
+The owner reports effectively unlimited resources. Resource farming, optional harvesting and accumulation are not goals. Prioritize reliable progression, movement, combat, bosses and total completion time; avoid collection-only detours and equipment/ability swaps. Preserve tools/interactions required for passage, with location-specific evidence rather than a generic `harvest` trigger. This is an owner requirement, not a claim about native game mechanics.
+
+**B2.1-NR change:** the generic nearby-harvest branch, cached shovel lookup, shovel configuration and unused helper are removed. Travel keeps sword + shield. No native AI, pickup, utility-belt, quest or interaction behavior is globally disabled. Existing source contains no separate mandatory-tool handler; none is removed. This is a static dependency audit, not proof that every location/difficulty passes without intervention. Test traversal and report blocking objects before claiming progression safety. See [policy/change acceptance](RESOURCE_POLICY.md).
+
 ## Evidence labels
 
 - **Official:** documented language/API behavior; not a claim that this project was executed.
@@ -114,7 +120,7 @@ For future entries include exact source revision or game test conditions. Update
 
 **Community-informed choices:** the eight main-location aliases and weakness cycle were reviewed in [Cobblestone](https://github.com/alexbarker234/stonescript/blob/main/Cobblestone.txt). Shielded combat, wand crowd handling, and boss-specific limitations were cross-checked against [Scribble](https://github.com/livercat/scribble). No boss frame constants or cancellation routines were copied.
 
-**Implemented project policy, unverified:** `scripts/basic/` caches available one-handed swords/wands/hammers and shields, dispatches eight locations, switches range with hysteresis, prefers wands for crowds/bosses, uses hammers against armor in melee, and permits low-HP lifesteal swords. Optional potion consumption defaults off. Available shovel harvesting is the only travel utility; no dash ability or resource refill. Quest/unknown routes observe only. See [BASIC_AUTOMATION.md](BASIC_AUTOMATION.md).
+**Implemented project policy, unverified:** `scripts/basic/` caches available one-handed swords/wands/hammers and shields, dispatches eight locations, switches range with hysteresis, prefers wands for crowds/bosses, uses hammers against armor in melee, and permits low-HP lifesteal swords. Optional potion consumption defaults off. Current B2.1-NR removes optional shovel harvesting; no dash ability or resource refill. Quest/unknown routes observe only. See [BASIC_AUTOMATION.md](BASIC_AUTOMATION.md). Historical B2/B2.1 harvesting descriptions below record earlier revisions and are superseded for current behavior by RESOURCE_POLICY.md.
 
 **Limits:** inventory row labels and enchantments are unresolved, so broad selector matching requires inspection of actual equipment. Cached existence is not proof of the intended item or adequate damage. Boss reflection, lethal telegraphs, resistance changes, walls, elite modifiers, missing gear and reload behavior remain risks. All new imports, combat decisions and difficulty completions are untested in-game. The original loading pass does not apply to the new entry point. See [LOCATION_COVERAGE.md](LOCATION_COVERAGE.md).
 
