@@ -10,6 +10,13 @@ var meleeEnter = 5
 var meleeExit = 7
 var aoeThreshold = 3
 // No optional resource harvesting. Mandatory progression belongs in a verified location handler.
+// Passive attraction only during safe ordinary travel; false is the benchmark baseline.
+var passiveStarEnabled = true
+// Official tutorial trigger, NOT a verified maximum attraction radius.
+var passiveStarDistance = 10
+// Project bounds, not native Star Stone timing requirements.
+var passiveStarHoldFrames = 15
+var passiveStarCooldownFrames = 90
 
 // Order: poison, vigor, aether, fire, ice. Refine selectors to your gear.
 // Broad defaults intentionally avoid ambiguous CSV labels such as '1'/'2'.

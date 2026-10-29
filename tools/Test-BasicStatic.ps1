@@ -69,7 +69,32 @@ if ($combat -match '\bharvest\b|\bshovel\b|EquipHarvestTool' -or
 foreach ($field in @('missingCore','unavailableSwords','unavailableWands','unavailableHammers','unavailableBase','selectedShield','requestMode')) {
     if ($catalog -notmatch ('var ' + $field + '\b')) { throw "B2 audit field missing: $field" }
 }
+# Source contracts only: these do not simulate native pickup/equipment timing.
+foreach ($contract in @(
+    'func TryPassiveStar\(gear, settings\)',
+    '\?!settings.passiveStarEnabled\s+starUntil = 0\s+return false',
+    '\?starBossSeen \| foe \| foe.count > 0 \| !ai.walking \| hp < maxhp',
+    '\?settings.passiveStarDistance <= 0 \| settings.passiveStarDistance > 10',
+    '\?settings.passiveStarHoldFrames <= 0',
+    '\?settings.passiveStarCooldownFrames < settings.passiveStarHoldFrames',
+    '\?pickup.distance >= settings.passiveStarDistance',
+    '\?starWindowUsed \| totaltime < starNextFrame',
+    'starWindowUsed = true',
+    'starUntil = totaltime \+ settings.passiveStarHoldFrames',
+    'starNextFrame = totaltime \+ settings.passiveStarCooldownFrames',
+    '\?foe = boss\s+starBossSeen = true',
+    '\?!pickup\s+starWindowUsed = false\s+starUntil = 0',
+    '\?TryPassiveStar\(gear, settings\)\s+strategy = "travel-star-passive"\s+gear.Apply\(gear.starStone\)\s+return\s+gear.Apply\(gear.defaultSword\)'
+)) {
+    if ($combat -notmatch $contract) { throw 'Passive Star safety/timeout/ownership contract missing' }
+}
+if ($catalog -notmatch '\?settings.passiveStarEnabled\s+starStone = Find\("star stone", "star stone"\)' -or
+    $settings -notmatch 'var passiveStarEnabled = (true|false)' -or
+    $combat -match 'activate star|GetCooldown\("star|pickup\.(id|count|GetCount)|loc\.Pause|loc\.Leave') {
+    throw 'Passive Star API/configuration contract invalid'
+}
 'PASS: five modules; import/helper references; indentation/delimiters; eight routes; no per-frame inventory searches; potion defaults off.'
 'PASS: B2 request/audit fields, measurement call, and missing-gear guard ordering.'
 'PASS: no generic harvesting branch, shovel lookup/equip helper or collection setting; reserved Harvest guard retained.'
+'PASS: passive Star guards, bounded window, cooldown, early return and optional cached lookup; no invented pickup API or Star activation.'
 'LIMIT: static lint only, not Stonescript parser execution or in-game testing.'

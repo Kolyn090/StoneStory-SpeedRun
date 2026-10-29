@@ -1,10 +1,49 @@
 // Project policy, not a native game AI. Thresholds require in-game validation.
 var melee = false
 var strategy = "initializing"
+var starWindowUsed = false
+var starUntil = 0
+var starNextFrame = 0
+var starBossSeen = false
 
 func Reset()
   melee = false
   strategy = "initializing"
+  starWindowUsed = false
+  starUntil = 0
+  starNextFrame = 0
+  starBossSeen = false
+
+// Low-priority policy only: ordinary travel calls this before applying equipment.
+// Poll documented pickup state; there is no assumed pickup event/instance API.
+func TryPassiveStar(gear, settings)
+  ?!settings.passiveStarEnabled
+    starUntil = 0
+    return false
+  ?starBossSeen | foe | foe.count > 0 | !ai.walking | hp < maxhp
+    starUntil = 0
+    return false
+  ?settings.passiveStarDistance <= 0 | settings.passiveStarDistance > 10
+    return false
+  ?settings.passiveStarHoldFrames <= 0
+    return false
+  ?settings.passiveStarCooldownFrames < settings.passiveStarHoldFrames
+    return false
+  ?string.Equals(gear.starStone, "")
+    return false
+  ?!pickup
+    return false
+  ?pickup.distance >= settings.passiveStarDistance
+    starUntil = 0
+    return false
+  ?totaltime < starUntil
+    return true
+  ?starWindowUsed | totaltime < starNextFrame
+    return false
+  starWindowUsed = true
+  starUntil = totaltime + settings.passiveStarHoldFrames
+  starNextFrame = totaltime + settings.passiveStarCooldownFrames
+  return true
 
 // Community weakness mapping; verify elemental matchups on installed build.
 func WeakElement()
@@ -22,10 +61,18 @@ func WeakElement()
 
 func Tick(gear, settings)
   gear.ClearRequest()
+  ?settings.passiveStarEnabled
+    ?foe = boss
+      starBossSeen = true
+    ?!pickup
+      starWindowUsed = false
+      starUntil = 0
   ?gear.missing > 0
+    starUntil = 0
     strategy = "missing-core-gear-manual"
     return
   ?!ai.enabled | ai.paused
+    starUntil = 0
     strategy = "ai-suspended"
     return
   // Optional potion consumption only; never brew or auto-refill resources.
@@ -35,9 +82,14 @@ func Tick(gear, settings)
   ?!foe | foe.distance > 22
     melee = false
     strategy = "travel-shield"
-    // Resources are incidental. No optional harvesting or collection-only swaps.
+    // No farming or waiting. This branch owns only unprotected ordinary travel.
+    ?TryPassiveStar(gear, settings)
+      strategy = "travel-star-passive"
+      gear.Apply(gear.starStone)
+      return
     gear.Apply(gear.defaultSword)
     return
+  starUntil = 0
   ?foe = undamageable
     strategy = "undamageable-wait"
     gear.Apply(gear.defaultWand)
