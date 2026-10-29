@@ -8,6 +8,7 @@ var defaultHammer = ""
 var shield = ""
 var healingSword = ""
 var starStone = ""
+var triskelion = ""
 var selectedWeapon = ""
 var selectedShield = ""
 var requestMode = "none"
@@ -59,6 +60,11 @@ func Prepare(settings)
   ?!preferredAvailable
     unavailableBase = unavailableBase + " heal"
   starStone = ""
+  triskelion = ""
+  ?settings.triskelionTravelEnabled
+    triskelion = Find("triskelion", "triskelion")
+    ?!preferredAvailable
+      unavailableBase = unavailableBase + " triskelion"
   ?settings.passiveStarEnabled
     starStone = Find("star stone", "star stone")
     ?!preferredAvailable
@@ -113,13 +119,17 @@ func Weapon(kind, element)
   return defaultSword
 
 func Apply(weapon)
+  ApplyPair(weapon, shield)
+
+// One executor for combat and travel. selectedShield is the requested R selector.
+func ApplyPair(weapon, offhand)
   selectedWeapon = weapon
-  selectedShield = shield
+  selectedShield = offhand
   requestMode = "one-hand"
   ?string.Equals(weapon, "")
     notice = "missing-weapon-manual"
   // No command for a missing item. No accidental two-handed fallback.
   ?!string.Equals(weapon, "")
     equipL @weapon@
-  ?!string.Equals(shield, "")
-    equipR @shield@
+  ?!string.Equals(offhand, "")
+    equipR @offhand@

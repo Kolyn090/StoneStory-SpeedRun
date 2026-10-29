@@ -73,7 +73,7 @@ foreach ($field in @('missingCore','unavailableSwords','unavailableWands','unava
 foreach ($contract in @(
     'func TryPassiveStar\(gear, settings\)',
     '\?!settings.passiveStarEnabled\s+starUntil = 0\s+return false',
-    '\?starBossSeen \| foe \| foe.count > 0 \| !ai.walking \| hp < maxhp',
+    '\?travelBossSeen \| foe \| foe.count > 0 \| !ai.walking \| hp < maxhp',
     '\?settings.passiveStarDistance <= 0 \| settings.passiveStarDistance > 10',
     '\?settings.passiveStarHoldFrames <= 0',
     '\?settings.passiveStarCooldownFrames < settings.passiveStarHoldFrames',
@@ -82,11 +82,34 @@ foreach ($contract in @(
     'starWindowUsed = true',
     'starUntil = totaltime \+ settings.passiveStarHoldFrames',
     'starNextFrame = totaltime \+ settings.passiveStarCooldownFrames',
-    '\?foe = boss\s+starBossSeen = true',
+    '\?foe = boss\s+travelBossSeen = true',
     '\?!pickup\s+starWindowUsed = false\s+starUntil = 0',
-    '\?TryPassiveStar\(gear, settings\)\s+strategy = "travel-star-passive"\s+gear.Apply\(gear.starStone\)\s+return\s+gear.Apply\(gear.defaultSword\)'
+    '\?TryPassiveStar\(gear, settings\)\s+\?useTriskelion\s+strategy = "travel-triskelion-star"\s+travelOffhand = gear.starStone\s+:\s+strategy = "travel-star-passive"\s+travelWeapon = gear.starStone\s+gear.ApplyPair\(travelWeapon, travelOffhand\)\s+return'
 )) {
     if ($combat -notmatch $contract) { throw 'Passive Star safety/timeout/ownership contract missing' }
+}
+$travelHelper = [regex]::Match($combat, '(?s)func CanTravelWithTriskelion.*?(?=func TryPassiveStar)').Value
+if ($travelHelper -notmatch '\?!settings.triskelionTravelEnabled \| string.Equals\(gear.triskelion, ""\)' -or
+    $travelHelper -notmatch '\?travelBossSeen \| foe \| foe.count > 0 \| !ai.walking \| hp < maxhp\s+return false' -or
+    $travelHelper -match 'totaltime|time\b|activate') {
+    throw 'Travel safety/configuration contract missing or timed delay added'
+}
+foreach ($contract in @(
+    '\?!foe\s+melee = false\s+strategy = "travel-shield"\s+\?foe.count > 0\s+starUntil = 0\s+strategy = "threat-ready-shield"\s+gear.Apply\(gear.defaultWand\)\s+return',
+    'useTriskelion = CanTravelWithTriskelion\(gear, settings\)\s+\?useTriskelion\s+strategy = "travel-triskelion"\s+travelWeapon = gear.triskelion',
+    '\?settings.passiveStarEnabled \| settings.triskelionTravelEnabled\s+\?foe = boss',
+    '\?foe = immune_to_physical & foe = immune_to_ranged\s+strategy = "immunity-conflict-manual"\s+gear.Apply\(gear.defaultWand\)\s+return'
+)) {
+    if ($combat -notmatch $contract) { throw 'Travel threat/slot ownership contract missing' }
+}
+if ($catalog -notmatch '\?settings.triskelionTravelEnabled\s+triskelion = Find\("triskelion", "triskelion"\)' -or
+    $catalog -notmatch 'func Apply\(weapon\)\s+ApplyPair\(weapon, shield\)' -or
+    $catalog -notmatch 'func ApplyPair\(weapon, offhand\)' -or
+    $catalog -notmatch 'selectedShield = offhand' -or $catalog -notmatch 'equipR @offhand@' -or
+    $settings -notmatch 'var triskelionTravelEnabled = (true|false)' -or
+    $combat -match 'foe.distance > 22|activate trisk|GetCooldown\("trisk' -or
+    $main -notmatch 'player.framesPerMove') {
+    throw 'Travel selector/executor/API/diagnostic contract invalid'
 }
 if ($catalog -notmatch '\?settings.passiveStarEnabled\s+starStone = Find\("star stone", "star stone"\)' -or
     $settings -notmatch 'var passiveStarEnabled = (true|false)' -or
@@ -97,4 +120,5 @@ if ($catalog -notmatch '\?settings.passiveStarEnabled\s+starStone = Find\("star 
 'PASS: B2 request/audit fields, measurement call, and missing-gear guard ordering.'
 'PASS: no generic harvesting branch, shovel lookup/equip helper or collection setting; reserved Harvest guard retained.'
 'PASS: passive Star guards, bounded window, cooldown, early return and optional cached lookup; no invented pickup API or Star activation.'
+'PASS: optional Triskelion, no travel timer, early threat response, persistent L slot, single pair executor and movement diagnostic.'
 'LIMIT: static lint only, not Stonescript parser execution or in-game testing.'

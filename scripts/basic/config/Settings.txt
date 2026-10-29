@@ -10,6 +10,8 @@ var meleeEnter = 5
 var meleeExit = 7
 var aoeThreshold = 3
 // No optional resource harvesting. Mandatory progression belongs in a verified location handler.
+// Equipped movement effect, no activation or timed travel delay. False benchmarks it off.
+var triskelionTravelEnabled = true
 // Passive attraction only during safe ordinary travel; false is the benchmark baseline.
 var passiveStarEnabled = true
 // Official tutorial trigger, NOT a verified maximum attraction radius.

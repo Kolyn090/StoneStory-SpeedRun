@@ -4,7 +4,7 @@ var strategy = "initializing"
 var starWindowUsed = false
 var starUntil = 0
 var starNextFrame = 0
-var starBossSeen = false
+var travelBossSeen = false
 
 func Reset()
   melee = false
@@ -12,7 +12,14 @@ func Reset()
   starWindowUsed = false
   starUntil = 0
   starNextFrame = 0
-  starBossSeen = false
+  travelBossSeen = false
+
+func CanTravelWithTriskelion(gear, settings)
+  ?!settings.triskelionTravelEnabled | string.Equals(gear.triskelion, "")
+    return false
+  ?travelBossSeen | foe | foe.count > 0 | !ai.walking | hp < maxhp
+    return false
+  return true
 
 // Low-priority policy only: ordinary travel calls this before applying equipment.
 // Poll documented pickup state; there is no assumed pickup event/instance API.
@@ -20,7 +27,7 @@ func TryPassiveStar(gear, settings)
   ?!settings.passiveStarEnabled
     starUntil = 0
     return false
-  ?starBossSeen | foe | foe.count > 0 | !ai.walking | hp < maxhp
+  ?travelBossSeen | foe | foe.count > 0 | !ai.walking | hp < maxhp
     starUntil = 0
     return false
   ?settings.passiveStarDistance <= 0 | settings.passiveStarDistance > 10
@@ -61,9 +68,10 @@ func WeakElement()
 
 func Tick(gear, settings)
   gear.ClearRequest()
-  ?settings.passiveStarEnabled
+  ?settings.passiveStarEnabled | settings.triskelionTravelEnabled
     ?foe = boss
-      starBossSeen = true
+      travelBossSeen = true
+  ?settings.passiveStarEnabled
     ?!pickup
       starWindowUsed = false
       starUntil = 0
@@ -79,16 +87,35 @@ func Tick(gear, settings)
   ?settings.usePotion & hp < maxhp * settings.potionHpRatio
     ?item.potion ! empty & item.CanActivate()
       activate potion
-  ?!foe | foe.distance > 22
+  ?!foe
     melee = false
     strategy = "travel-shield"
-    // No farming or waiting. This branch owns only unprotected ordinary travel.
-    ?TryPassiveStar(gear, settings)
-      strategy = "travel-star-passive"
-      gear.Apply(gear.starStone)
+    // A non-targeted enemy still prevents travel gear; prepare ranged combat.
+    ?foe.count > 0
+      starUntil = 0
+      strategy = "threat-ready-shield"
+      gear.Apply(gear.defaultWand)
       return
-    gear.Apply(gear.defaultSword)
+    var travelWeapon
+    var travelOffhand
+    var useTriskelion
+    travelWeapon = gear.defaultSword
+    travelOffhand = gear.shield
+    useTriskelion = CanTravelWithTriskelion(gear, settings)
+    ?useTriskelion
+      strategy = "travel-triskelion"
+      travelWeapon = gear.triskelion
+    // No farming/waiting. Star uses R while Triskelion remains in L.
+    ?TryPassiveStar(gear, settings)
+      ?useTriskelion
+        strategy = "travel-triskelion-star"
+        travelOffhand = gear.starStone
+      :
+        strategy = "travel-star-passive"
+        travelWeapon = gear.starStone
+    gear.ApplyPair(travelWeapon, travelOffhand)
     return
+  // Any targeted enemy takes the combat path, including ranged/far targets.
   starUntil = 0
   ?foe = undamageable
     strategy = "undamageable-wait"
@@ -96,6 +123,8 @@ func Tick(gear, settings)
     return
   ?foe = immune_to_physical & foe = immune_to_ranged
     strategy = "immunity-conflict-manual"
+    // Manual combat conditions must not leave a travel-only pair equipped.
+    gear.Apply(gear.defaultWand)
     return
   ?foe.distance <= settings.meleeEnter
     melee = true

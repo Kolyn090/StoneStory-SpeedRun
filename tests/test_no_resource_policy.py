@@ -59,12 +59,32 @@ class NoResourcePolicyTests(unittest.TestCase):
             ("starUntil = totaltime + settings.passiveStarHoldFrames", "starUntil = 999999"),
             ("?TryPassiveStar(gear, settings)", "?true"),
             ("!ai.walking", "ai.walking"),
-            ("starBossSeen = true", "starBossSeen = false"),
+            ("travelBossSeen = true", "travelBossSeen = false"),
         ]:
             with self.subTest(contract=before):
                 result = self.run_checker(("combat/Generic.txt", before, after))
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn("Passive Star", result.stderr)
+
+    def test_triskelion_off_configuration_passes(self):
+        result = self.run_checker(("config/Settings.txt", "var triskelionTravelEnabled = true",
+                                   "var triskelionTravelEnabled = false"))
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_travel_slot_threat_delay_and_lookup_regressions_are_rejected(self):
+        mutations = [
+            ("combat/Generic.txt", "travelWeapon = gear.triskelion", "travelWeapon = gear.starStone"),
+            ("combat/Generic.txt", "?!foe\n", "?!foe | foe.distance > 22\n"),
+            ("combat/Generic.txt", "?!settings.triskelionTravelEnabled", "?totaltime < 60"),
+            ("equipment/Catalog.txt", "?settings.triskelionTravelEnabled", "?true"),
+            ("equipment/Catalog.txt", "equipR @offhand@", "equipR @shield@"),
+            ("combat/Generic.txt", "\nactivate triskelion\n"),
+        ]
+        for mutation in mutations:
+            with self.subTest(mutation=mutation):
+                result = self.run_checker(mutation)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("Travel", result.stderr)
 
     def test_passive_star_unconditional_lookup_and_invented_api_are_rejected(self):
         for mutation in [
