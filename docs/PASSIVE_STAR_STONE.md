@@ -1,5 +1,7 @@
 # Passive Star Stone: B2.1-PS
 
+Current B2.1-TS refinement: [TRISKELION_TRAVEL.md](TRISKELION_TRAVEL.md) supersedes the slot and threat descriptions below. When Triskelion travel is active it stays in L and Star Stone temporarily uses R, replacing the shield rather than the movement stone. If Triskelion is disabled/unavailable, the old Star L + shield R fallback remains. The existing 15-frame/90-frame collection bounds and off switch remain; no timer delays Triskelion travel. Historical PS installation/rollback evidence below is preserved.
+
 Owner policy (2026-10-29): no resource farming, optional shovel harvesting, collection detours or waiting. Resources remain incidental. Star Stone may attract already-nearby pickups as background ordinary travel, subordinate to survival, progression, combat, bosses, movement optimizations and protected equipment sequences. The importer, private inventories and isolated selector validator are unchanged.
 
 ## Verified sources versus unresolved mechanics

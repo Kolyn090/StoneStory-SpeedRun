@@ -1,5 +1,7 @@
 # Resource policy and B2.1-NR acceptance
 
+Movement priority refinement **B2.1-TS**: keep Triskelion in its travel slot; permit bounded Star Stone in the other slot only in the same clear-area/full-HP walking window. Never replace Triskelion solely for resources, wait for collection or delay combat preparation. See [TRISKELION_TRAVEL.md](TRISKELION_TRAVEL.md). Earlier NR/PS rules and backup records below are historical; mandatory progression remains an explicit exception to the no-farming policy.
+
 Current refinement: **B2.1-PS**, passive Star Stone attraction during safe ordinary travel. This is an explicit exception to the historical prohibition on collection-only equipment swaps below: no farming, optional shovel harvesting, detours, waiting or interruption of higher-priority actions. See [PASSIVE_STAR_STONE.md](PASSIVE_STAR_STONE.md) for mechanics, safeguards, configuration, deployment and tests. The B2.1-NR audit/backup record below is historical and remains the rollback baseline; mandatory interactions remain supported in scope.
 
 Owner requirement, 2026-10-29: resources are effectively unlimited. Optimize reliable progression, movement, combat, bosses and total completion time. Resource accumulation/farming/optional harvesting is never a goal. Resources obtained during required actions are incidental. Potion activation permissions remain unchanged; this policy does not silently enable consumption.

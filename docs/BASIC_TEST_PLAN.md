@@ -1,5 +1,7 @@
 # B2 testing and stabilization
 
+Current revision: **B2.1-TS**. Follow [TRISKELION_TRAVEL.md](TRISKELION_TRAVEL.md) for movement, stable slots, ranged threat/first-attack transitions, benchmark toggles and the movement-frame diagnostic. All older header/slot descriptions below are historical. No completion status changes from this source/deployment milestone.
+
 Current revision: **B2.1-PS**. First follow [PASSIVE_STAR_STONE.md](PASSIVE_STAR_STONE.md): Star Stone is allowed only in safe ordinary travel with nearby targeted pickups, with bounded duration and a benchmark off switch. Expect no shovel or harvest strategy. The B2.1-NR description below is historical; all existing completion statuses remain unchanged.
 
 Current revision: **B2.1-NR**. Optional harvesting is removed; preserve mandatory passage/interactions. Follow [RESOURCE_POLICY.md](RESOURCE_POLICY.md) for this change's tests. Historical B2 expectations are superseded where noted below; no prior completion status changes.

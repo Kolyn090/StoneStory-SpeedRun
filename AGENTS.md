@@ -1,5 +1,11 @@
 # StoneStory-SpeedRun development instructions
 
+## Permanent rule: Triskelion Stone for faster clear travel
+
+Prioritize completion time with configurable equipped Triskelion movement during safe travel. Use verified `triskelion` equipment criteria; do not invent an activation/cooldown or assume a lingering bonus after removal. Reserve travel gear for clear ordinary movement: current conservative policy requires no targeted foe, no enemies reported within 46 units, full HP, walking, and no boss observed this attempt. Every targeted enemy takes priority regardless of melee distance, including ranged/imminent threats; keep combat gear ready before the first attack.
+
+Keep Triskelion in a stable slot. Star Stone may briefly use the other slot without replacing it; collection must yield if slots conflict or measured completion time/reliability worsens. Never add repeated alternating swaps, fixed travel waits or collection detours. Protected combat, movement and mandatory progression sequences must bypass ordinary travel equipment decisions. Verify movement with documented `player.framesPerMove` and actual timed runs; magnitude, exact applicability, carryover and switching side effects require in-game evidence. See [TRISKELION_TRAVEL.md](docs/TRISKELION_TRAVEL.md).
+
 ## Permanent rule: passive resource collection using Star Stone
 
 The owner has effectively unlimited resources. Optimize reliable location progression, movement, combat, boss completion and total run time. Never add farming, optional shovel harvesting, resource-accumulation targets or collection detours. Collection is incidental, never an optimization objective. Exception: opportunistically equip Star Stone to attract already-nearby pickups during safe ordinary travel, without activation, waiting or interrupting combat, boss mechanics, mandatory progression, movement optimizations or protected equipment sequences. Keep this behavior configurable for benchmarks and bound/latch requests to avoid equipment thrashing.

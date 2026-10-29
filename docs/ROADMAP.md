@@ -33,6 +33,8 @@ Do not build a generic plugin framework, event bus, dynamic scoring engine, or r
 
 ## Frame workflow and ownership (proposal)
 
+Current B2.1-TS travel refinement implements optional cached `triskelion`, a stable left-hand travel slot, and Star Stone in R only for bounded clear-area pickup opportunities. Ordinary travel and combat share one final pair executor; no post-combat collection override and no Triskelion activation/timer. Any targeted foe prepares existing combat gear immediately; non-targeted foes reported within 46 units request wand/shield readiness. Mandatory/protected handlers continue to outrank ordinary travel. See [TRISKELION_TRAVEL.md](TRISKELION_TRAVEL.md).
+
 1. Handle fresh-entry/loop resets, clearing frame-local requests separately from persistent sequence state.
 2. Read only the state needed by the active profile. Reuse values within that decision pass; refresh after mutations if subsequent logic needs updated equipment/activation state.
 3. Dispatch the current location and difficulty only. Delegate to a boss handler when appropriate.
@@ -49,6 +51,8 @@ Only the executor and explicitly approved sequence routines issue equipment comm
 Cache static gear information at initialization. Keep volatile distance/state/eligibility checks current. Do not throttle defensive timing or cancellation checks. Add modules incrementally and measure overhead rather than assuming abstractions are free.
 
 ## Milestones and acceptance gates
+
+Authorized next travel gate: test Triskelion equipped versus disabled under identical build/gear/difficulty, verify `player.framesPerMove` and timed travel splits, both-hand stone coexistence, threat/first-attack transitions (including ranged), no boundary oscillation and mandatory traversal. Keep Star separately configurable to isolate gains/losses. No bonus magnitude/carryover or all-location safety claim is accepted from source inspection; no arbitrary travel delay or duplicate-stone stacking optimization. All B2.1-TS game tests remain NOT RUN.
 
 Current incremental gate: B2.1-PS adds bounded passive attraction to ordinary travel with an off switch. Verify targeted-pickup detection, installed effective range, actual attraction while moving, no combat/boss interruption, no repeated swaps and timeout restoration. Compare paired enabled/disabled completion timings at fixed gear/build/difficulty; disable if slower or less reliable. Raw material yield is not an acceptance metric. Do not expand the range beyond the documented tutorial threshold without separate evidence; exact maximum radius is unresolved. See PASSIVE_STAR_STONE.md; all in-game outcomes remain NOT RUN.
 
