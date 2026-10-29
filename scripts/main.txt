@@ -1,0 +1,27 @@
+// Install scripts/ as Stonescript/SpeedRun/. Mind Stone: import SpeedRun/main
+// Set true for validation; leave false for timing comparisons.
+var showDiagnostics = true
+var metrics = new SpeedRun/metrics/RunMetrics
+var initialized = false
+var observedLoops = 0
+
+?loc.begin
+  observedLoops = 0
+  metrics.ResetSession()
+  metrics.Begin("entry", true)
+  initialized = true
+:?loc.loop
+  observedLoops++
+  metrics.Begin("loop", true)
+  initialized = true
+:?!initialized
+  // Loaded during a run: measure only the observed interval.
+  metrics.Begin("attached", false)
+  initialized = true
+
+// Future location dispatch goes here, after lifecycle and before measurement.
+// Handlers must not call Begin every frame.
+
+metrics.Observe()
+?showDiagnostics
+  metrics.Draw(observedLoops)
