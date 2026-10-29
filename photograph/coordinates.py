@@ -1,1 +1,1 @@
-matrix_boundary = [238, 204, 767, 639]
+matrix_boundary = [238, 205, 756, 620]

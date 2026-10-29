@@ -5,7 +5,7 @@ if platform.platform().startswith('Win'):
 import numpy as np
 from PIL import Image, ImageGrab
 from pathlib import Path
-from window_name import window_name
+from .window_name import window_name
 
 # This function will look for a window with a specific title
 def get_window_with_title(title):
@@ -30,7 +30,9 @@ def get_screenshot_of_chosen_window(window) -> Image.Image:
         y = window.top
         h = window.height
         w = window.width
-        return ImageGrab.grab(bbox=(x, y, w, h))
+        return ImageGrab.grab(
+            bbox=(x, y, x + w, y + h)
+        )
 
     if platform.system() == 'Windows':  # Better way to check OS
         return run_win()
@@ -63,14 +65,18 @@ def get_chosen_region_cv2(window, region) -> np.ndarray:
     return None
 
 
+
 def get_unique_path(filename):
     path = Path(filename)
+
+    # Create the destination folder if necessary.
+    path.parent.mkdir(parents=True, exist_ok=True)
 
     if not path.exists():
         return path
 
-    stem = path.stem      # "test"
-    suffix = path.suffix  # ".png"
+    stem = path.stem
+    suffix = path.suffix
     parent = path.parent
 
     i = 1

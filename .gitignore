@@ -239,3 +239,5 @@ Desktop.ini
 !.env.example
 
 data/raw/player_save
+
+photograph/screenshot
