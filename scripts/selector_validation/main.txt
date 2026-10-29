@@ -1,0 +1,92 @@
+// Isolated diagnostic ONLY. Never import alongside combat automation.
+var cases = new EquipmentSelectorTest/Candidates
+var allowEquip = false
+var showDiagnostics = true
+var probeIndex = 0
+var probeReady = false
+var probeSelector = ""
+var probeHand = ""
+var probeCount = 0
+var probeStatus = "not queried"
+var probeAction = "no equipment requested"
+var probeRequested = "none"
+var probeArmed = false
+var probeSent = false
+var probeLastLeft = "not sampled"
+var probeLastRight = "not sampled"
+
+func SelectorProbeRefresh()
+  probeSelector = cases.selectors[probeIndex]
+  probeHand = cases.hands[probeIndex]
+  probeCount = item.GetCount(probeSelector)
+  probeStatus = "ONE COPY; exact identity unconfirmed"
+  ?probeCount = 0
+    probeStatus = "ZERO: missing or alias/filter mismatch"
+  :?probeCount > 1
+    probeStatus = "MULTIPLE: ambiguous copies/variants"
+  probeArmed = false
+  probeAction = "queried; disarmed; no new request"
+
+?!probeReady
+  SelectorProbeRefresh()
+  probeReady = true
+
+// Capture after the command frame, not as proof of same-frame equip success.
+?probeSent
+  probeLastLeft = item.left
+  probeLastRight = item.right
+  probeSent = false
+
+?loc.begin | loc.loop
+  probeArmed = false
+  probeAction = "boundary disarmed; no new request"
+
+?key = leftBegin
+  probeIndex--
+  ?probeIndex < 0
+    probeIndex = cases.selectors.Count() - 1
+  SelectorProbeRefresh()
+?key = rightBegin
+  probeIndex++
+  ?probeIndex >= cases.selectors.Count()
+    probeIndex = 0
+  SelectorProbeRefresh()
+?key = downBegin
+  SelectorProbeRefresh()
+
+// UP explicitly arms one test; a separate ENTER press sends exactly one command.
+?key = upBegin
+  ?allowEquip & probeCount > 0
+    probeArmed = true
+    probeAction = "ARMED: Enter once; arrows cancel"
+  :
+    probeAction = "BLOCKED: count-only mode or zero matches"
+?key = primaryBegin
+  ?allowEquip & probeArmed
+    SelectorProbeRefresh()
+    ?probeCount > 0
+      ?probeHand = L
+        equipL @probeSelector@
+      :?probeHand = R
+        equipR @probeSelector@
+      :
+        equip @probeSelector@
+      probeRequested = probeSelector
+      probeAction = "SENT ONCE; inspect inventory manually"
+      probeSent = true
+  probeArmed = false
+
+?showDiagnostics
+  >`0,0,Selector test: no combat automation
+  >`0,1,Allow equip: @allowEquip@ | Location: @loc@
+  >`0,2,Index (zero-based): @probeIndex@ | Hand: @probeHand@
+  >`0,3,Query: @probeSelector@
+  >`0,4,Copies: @probeCount@ | @probeStatus@
+  >`0,5,@probeAction@
+  >`0,6,Last requested: @probeRequested@
+  >`0,7,Live L: @item.left@
+  >`0,8,Live R: @item.right@
+  >`0,9,After request L: @probeLastLeft@
+  >`0,10,After request R: @probeLastRight@
+  >`0,11,Left/Right browse; Down recount; Up arm; Enter send
+  >`0,12,Exact identity UNVERIFIED; Tab for native errors
