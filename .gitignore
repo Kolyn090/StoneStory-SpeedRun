@@ -237,3 +237,5 @@ Thumbs.db
 Desktop.ini
 .env.*
 !.env.example
+
+data/raw/player_save
