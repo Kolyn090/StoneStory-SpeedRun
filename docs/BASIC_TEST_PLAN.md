@@ -1,5 +1,7 @@
 # B2 testing and stabilization
 
+Current revision: **B2.1-PS**. First follow [PASSIVE_STAR_STONE.md](PASSIVE_STAR_STONE.md): Star Stone is allowed only in safe ordinary travel with nearby targeted pickups, with bounded duration and a benchmark off switch. Expect no shovel or harvest strategy. The B2.1-NR description below is historical; all existing completion statuses remain unchanged.
+
 Current revision: **B2.1-NR**. Optional harvesting is removed; preserve mandatory passage/interactions. Follow [RESOURCE_POLICY.md](RESOURCE_POLICY.md) for this change's tests. Historical B2 expectations are superseded where noted below; no prior completion status changes.
 
 Status: prepared for owner testing; **all eight location completion tests remain NOT RUN**. No advanced boss logic or AAC is introduced. The original observer and all prior backups are preserved. B2 uses the existing five modules and the unchanged original metrics dependency.

@@ -1,5 +1,7 @@
 # Resource policy and B2.1-NR acceptance
 
+Current refinement: **B2.1-PS**, passive Star Stone attraction during safe ordinary travel. This is an explicit exception to the historical prohibition on collection-only equipment swaps below: no farming, optional shovel harvesting, detours, waiting or interruption of higher-priority actions. See [PASSIVE_STAR_STONE.md](PASSIVE_STAR_STONE.md) for mechanics, safeguards, configuration, deployment and tests. The B2.1-NR audit/backup record below is historical and remains the rollback baseline; mandatory interactions remain supported in scope.
+
 Owner requirement, 2026-10-29: resources are effectively unlimited. Optimize reliable progression, movement, combat, bosses and total completion time. Resource accumulation/farming/optional harvesting is never a goal. Resources obtained during required actions are incidental. Potion activation permissions remain unchanged; this policy does not silently enable consumption.
 
 ## Architecture and source audit

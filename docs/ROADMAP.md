@@ -2,7 +2,7 @@
 
 Status (2026-10-29): original observer retained with user-verified loading/display; correctness tests still pending. Basic automation and eight-route dispatcher implemented as an untested side-by-side candidate. No automated completion or speed result is verified.
 
-Current objective: broad completion coverage, functional correctness, and reliability before speed tuning. Long-term objective: minimize completion time subject to an agreed reliability target across relevant locations/difficulties. Resources are effectively unlimited: farming, optional harvesting, collection detours and accumulation are never optimization goals. Collection is incidental. Preserve evidenced mandatory interactions and progression-tool use. Read [the knowledge base](STONESCRIPT_KNOWLEDGE.md) and [resource policy](RESOURCE_POLICY.md).
+Current objective: broad completion coverage, functional correctness, and reliability before speed tuning. Long-term objective: minimize completion time subject to an agreed reliability target across relevant locations/difficulties. Resources are effectively unlimited: farming, optional shovel harvesting, collection detours and accumulation are never optimization goals. Collection is incidental; configurable Star Stone attraction is permitted only as safe background travel behavior with no waiting or higher-priority interruption. Preserve mandatory progression. Read [the knowledge base](STONESCRIPT_KNOWLEDGE.md), [resource policy](RESOURCE_POLICY.md) and [Star Stone validation](PASSIVE_STAR_STONE.md).
 
 ## Proposed structure
 
@@ -36,7 +36,7 @@ Do not build a generic plugin framework, event bus, dynamic scoring engine, or r
 1. Handle fresh-entry/loop resets, clearing frame-local requests separately from persistent sequence state.
 2. Read only the state needed by the active profile. Reuse values within that decision pass; refresh after mutations if subsequent logic needs updated equipment/activation state.
 3. Dispatch the current location and difficulty only. Delegate to a boss handler when appropriate.
-4. Resolve competing actions with a deterministic priority: required survival response, protected sequence, mandatory progression interaction, boss strategy, regular combat, travel. Future progression tools require a narrow location/phase condition, evidence that passage needs them, and restoration of combat gear; optional gathering is not an action owner.
+4. Resolve competing actions with a deterministic priority: required survival response, protected sequence, mandatory progression interaction, boss strategy, regular combat, movement optimization, ordinary travel. Only ordinary travel may offer its loadout to bounded passive Star Stone attraction. Never append pickup equipment commands after a higher-priority handler. Future progression tools require a narrow location/phase condition, evidence that passage needs them, and restoration of combat gear; optional farming is not an action owner.
 5. Execute the selected ordinary equipment/ability action or the selected bounded sequence.
 6. Record transitions/splits. Keep optional rendering and analysis off the critical decision path.
 
@@ -49,6 +49,8 @@ Only the executor and explicitly approved sequence routines issue equipment comm
 Cache static gear information at initialization. Keep volatile distance/state/eligibility checks current. Do not throttle defensive timing or cancellation checks. Add modules incrementally and measure overhead rather than assuming abstractions are free.
 
 ## Milestones and acceptance gates
+
+Current incremental gate: B2.1-PS adds bounded passive attraction to ordinary travel with an off switch. Verify targeted-pickup detection, installed effective range, actual attraction while moving, no combat/boss interruption, no repeated swaps and timeout restoration. Compare paired enabled/disabled completion timings at fixed gear/build/difficulty; disable if slower or less reliable. Raw material yield is not an acceptance metric. Do not expand the range beyond the documented tutorial threshold without separate evidence; exact maximum radius is unresolved. See PASSIVE_STAR_STONE.md; all in-game outcomes remain NOT RUN.
 
 | Priority / milestone | Scope | Dependencies | Acceptance gate |
 |---|---|---|---|

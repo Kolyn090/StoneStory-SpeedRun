@@ -1,8 +1,10 @@
 # StoneStory-SpeedRun development instructions
 
-## Permanent rule: do not prioritize resource collection
+## Permanent rule: passive resource collection using Star Stone
 
-The owner has effectively unlimited resources. Optimize reliable location progression, movement, combat, boss completion and total run time. Never add farming, optional harvesting, resource-accumulation targets, collection detours, or equipment/ability swaps solely to obtain resources. Resource collection is an incidental byproduct of completing a location, never an optimization objective.
+The owner has effectively unlimited resources. Optimize reliable location progression, movement, combat, boss completion and total run time. Never add farming, optional shovel harvesting, resource-accumulation targets or collection detours. Collection is incidental, never an optimization objective. Exception: opportunistically equip Star Stone to attract already-nearby pickups during safe ordinary travel, without activation, waiting or interrupting combat, boss mechanics, mandatory progression, movement optimizations or protected equipment sequences. Keep this behavior configurable for benchmarks and bound/latch requests to avoid equipment thrashing.
+
+Consult [PASSIVE_STAR_STONE.md](docs/PASSIVE_STAR_STONE.md). Use documented `pickup`/`pickup.distance`; they describe the currently targeted pickup, not an enumerable list or stable instance ID. The official tutorial's `<10` trigger is not proof of a universal maximum attraction radius. Do not invent pickup events, IDs, range queries or Star Stone activation APIs. Confirm effective range, collection duration, native movement and any timing benefit in-game before making broader claims. Higher-priority handlers must bypass passive collection, not have their equipment overwritten afterward.
 
 Preserve interactions and tool use genuinely required to progress (for example a confirmed blocking object or mandatory traversal interaction). Classify these by explicit location/phase evidence; the presence of a `harvest` target alone is not proof of a progression requirement. Do not globally disable native interactions or remove required utility items to suppress optional gathering. Any future progression-tool handler must be narrow, restore combat equipment, and be tested for passage/completion. Do not reintroduce generic harvesting as a fallback.
 

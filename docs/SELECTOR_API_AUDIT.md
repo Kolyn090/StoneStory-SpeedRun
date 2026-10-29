@@ -1,5 +1,7 @@
 # B2 selector and API review
 
+B2.1-PS addition: documented `pickup`, `pickup.distance`, `ai.walking`, `foe.count`, `totaltime`, `hp`/`maxhp`, cached `item.GetCount("star stone")`, existing `equipL`/`equipR` application and scalar project state. The [official tutorial](https://stonestoryrpg.com/stonescript/) demonstrates equipping Star Stone for pickups below 10 units; the manual also gives a below-5 example. Neither example establishes the exact maximum attraction radius. No Star Stone activation, native cooldown identifier, pickup ID/event/enumeration or range-query API is assumed. Slot replacement and actual movement/attraction require in-game validation.
+
 Current B2.1-NR delta: optional `harvest` queries and shovel selectors/commands are removed from basic automation. Entries below mentioning them describe historical API review, not active behavior. No new native API is introduced. Standalone selector-validation shovel probes remain diagnostic-only and are not a farming policy.
 
 Reviewed 2026-10-29 against the [official manual](https://stonestoryrpg.com/stonescript/manual.html), displayed v4.35.2 (2026-09-25). This verifies documented forms/APIs, not parser execution of B2 or availability/quality of inventory items.

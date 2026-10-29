@@ -1,5 +1,7 @@
 # Basic automation candidate
 
+Current revision: **B2.1-PS** adds configurable passive attraction with Star Stone L + shield R only in safe ordinary travel. It never adds optional shovel harvesting or collection detours. See [PASSIVE_STAR_STONE.md](PASSIVE_STAR_STONE.md); physical range, timings and completion benefit remain unverified. Earlier B2.1-NR policy below records the shovel-removal baseline; the current bounded Star Stone exception supersedes its general prohibition on collection-only swaps.
+
 Current policy revision: **B2.1-NR** removes optional resource harvesting. Resources are incidental; movement, combat, boss completion and run time take priority. Earlier B2/B2.1 reports are historical. See [RESOURCE_POLICY.md](RESOURCE_POLICY.md) for the source audit, backup/deployment evidence and progression test gate. Mandatory interactions remain in scope; no blanket native-interaction suppression is applied.
 
 Status: source-reviewed, not parsed or executed in-game. Priority is broad basic coverage and reliability; speed optimizations, AAC, dash sequences and boss timing are deferred. See [coverage matrix](LOCATION_COVERAGE.md).
@@ -13,7 +15,7 @@ Correction **B2.1** supersedes the B2 diagnostic header: `Harvest()` was rejecte
 The original `scripts/main.txt` and `scripts/metrics/RunMetrics.txt` remain unchanged. The alternative entry is `scripts/basic/main.txt`, installed as `SpeedRunBasic/main.txt`. It reuses the original `SpeedRun/metrics/RunMetrics` object and reproduces the same entry/loop/attachment ordering around it. Original observer loading is user-verified; the new composition and all observer correctness cases still need tests.
 
 - `config/Settings.txt`: flags, HP/distance thresholds, explicit inventory search criteria.
-- `equipment/Catalog.txt`: initialization-time availability searches and bounded elemental arrays; one-handed equipment application. No shovel lookup or optional collection tool. Refreshes on fresh manual entry, not loops. Restart manually after inventory/config changes.
+- `equipment/Catalog.txt`: initialization-time availability searches and bounded elemental arrays; one-handed equipment application and optional cached Star Stone. No shovel lookup. Refreshes on fresh manual entry, not loops. Restart manually after inventory/config changes.
 - `locations/Dispatcher.txt`: caches classification by `loc.id` and quest status; eight main location aliases share the generic handler. Quest and unknown locations perform no automation.
 - `combat/Generic.txt`: selects one ordinary loadout per frame, with no cancellation swaps or resource abilities. Native game AI performs attacks/movement.
 
@@ -33,7 +35,7 @@ Inventory CSVs were reviewed but not changed. Their DPS, effect probabilities, a
 | Physical/ranged immunity | Physical immunity forces wand; ranged immunity forces melee. Conflicting flags report manual intervention rather than claiming a solution |
 | Low HP | At less than 40% HP, choose a cached vigor `dL` sword only in melee. Healing is not guaranteed to outpace damage |
 | Potion | Disabled by default. If explicitly enabled, consume the current nonempty potion below 25% HP when activations are allowed. No automatic identification of potion effect, brewing or refill |
-| Travel | Sword + shield while no target is within 22 units, including near optional boulders/trees. No collection-only equipment swaps, detours or resource abilities; required traversal exceptions need location-specific evidence |
+| Travel / passive pickups | Sword + shield by default when no target is within 22 units. A bounded Star Stone L + shield R opportunity is permitted only with no targeted foe/no foes within 46, full HP, walking, no boss seen and a nearby targeted pickup; see PASSIVE_STAR_STONE.md. No shovel, collection detours or resource abilities |
 | Suspended AI | Skip equipment and potion decisions while disabled/paused |
 
 The elemental weakness cycle is a community-derived policy, not a new native API. Current setup has five-element candidates and no special air matchup. An undamageable target reports a wait strategy; it does not dodge or force a phase transition. Missing item families produce diagnostics and may leave previous equipment in a slot. **Do not continue unattended with missing gear or a manual-intervention strategy.**
