@@ -156,7 +156,7 @@ def select_item(x, y):
 def click_details_button(cell_x, cell_y):
     """Click the Details button beneath the selected cell."""
 
-    details_x = cell_x
+    details_x = cell_x - 60
     details_y = cell_y + DETAILS_OFFSET_Y
 
     print(f"Opening Details at ({details_x}, {details_y})")

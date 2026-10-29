@@ -5,85 +5,70 @@ import cv2
 import numpy as np
 
 
+# Configuration
+MIN_BRIGHTNESS = 35
+MIN_BORDER_COVERAGE = 0.70
+MIN_PANEL_HEIGHT = 80
+EDGE_MARGIN = 4
+
+
 SCREENSHOT_DIR = Path(__file__).resolve().parent / "screenshot"
 
 
 def find_description_bounds(image):
     """
-    Detect top and bottom horizontal gray borders.
+    Detect long horizontal panel borders regardless of color.
 
-    Returns (top, bottom), or raises ValueError.
+    Accepts a BGR OpenCV image.
+    Returns (top, bottom).
     """
     height, width = image.shape[:2]
 
-    # Identify gray border pixels.
-    # Borders should be neutral-gray, not colorful.
-    rgb = image.astype(np.int16)
+    # Detect visible pixels regardless of hue.
+    brightness = np.max(image, axis=2)
+    visible = brightness >= MIN_BRIGHTNESS
 
-    maximum = rgb.max(axis=2)
-    minimum = rgb.min(axis=2)
+    # Exclude the extreme horizontal edges.
+    region = visible[:, EDGE_MARGIN:width - EDGE_MARGIN]
 
-    neutral = (maximum - minimum) <= 12
-    brightness = (minimum >= 45) & (maximum <= 190)
+    # Fraction of each row containing visible pixels.
+    coverage = np.mean(region, axis=1)
 
-    border_mask = neutral & brightness
+    # Long, solid lines have high row coverage.
+    candidate_rows = np.where(
+        coverage >= MIN_BORDER_COVERAGE
+    )[0]
 
-    candidates = []
+    if len(candidate_rows) < 2:
+        raise ValueError("Not enough panel borders detected")
 
-    min_line_length = int(width * 0.45)
+    # Group adjacent rows into single lines.
+    groups = []
+    current = [int(candidate_rows[0])]
 
-    for y in range(height):
-        row = border_mask[y]
+    for y in candidate_rows[1:]:
+        y = int(y)
 
-        # Find longest contiguous horizontal run.
-        padded = np.pad(
-            row.astype(np.int8),
-            (1, 1),
-            constant_values=0
-        )
-
-        changes = np.diff(padded)
-        starts = np.where(changes == 1)[0]
-        ends = np.where(changes == -1)[0]
-
-        if len(starts) == 0:
-            continue
-
-        longest = int(np.max(ends - starts))
-
-        if longest >= min_line_length:
-            candidates.append(y)
-
-    if len(candidates) < 2:
-        raise ValueError(
-            "Could not detect two description borders."
-        )
-
-    # Combine nearby detected rows into line groups.
-    groups = [[candidates[0]]]
-
-    for y in candidates[1:]:
-        if y - groups[-1][-1] <= 3:
-            groups[-1].append(y)
+        if y <= current[-1] + 2:
+            current.append(y)
         else:
-            groups.append([y])
+            groups.append(current)
+            current = [y]
+
+    groups.append(current)
 
     lines = [
         int(np.median(group))
         for group in groups
     ]
 
-    if len(lines) < 2:
-        raise ValueError(
-            "Only one horizontal border detected."
-        )
-
+    # Select outermost horizontal borders.
     top = lines[0]
     bottom = lines[-1]
 
-    if bottom - top < 80:
+    if bottom - top < MIN_PANEL_HEIGHT:
         raise ValueError(
-            "Detected panel height is too small."
+            "Detected borders are too close together"
         )
 
     return top, bottom

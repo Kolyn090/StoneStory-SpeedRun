@@ -61,4 +61,4 @@ def take_description_screenshot(output_path=None):
 
 if __name__ == "__main__":
     # take_matrix_screenshot()
-    take_description_screenshot()
+    take_description_screenshot('screenshot/description.png')
