@@ -5,7 +5,6 @@ if platform.platform().startswith('Win'):
 import numpy as np
 from PIL import Image, ImageGrab
 from pathlib import Path
-from .window_name import window_name
 
 # This function will look for a window with a specific title
 def get_window_with_title(title):
@@ -88,7 +87,7 @@ def get_unique_path(filename):
 
 
 if __name__ == '__main__':
-    chosen_window = get_window_with_title(window_name)
+    chosen_window = get_window_with_title('Stone Story')
     screen = get_screenshot_of_chosen_window(chosen_window)
     add_x = 155
     crop_bound = (117+add_x, 198, 770+add_x, 621)

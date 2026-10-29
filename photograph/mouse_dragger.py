@@ -6,7 +6,14 @@ from helper.screen_getter import get_window_with_title
 from helper.window_name import window_name
 
 
-def scroll_inventory_down(steps=5, delay=0.1):
+SCROLL_POSITION = (765, 216)
+SCROLL_STEPS_PER_PAGE = 6
+SCROLL_DELAY = 0.1
+
+
+def scroll_next_page():
+    """Advance the inventory by one 4x3 page."""
+
     window = get_window_with_title(window_name)
 
     if window is None:
@@ -15,19 +22,17 @@ def scroll_inventory_down(steps=5, delay=0.1):
     window.activate()
     time.sleep(0.3)
 
-    # Position mouse inside inventory grid
-    x = window.left + 765
-    y = window.top + 216
+    x = window.left + SCROLL_POSITION[0]
+    y = window.top + SCROLL_POSITION[1]
 
     pg.moveTo(x, y)
 
-    # Send individual scroll events
-    for _ in range(steps):
+    for _ in range(SCROLL_STEPS_PER_PAGE):
         pg.scroll(-1)
-        time.sleep(delay)
+        time.sleep(SCROLL_DELAY)
 
     time.sleep(0.5)
 
 
 if __name__ == "__main__":
-    scroll_inventory_down(steps=9, delay=0.1)
+    scroll_next_page()

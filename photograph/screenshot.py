@@ -40,9 +40,23 @@ def take_matrix_screenshot():
     return take_screenshot(matrix_boundary, "matrix.png")
 
 
-def take_description_screenshot():
-    """Capture the selected equipment's description panel."""
-    return take_screenshot(description_boundary, "description.png")
+def take_description_screenshot(output_path=None):
+    window = get_window_with_title(window_name)
+
+    if window is None:
+        raise RuntimeError("Game window not found")
+
+    image = get_chosen_region(window, description_boundary)
+
+    if image is None:
+        raise RuntimeError("Failed to capture description")
+
+    if output_path is not None:
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        image.save(output_path)
+
+    return image
 
 
 if __name__ == "__main__":
