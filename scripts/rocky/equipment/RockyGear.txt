@@ -1,0 +1,77 @@
+// Strict preferred availability: never label a generic fallback as an element.
+var swords = []
+var wands = []
+var hammers = []
+var elements = ["poison", "vigor", "aether", "fire", "ice"]
+var order = [3, 4, 1, 2, 0]
+var physicalSword = ""
+var healingSword = ""
+var pickedElement = -1
+var pickedKind = ""
+var usedFallback = false
+var missingPreferred = ""
+
+func Available(selector)
+  ?!string.Equals(selector, "")
+    ?item.GetCount(selector) > 0
+      return selector
+  return ""
+
+func Prepare(settings, profile)
+  swords.Clear()
+  wands.Clear()
+  hammers.Clear()
+  missingPreferred = ""
+  for i = 0..4
+    swords.Add(Available(settings.swords[i]))
+    wands.Add(Available(settings.wands[i]))
+    hammers.Add(Available(settings.hammers[i]))
+    ?string.Equals(swords[i], "")
+      missingPreferred = missingPreferred + " S:" + elements[i]
+  physicalSword = Available(profile.physicalSword)
+  healingSword = Available(settings.healingSword)
+  ?string.Equals(physicalSword, "")
+    missingPreferred = missingPreferred + " physical"
+  ?string.Equals(missingPreferred, "")
+    missingPreferred = "none"
+
+func FromChoices(choices, preferred, blocked)
+  ?preferred >= 0 & preferred < 5
+    ?!blocked[preferred] & !string.Equals(choices[preferred], "")
+      pickedElement = preferred
+      return choices[preferred]
+  for n = 0..4
+    var index
+    index = order[n]
+    ?!blocked[index] & !string.Equals(choices[index], "")
+      pickedElement = index
+      return choices[index]
+  return ""
+
+func Pick(kind, preferred, blocked, physicalOnly)
+  pickedElement = -1
+  pickedKind = kind
+  usedFallback = false
+  ?physicalOnly
+    pickedKind = "physical-sword"
+    return physicalSword
+  var choices
+  var result
+  choices = swords
+  ?kind = "wand"
+    choices = wands
+  :?kind = "hammer"
+    choices = hammers
+  result = FromChoices(choices, preferred, blocked)
+  ?!string.Equals(result, "")
+    return result
+  usedFallback = true
+  ?kind = "hammer"
+    result = FromChoices(swords, preferred, blocked)
+    ?!string.Equals(result, "")
+      pickedKind = "sword"
+      return result
+  ?kind ! "wand"
+    pickedKind = "physical-sword"
+    return physicalSword
+  return ""

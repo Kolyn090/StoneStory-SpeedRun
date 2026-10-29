@@ -1,0 +1,83 @@
+// Candidate ONLY. Future authorized Mind Stone import: SpeedRunRocky/main
+// Shared SpeedRunBasic modules and original observer remain unchanged.
+var config = new SpeedRunBasic/config/Settings
+var gear = new SpeedRunBasic/equipment/Catalog
+var locations = new SpeedRunBasic/locations/Dispatcher
+var combat = new SpeedRunBasic/combat/Generic
+var metrics = new SpeedRun/metrics/RunMetrics
+var profile = new SpeedRunRocky/config/RockySettings
+var equipment = new SpeedRunRocky/equipment/RockyGear
+var rocky = new SpeedRunRocky/locations/RockyPlateau
+var initialized = false
+var observedLoops = 0
+var rockyHandled = false
+
+?loc.begin
+  observedLoops = 0
+  metrics.ResetSession()
+  metrics.Begin("entry", true)
+  gear.Prepare(config)
+  equipment.Prepare(config, profile)
+  combat.Reset()
+  // A sub-location boundary must not erase a latched boss encounter.
+  ?!initialized
+    rocky.Reset()
+  initialized = true
+:?loc.loop
+  observedLoops++
+  metrics.Begin("loop", true)
+  combat.Reset()
+  rocky.Reset()
+  ?!initialized
+    gear.Prepare(config)
+    equipment.Prepare(config, profile)
+  initialized = true
+:?!initialized
+  metrics.Begin("attached", false)
+  gear.Prepare(config)
+  equipment.Prepare(config, profile)
+  combat.Reset()
+  rocky.Reset()
+  initialized = true
+
+rockyHandled = false
+locations.Update()
+?config.enabled & locations.allowed
+  ?string.Equals(locations.handler, "rocky")
+    rockyHandled = rocky.Tick(gear, config, equipment, profile, combat)
+  ?!rockyHandled
+    combat.Tick(gear, config)
+:
+  combat.strategy = "observer-only"
+  gear.ClearRequest()
+
+func DrawRockyCandidate()
+  var activeStrategy
+  var activeEncounter
+  var activePhase
+  activeStrategy = combat.strategy
+  activeEncounter = rocky.encounter
+  activePhase = rocky.phase
+  ?!string.Equals(locations.handler, "rocky")
+    activeEncounter = "shared-location"
+    activePhase = "none"
+  ?rockyHandled
+    activeStrategy = rocky.strategy
+  >`0,0,Rocky R1 UNTESTED | @loc.id@ *@loc.stars@ -> @locations.handler@
+  >`0,1,Owner Rocky:@rockyHandled@ Encounter:@activeEncounter@ Phase:@activePhase@
+  >`0,2,Strategy:@activeStrategy@ Last phase:@rocky.lastPhase@
+  >`0,3,Want L:@gear.selectedWeapon@
+  >`0,4,Want R:@gear.selectedShield@
+  >`0,5,Have L:@item.left@
+  >`0,6,Have R:@item.right@
+  >`0,7,Warning:@rocky.warning@ Shared:@gear.notice@ Core:@gear.missingCore@
+  >`0,8,Foe:@foe.id@ state:@foe.state@ time:@foe.time@ Armor:@foe.armor@
+  >`0,9,Adaptive unknown:@rocky.unknownAdaptive@ Buffs:@foe.buffs.string@
+  >`0,10,Strict sword/physical misses:@equipment.missingPreferred@
+  >`0,11,Shared misses:@gear.unavailableBase@ Move frames:@player.framesPerMove@
+  >`0,12,@metrics.startKind@ t:@totaltime@ done:@metrics.currentCompletion@ loops:@observedLoops@
+  >`0,13,Last:@metrics.lastCompletion@ count:@metrics.completedCount@ Tab=native errors
+
+metrics.Observe()
+?config.showDiagnostics
+  DrawRockyCandidate()

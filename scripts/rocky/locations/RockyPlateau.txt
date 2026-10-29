@@ -1,0 +1,192 @@
+// Original phase policy informed by the pinned sources in ROCKY_PLATEAU_RESEARCH.
+// No numeric foe.state/foe.time thresholds, AAC, dash or ability sequence.
+var bossLatched = false
+var encounter = "ordinary"
+var phase = "none"
+var lastPhase = "none"
+var strategy = "shared"
+var warning = "none"
+var blocked = [false, false, false, false, false]
+var lastBuffs = "<unset>"
+var unknownAdaptive = false
+var lastWeapon = ""
+var lastElement = -1
+var lastKind = ""
+
+func Reset()
+  bossLatched = false
+  encounter = "ordinary"
+  phase = "none"
+  lastPhase = "none"
+  strategy = "shared"
+  warning = "none"
+  lastBuffs = "<unset>"
+  unknownAdaptive = false
+  lastWeapon = ""
+  lastElement = -1
+  lastKind = ""
+  for i = 0..4
+    blocked[i] = false
+
+func WeakElement()
+  ?foe = "vigor"
+    return 0
+  ?foe = "aether"
+    return 1
+  ?foe = "fire"
+    return 2
+  ?foe = "ice"
+    return 3
+  ?foe = "poison"
+    return 4
+  return -1
+
+// The composite string API is documented. These UID names are community evidence.
+// Tokenize only on actual changes; do not assume an icon/field offset or duration.
+func UpdateAdaptive(text, equipment)
+  ?string.Equals(lastBuffs, text)
+    return
+  lastBuffs = text
+  unknownAdaptive = false
+  for i = 0..4
+    blocked[i] = false
+  var lower
+  var tokens
+  var matched
+  var anyKnown
+  lower = string.ToLower(text)
+  anyKnown = false
+  ?lower ! "adaptive"
+    return
+  tokens = string.Split(lower, ":", ",", true)
+  ?tokens.Count() > 0
+    for n = 0..tokens.Count()-1
+      matched = false
+      for i = 0..4
+        ?string.Equals(tokens[n], "adaptive_defense_" + equipment.elements[i])
+          blocked[i] = true
+          matched = true
+          anyKnown = true
+      ?string.IndexOf(tokens[n], "adaptive") = 0 & !matched
+        unknownAdaptive = true
+  ?!anyKnown
+    unknownAdaptive = true
+
+func HoldTransition(gear)
+  strategy = "transition-shield"
+  ?string.Equals(lastWeapon, "")
+    lastWeapon = gear.defaultSword
+  gear.Apply(lastWeapon)
+
+// True means this module owns the frame. False means no equipment was issued.
+func Tick(gear, settings, equipment, profile, combat)
+  encounter = "ordinary"
+  phase = "none"
+  strategy = "shared"
+  warning = "none"
+  ?!profile.enabled
+    return false
+  ?foe = "acronian_scout"
+    encounter = "scout"
+    phase = "scout"
+  :?foe = "dysangelos"
+    bossLatched = true
+    encounter = "dysangelos"
+    phase = "unknown"
+    ?foe = "phase1"
+      phase = "bearer"
+    :?foe = "phase2"
+      phase = "elementalist"
+    :?foe = "phase3"
+      phase = "perfected"
+    :?foe = "dysangelos_bearer"
+      phase = "bearer"
+    :?foe = "dysangelos_elementalist"
+      phase = "elementalist"
+    :?foe = "dysangelos_perfected"
+      phase = "perfected"
+  :?bossLatched & !foe
+    encounter = "dysangelos"
+    phase = "transition-gap"
+  :
+    return false
+  gear.ClearRequest()
+  // Do not allow a later shared fallback to mistake a boss gap for clear travel.
+  combat.travelBossSeen = true
+  combat.starUntil = 0
+  ?gear.missing > 0
+    strategy = "missing-core-gear-manual"
+    warning = "STOP: missing core gear"
+    return true
+  ?!ai.enabled | ai.paused
+    strategy = "ai-suspended"
+    return true
+  ?settings.usePotion & hp < maxhp * settings.potionHpRatio
+    ?item.potion ! "empty" & item.CanActivate()
+      activate potion
+  ?phase = "transition-gap"
+    HoldTransition(gear)
+    return true
+  ?foe = "undamageable" | foe.hp <= 0
+    phase = phase + "-transition"
+    HoldTransition(gear)
+    return true
+  UpdateAdaptive(foe.buffs.string, equipment)
+  var preferred
+  var kind
+  var weapon
+  var physicalOnly
+  preferred = WeakElement()
+  ?phase = "elementalist" & preferred < 0
+    warning = "element not recognized; allowed fallback"
+  kind = "sword"
+  ?!profile.preferMelee | foe = "immune_to_physical"
+    kind = "wand"
+  ?foe = "immune_to_ranged"
+    kind = "sword"
+  ?kind = "sword" & foe.armor > 0
+    kind = "hammer"
+  ?phase = "bearer"
+    preferred = profile.bearerElement
+  :?phase = "scout" & preferred < 0
+    preferred = profile.scoutElement
+  :?phase = "perfected" & string.Equals(lastKind, kind)
+    preferred = lastElement
+  physicalOnly = unknownAdaptive | (phase = "unknown")
+  ?unknownAdaptive
+    warning = "unknown adaptive format; physical fallback"
+  ?phase = "unknown"
+    warning = "unknown Dysangelos phase; inspect native state"
+  ?foe = "immune_to_physical" & foe = "immune_to_ranged"
+    strategy = "immunity-conflict-manual"
+    warning = "STOP: conflicting immunities"
+    gear.Apply(gear.defaultWand)
+    return true
+  ?physicalOnly & foe = "immune_to_physical"
+    strategy = "adaptive-immunity-manual"
+    warning = "STOP: physical fallback cannot damage target"
+    gear.Apply(gear.defaultWand)
+    return true
+  weapon = equipment.Pick(kind, preferred, blocked, physicalOnly)
+  strategy = phase + "-" + kind + "-shield"
+  ?physicalOnly
+    strategy = phase + "-physical-shield"
+  ?equipment.usedFallback
+    strategy = phase + "-" + equipment.pickedKind + "-fallback-shield"
+    warning = "preferred damage family unavailable; fallback"
+  ?profile.useHealingSword & kind = "sword" & !physicalOnly
+    ?hp < maxhp * settings.healingHpRatio & !blocked[1]
+      ?!string.Equals(equipment.healingSword, "")
+        weapon = equipment.healingSword
+        equipment.pickedElement = 1
+        strategy = phase + "-healing-shield"
+  ?string.Equals(weapon, "")
+    weapon = gear.defaultWand
+    strategy = "no-safe-selector-manual"
+    warning = "STOP: no strict allowed selector; generic wand needs inspection"
+  lastWeapon = weapon
+  lastElement = equipment.pickedElement
+  lastKind = kind
+  lastPhase = phase
+  gear.Apply(weapon)
+  return true

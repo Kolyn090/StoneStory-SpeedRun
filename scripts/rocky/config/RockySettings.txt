@@ -1,0 +1,8 @@
+// Candidate-only policy. No verified star/enchantment ranking is implied.
+var enabled = true
+var preferMelee = true
+var useHealingSword = true
+// P,V,A,F,I ordering matches the preserved basic settings.
+var bearerElement = 3
+var scoutElement = 3
+var physicalSword = "stone sword -big -socket"
