@@ -1,0 +1,86 @@
+// Project policy, not a native game AI. Thresholds require in-game validation.
+var melee = false
+var strategy = "initializing"
+
+func Reset()
+  melee = false
+  strategy = "initializing"
+
+// Community weakness mapping; verify elemental matchups on installed build.
+func WeakElement()
+  ?foe = vigor
+    return 0
+  ?foe = aether
+    return 1
+  ?foe = fire
+    return 2
+  ?foe = ice
+    return 3
+  ?foe = poison
+    return 4
+  return -1
+
+func Tick(gear, settings)
+  gear.ClearRequest()
+  ?gear.missing > 0
+    strategy = "missing-core-gear-manual"
+    return
+  ?!ai.enabled | ai.paused
+    strategy = "ai-suspended"
+    return
+  // Optional potion consumption only; never brew or auto-refill resources.
+  ?settings.usePotion & hp < maxhp * settings.potionHpRatio
+    ?item.potion ! empty & item.CanActivate()
+      activate potion
+  ?!foe | foe.distance > 22
+    melee = false
+    strategy = "travel-shield"
+    ?settings.harvestEnabled & harvest & harvest.distance < 7
+      ?!string.Equals(gear.shovel, "")
+        strategy = "harvest"
+        gear.EquipHarvestTool()
+        return
+    gear.Apply(gear.defaultSword)
+    return
+  ?foe = undamageable
+    strategy = "undamageable-wait"
+    gear.Apply(gear.defaultWand)
+    return
+  ?foe = immune_to_physical & foe = immune_to_ranged
+    strategy = "immunity-conflict-manual"
+    return
+  ?foe.distance <= settings.meleeEnter
+    melee = true
+  :?foe.distance > settings.meleeExit
+    melee = false
+  var kind
+  kind = "sword"
+  strategy = "melee-shield"
+  ?!melee | foe = boss
+    kind = "wand"
+    strategy = "ranged-shield"
+  ?foe.GetCount(20) >= settings.aoeThreshold
+    kind = "wand"
+    strategy = "crowd-wand-shield"
+  ?foe = immune_to_ranged
+    kind = "sword"
+    strategy = "ranged-immune-melee"
+  ?foe = immune_to_physical
+    kind = "wand"
+    strategy = "physical-immune-magic"
+  ?kind = "sword" & foe.armor > 0
+    kind = "hammer"
+    strategy = "armor-hammer-shield"
+  var weapon
+  weapon = gear.Weapon(kind, WeakElement())
+  ?hp < maxhp * settings.healingHpRatio & kind ! "wand"
+    ?!string.Equals(gear.healingSword, "")
+      weapon = gear.healingSword
+      strategy = "healing-sword-shield"
+  ?string.Equals(weapon, "")
+    // Fallback within the required damage mode; never bypass immunity rules.
+    ?kind = "hammer"
+      weapon = gear.defaultSword
+    ?string.Equals(weapon, "")
+      strategy = "missing-weapon-manual"
+  gear.Apply(weapon)

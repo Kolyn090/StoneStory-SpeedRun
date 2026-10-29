@@ -1,0 +1,130 @@
+// Inventory searches run on initialization/fresh entry, not every frame.
+var swords = []
+var wands = []
+var hammers = []
+var defaultSword = ""
+var defaultWand = ""
+var defaultHammer = ""
+var shield = ""
+var healingSword = ""
+var shovel = ""
+var selectedWeapon = ""
+var selectedShield = ""
+var requestMode = "none"
+var notice = ""
+var missing = 0
+var missingCore = ""
+var unavailableSwords = ""
+var unavailableWands = ""
+var unavailableHammers = ""
+var unavailableBase = ""
+var preferredAvailable = false
+var elementCodes = ["P", "V", "A", "F", "I"]
+
+func Find(preferred, fallback)
+  preferredAvailable = false
+  ?!string.Equals(preferred, "")
+    ?item.GetCount(preferred) > 0
+      preferredAvailable = true
+      return preferred
+  ?!string.Equals(fallback, "") & !string.Equals(preferred, fallback)
+    ?item.GetCount(fallback) > 0
+      return fallback
+  return ""
+
+func Prepare(settings)
+  missing = 0
+  ClearRequest()
+  missingCore = ""
+  unavailableSwords = ""
+  unavailableWands = ""
+  unavailableHammers = ""
+  unavailableBase = ""
+  swords.Clear()
+  wands.Clear()
+  hammers.Clear()
+  defaultSword = Find(settings.defaultSword, "sword -big")
+  ?!preferredAvailable
+    unavailableBase = unavailableBase + " sword"
+  defaultWand = Find(settings.defaultWand, "wand")
+  ?!preferredAvailable
+    unavailableBase = unavailableBase + " wand"
+  defaultHammer = Find(settings.defaultHammer, "hammer -heavy")
+  ?!preferredAvailable
+    unavailableBase = unavailableBase + " hammer"
+  shield = Find(settings.shield, "vigor shield")
+  ?!preferredAvailable
+    unavailableBase = unavailableBase + " shield"
+  healingSword = Find(settings.healingSword, settings.healingSword)
+  ?!preferredAvailable
+    unavailableBase = unavailableBase + " heal"
+  shovel = Find(settings.shovel, settings.shovel)
+  ?!preferredAvailable
+    unavailableBase = unavailableBase + " shovel"
+  for i = 0..4
+    swords.Add(Find(settings.swords[i], defaultSword))
+    ?!preferredAvailable
+      unavailableSwords = unavailableSwords + elementCodes[i]
+    wands.Add(Find(settings.wands[i], defaultWand))
+    ?!preferredAvailable
+      unavailableWands = unavailableWands + elementCodes[i]
+    hammers.Add(Find(settings.hammers[i], defaultHammer))
+    ?!preferredAvailable
+      unavailableHammers = unavailableHammers + elementCodes[i]
+  ?string.Equals(defaultSword, "")
+    missing++
+    missingCore = missingCore + " sword"
+  ?string.Equals(defaultWand, "")
+    missing++
+    missingCore = missingCore + " wand"
+  ?string.Equals(shield, "")
+    missing++
+    missingCore = missingCore + " shield"
+  ?missing = 0
+    missingCore = "none"
+  ?string.Equals(unavailableSwords, "")
+    unavailableSwords = "-"
+  ?string.Equals(unavailableWands, "")
+    unavailableWands = "-"
+  ?string.Equals(unavailableHammers, "")
+    unavailableHammers = "-"
+  ?string.Equals(unavailableBase, "")
+    unavailableBase = " none"
+
+func ClearRequest()
+  selectedWeapon = ""
+  selectedShield = ""
+  requestMode = "none"
+  notice = ""
+
+func Weapon(kind, element)
+  ?kind = "wand"
+    ?element >= 0
+      return wands[element]
+    return defaultWand
+  ?kind = "hammer"
+    ?element >= 0
+      return hammers[element]
+    return defaultHammer
+  ?element >= 0
+    return swords[element]
+  return defaultSword
+
+func Apply(weapon)
+  selectedWeapon = weapon
+  selectedShield = shield
+  requestMode = "one-hand"
+  ?string.Equals(weapon, "")
+    notice = "missing-weapon-manual"
+  // No command for a missing item. No accidental two-handed fallback.
+  ?!string.Equals(weapon, "")
+    equipL @weapon@
+  ?!string.Equals(shield, "")
+    equipR @shield@
+
+func EquipHarvestTool()
+  selectedWeapon = shovel
+  selectedShield = ""
+  requestMode = "two-hand"
+  ?!string.Equals(shovel, "")
+    equip @shovel@

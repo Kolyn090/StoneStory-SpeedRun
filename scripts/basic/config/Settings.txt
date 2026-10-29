@@ -1,0 +1,24 @@
+// Configure before a fresh manual run. No brewing or resource abilities.
+var enabled = true
+var showDiagnostics = true
+// Test build B2: compact overlay; no disk logging or native error interception.
+// Opt in only if consuming your currently brewed potion is acceptable.
+var usePotion = false
+var potionHpRatio = 0.25
+var healingHpRatio = 0.4
+var meleeEnter = 5
+var meleeExit = 7
+var aoeThreshold = 3
+var harvestEnabled = true
+
+// Order: poison, vigor, aether, fire, ice. Refine selectors to your gear.
+// Broad defaults intentionally avoid ambiguous CSV labels such as '1'/'2'.
+var swords = ["poison sword -big", "vigor sword -big", "aether sword -big", "fire sword -big", "ice sword -big"]
+var wands = ["poison wand", "vigor wand", "aether wand", "fire wand", "ice wand"]
+var hammers = ["poison hammer -heavy", "vigor hammer -heavy", "aether hammer -heavy", "fire hammer -heavy", "ice hammer -heavy"]
+var defaultSword = "stone sword -big"
+var defaultWand = "vigor wand"
+var defaultHammer = "vigor hammer -heavy"
+var shield = "compound shield"
+var healingSword = "vigor sword dL -big"
+var shovel = "shovel"

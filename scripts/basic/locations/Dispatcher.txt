@@ -1,0 +1,34 @@
+// Named routes share one generic policy. Route existence is NOT support proof.
+var handler = "unknown"
+var allowed = false
+var lastLocation = ""
+var wasQuest = false
+
+func Update()
+  ?string.Equals(lastLocation, loc.id) & wasQuest = loc.isQuest
+    return
+  lastLocation = loc.id
+  wasQuest = loc.isQuest
+  handler = "unknown"
+  allowed = false
+  ?loc.isQuest
+    handler = "quest-observer"
+    return
+  ?loc = rocky
+    handler = "rocky"
+  :?loc = deadwood
+    handler = "deadwood"
+  :?loc = caves
+    handler = "caves"
+  :?loc = mushroom
+    handler = "mushroom"
+  :?loc = halls
+    handler = "halls"
+  :?loc = mine
+    handler = "mine"
+  :?loc = icy
+    handler = "icy"
+  :?loc = temple
+    handler = "temple"
+  ?!string.Equals(handler, "unknown")
+    allowed = true
