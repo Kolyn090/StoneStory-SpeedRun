@@ -1,5 +1,11 @@
 # Stonescript knowledge base
 
+## Rocky R1 preparation (2026-10-29; uninstalled)
+
+Separate `scripts/rocky/` reuses unchanged shared modules and observer, with exclusive handled/fallback ownership. Documented phase filters and community foe-name aliases distinguish Scout and three Dysangelos forms; numeric state/time values are diagnostic only. A boss-gap latch suppresses shared travel through transformations. Strict init-only elemental lookups avoid mislabelling broad fallbacks; shielded phase/armor decisions and exact community adaptive-UID tokens have conservative unknown-format fallbacks. String/count/equipment/API forms were checked against the [manual](https://stonestoryrpg.com/stonescript/manual.html); preferences, UID representation, exact selected gear and phase-3 survival remain unverified. No new selector inventory integration, timer-based dodge, AAC or active movement technique is included.
+
+The candidate/test-only source evaluator does not execute the native game interpreter. See [ROCKY_PLATEAU_CANDIDATE.md](ROCKY_PLATEAU_CANDIDATE.md) for checks, isolated future installation/rollback and known limitations. Live candidate installation remains unauthorized and unperformed. Subsequent owner authorization permits local commits of the prepared work; no push is authorized or performed. Only owner-confirmed actual unassisted completion may establish supported Rocky difficulty.
+
 Reviewed: 2026-10-29. Official manual displayed v4.35.2, dated 2026-09-25. The installed game version has not been established. Loading/import execution and visible diagnostics are user-verified in-game; observer correctness remains pending.
 
 ## Permanent project policy: resources are incidental
