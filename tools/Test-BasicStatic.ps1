@@ -61,12 +61,15 @@ if ($combat.IndexOf('gear.ClearRequest()') -lt 0 -or $combat.IndexOf('?gear.miss
 }
 $catalog = Get-Content -Raw -LiteralPath (Join-Path $basicRoot 'equipment\Catalog.txt')
 if ($catalog -match '(?im)^\s*func\s+Harvest\s*\(') { throw 'Harvest is a native reserved name; do not use as helper' }
-if ($catalog -notmatch 'func EquipHarvestTool\(' -or $combat -notmatch 'gear.EquipHarvestTool\(\)') {
-    throw 'Harvest helper declaration/call mismatch'
+if ($combat -match '\bharvest\b|\bshovel\b|EquipHarvestTool' -or
+    $settings -match 'var (harvestEnabled|shovel)\b' -or
+    $catalog -match '\bshovel\b|EquipHarvestTool') {
+    throw 'Optional resource harvesting must not return to generic automation'
 }
 foreach ($field in @('missingCore','unavailableSwords','unavailableWands','unavailableHammers','unavailableBase','selectedShield','requestMode')) {
     if ($catalog -notmatch ('var ' + $field + '\b')) { throw "B2 audit field missing: $field" }
 }
 'PASS: five modules; import/helper references; indentation/delimiters; eight routes; no per-frame inventory searches; potion defaults off.'
 'PASS: B2 request/audit fields, measurement call, and missing-gear guard ordering.'
+'PASS: no generic harvesting branch, shovel lookup/equip helper or collection setting; reserved Harvest guard retained.'
 'LIMIT: static lint only, not Stonescript parser execution or in-game testing.'

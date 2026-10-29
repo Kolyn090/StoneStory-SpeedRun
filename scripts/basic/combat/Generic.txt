@@ -35,11 +35,7 @@ func Tick(gear, settings)
   ?!foe | foe.distance > 22
     melee = false
     strategy = "travel-shield"
-    ?settings.harvestEnabled & harvest & harvest.distance < 7
-      ?!string.Equals(gear.shovel, "")
-        strategy = "harvest"
-        gear.EquipHarvestTool()
-        return
+    // Resources are incidental. No optional harvesting or collection-only swaps.
     gear.Apply(gear.defaultSword)
     return
   ?foe = undamageable

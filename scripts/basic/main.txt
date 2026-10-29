@@ -50,7 +50,7 @@ func DrawTest()
     condition = "WAIT: undamageable target"
   :?!string.Equals(gear.notice, "")
     condition = gear.notice
-  >`0,0,B2.1 @loc.id@ *@loc.stars@ -> @locations.handler@
+  >`0,0,B2.1-NR @loc.id@ *@loc.stars@ -> @locations.handler@
   >`0,1,Strategy: @combat.strategy@ (@gear.requestMode@)
   >`0,2,Want L/2H: @gear.selectedWeapon@
   >`0,3,Want R: @gear.selectedShield@

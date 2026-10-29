@@ -7,7 +7,6 @@ var defaultWand = ""
 var defaultHammer = ""
 var shield = ""
 var healingSword = ""
-var shovel = ""
 var selectedWeapon = ""
 var selectedShield = ""
 var requestMode = "none"
@@ -58,9 +57,6 @@ func Prepare(settings)
   healingSword = Find(settings.healingSword, settings.healingSword)
   ?!preferredAvailable
     unavailableBase = unavailableBase + " heal"
-  shovel = Find(settings.shovel, settings.shovel)
-  ?!preferredAvailable
-    unavailableBase = unavailableBase + " shovel"
   for i = 0..4
     swords.Add(Find(settings.swords[i], defaultSword))
     ?!preferredAvailable
@@ -121,10 +117,3 @@ func Apply(weapon)
     equipL @weapon@
   ?!string.Equals(shield, "")
     equipR @shield@
-
-func EquipHarvestTool()
-  selectedWeapon = shovel
-  selectedShield = ""
-  requestMode = "two-hand"
-  ?!string.Equals(shovel, "")
-    equip @shovel@

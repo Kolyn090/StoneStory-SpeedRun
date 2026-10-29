@@ -9,7 +9,7 @@ var healingHpRatio = 0.4
 var meleeEnter = 5
 var meleeExit = 7
 var aoeThreshold = 3
-var harvestEnabled = true
+// No optional resource harvesting. Mandatory progression belongs in a verified location handler.
 
 // Order: poison, vigor, aether, fire, ice. Refine selectors to your gear.
 // Broad defaults intentionally avoid ambiguous CSV labels such as '1'/'2'.
@@ -21,4 +21,3 @@ var defaultWand = "vigor wand"
 var defaultHammer = "vigor hammer -heavy"
 var shield = "compound shield"
 var healingSword = "vigor sword dL -big"
-var shovel = "shovel"
