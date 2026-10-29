@@ -99,6 +99,17 @@ Next: verify new imports and actual gear selection on a safe run, then test each
 
 ## Active phase: B2 testing and stabilization
 
+### Prerequisite: exact equipment selector validation
+
+The private importer is complete. An isolated diagnostic and reproducible private candidate builder now exist; see [EQUIPMENT_SELECTOR_VALIDATION.md](EQUIPMENT_SELECTOR_VALIDATION.md). Source, synthetic tests and a backup-first optional installer are ready; live installation and all in-game results remain pending. Neither B2.1 nor the observer was modified.
+
+1. Owner verifies count-only import, browsing/recount, zero/multiple handling and no equipment changes with test mode disabled.
+2. Owner explicitly enables supervised one-shot tests, beginning with B2.1 sword/wand/shield families, and compares exact inventory details.
+3. Resolve displayed stars, primary/secondary enchantments, effect tokens, hand requirements and ambiguous variants. Keep unknown aliases deferred; do not infer stars from raw upgrade values.
+4. Only after exact-item confirmation, authorize a separate B2.1 integration milestone using individually verified selectors and a fallback policy. Continue Rocky Plateau stabilization before broader coverage/optimization.
+
+Current evidence: all 130 inventory records profiled privately, 94 candidate queries, 30 with multiple saved profiles, 21 equipment/tool records deferred; 23 automated tests pass. No selector exact-match or location-completion status is promoted to verified.
+
 Freeze advanced features. The compact B2 configuration adds selector-availability and unsupported-condition diagnostics and fixes misleading/stale equipment requests. Missing core gear stops project equipment/potion automation. Source fixes do not constitute in-game acceptance.
 
 Follow [BASIC_TEST_PLAN.md](BASIC_TEST_PLAN.md): Rocky Plateau, then the other seven recognized locations at recorded safe difficulties. Keep all location completion statuses NOT RUN until the owner confirms results; record failures/assisted completions separately in [BASIC_TEST_RESULTS.md](BASIC_TEST_RESULTS.md). Prioritize shared import, selector, switching and lifecycle defects before map-specific logic. Existing observer and all historical backups must remain unchanged. See [SELECTOR_API_AUDIT.md](SELECTOR_API_AUDIT.md) and the B2 deployment record for static evidence.

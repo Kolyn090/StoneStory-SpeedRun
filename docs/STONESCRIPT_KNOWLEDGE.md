@@ -132,4 +132,14 @@ The installed game's log confirmed `SpeedRunBasic/main line 4: SpeedRunBasic/equ
 
 Minimal correction: rename project helper `Harvest()` to `EquipHarvestTool()` and update its sole call in `combat/Generic.txt`. Entry diagnostics identify the corrected candidate as B2.1. No selection thresholds, gear criteria, lifecycle, or equipment commands change. A reserved-name regression check now rejects the broken declaration and checks the renamed call. Static success does not prove the corrected module loads in-game or that other errors will not appear.
 
+## Isolated selector-validation milestone (2026-10-29)
+
+**Official:** `item.GetCount(criteria)` returns inventory copies, not a matching-instance list. `*N` is displayed star-level filtering; `+N` is enchantment bonus filtering. The manual demonstrates `shiny`, `dL` and subtractive criteria, but provides no full save-code-to-selector dictionary. `item.left`/`item.right`, their IDs and gear power do not document unique saved-instance identity. See the [official manual](https://stonestoryrpg.com/stonescript/manual.html) and [validation matrix/procedure](EQUIPMENT_SELECTOR_VALIDATION.md).
+
+**Community:** [Cobblestone](https://github.com/alexbarker234/stonescript/blob/main/Cobblestone.txt) narrows duplicates with bonus, effect and shiny criteria. No raw upgrade/star or raw ability/effect mapping is inferred from it.
+
+**Implemented, not game-verified:** separate `EquipmentSelectorTest` diagnostic, default count-only; optional explicitly enabled Up-arm/Enter one-shot equip test. The private builder preserves provenance and raw variant profiles, emits fixed allowlisted selector hypotheses, never converts raw upgrades to stars, and defers unknown aliases. 130 records analyzed; 94 private queries; 30 queries span multiple saved profiles; 21 tentative equipment/tool records deferred. Native count one still requires inventory detail confirmation. All game match counts, exact variants, input gating and module loading remain untested. B2.1 is unchanged; no game-root deployment performed.
+
+**Validation:** 23 Python tests pass, including synthetic installer backup/hash verification. Original save, normalized inventory, observer, B2.1, live deployment and pre-existing backup hashes are preserved. Static checks are not Stonescript interpreter tests. Future property mappings must cite owner-confirmed display/equipment evidence before automation integration.
+
 Interrupted-session audit: the rejected installation had not executed; repository and both live roots remained B2, while the rename existed only in staging. A new verified backup precedes deployment of the correction. See [BUG_HARVEST_RESERVED.md](BUG_HARVEST_RESERVED.md) for the trace, remaining risks and Rocky retest. No location completion is promoted to verified.
