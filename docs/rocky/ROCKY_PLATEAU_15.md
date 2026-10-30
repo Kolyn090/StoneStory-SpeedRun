@@ -1,6 +1,8 @@
 # Rocky Plateau ★15: first playable R15 candidate
 
-Status: **dual-wield + sword AAC candidate authorized for one scoped local commit/deployment after checks**. The shielded R15 at `f0bd449` remains the pre-release rollback. Owner reports one successful Perfected ray avoidance; no full-stage completion or speed improvement is established.
+Status: **`1c696fe` is the first owner-confirmed successful Rocky Plateau ★15 dual-wield + AAC baseline on `main`.** The previous runtime error is owner-confirmed resolved. The [results ledger](ROCKY_PLATEAU_TEST_RESULTS.md#successful-baseline-1c696fe) owns approximate timing and evidence limits; independent AAC throughput and repeatability remain unverified. The shielded `f0bd449` rollback remains preserved.
+
+The initial shielded design/deployment sections below are historical checkpoints. Current dual-wield behavior is described in [the dual-wield section](#dual-wield-and-aac-candidate) and the later native-parser fix; old NOT RUN or undeployed labels do not override the latest results ledger.
 
 ## Decisions
 
@@ -277,7 +279,7 @@ Use only `import SpeedRunRocky/main` and start fresh normal★15. Check:
 3. AAC counters can increase on completed short-sword recovery edges; attacks continue registering HP/armor loss, no windup loop/stall, and selected normal gear returns immediately. Hammers/Wands do not cancel.
 4. Elementalist counter selection and Perfected resistance/armor handling remain correct. Transformations retain combat ownership.
 5. Record the ray: exact original23/30/90, Mind + FastGenShl retained throughout hold, no AAC during it, current dual gear recomputed after release. One prior successful avoidance is not a guarantee.
-6. Clear-travel Triskelion/Star remain stable, no optional shovel or collection waits; report any native pause with new diagnostics. Report reached phase, deaths/interventions, first-hit/phase and total-run timing, exact gear and any stalls. No full completion is currently confirmed.
+6. Clear-travel Triskelion/Star remain stable, no optional shovel or collection waits; report any native pause with new diagnostics. Report reached phase, deaths/interventions, first-hit/phase and total-run timing, exact gear and any stalls. The first completed baseline is now recorded in [the results ledger](ROCKY_PLATEAU_TEST_RESULTS.md#successful-baseline-1c696fe); detailed checks above are not all independently verified by that completion.
 
 Deferred: Cultist Mask/debuff rotations, Poison/Burn/Chill maintenance, Quarterstaff approach, potion strategies, Bardiche burst, Heavy Hammer/two-handed handling and further boss timers. Existing weapon passive effects may occur incidentally; this release adds no effect-maintenance logic.
 

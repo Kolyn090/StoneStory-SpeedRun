@@ -1,16 +1,19 @@
 # Current development roadmap
 
-R15 is **committed locally and deployed for supervised testing; not yet verified in-game**. B2.1-TS remains the existing live baseline. [The documentation index](README.md) owns the project-status table; [the R15 guide](rocky/ROCKY_PLATEAU_15.md) owns current equipment, fallback, bundle and activation details.
+**`1c696fe` is the first owner-confirmed successful Rocky Plateau ★15 dual-wield + AAC baseline on `main`.** The owner confirms completion and resolution of the prior runtime error. The [results ledger](rocky/ROCKY_PLATEAU_TEST_RESULTS.md#successful-baseline-1c696fe) owns the approximate clear-time comparison and its measurement limits. B2.1-TS remains preserved; the [R15 guide](rocky/ROCKY_PLATEAU_15.md) owns current implementation and activation details.
 
-| Priority | Next gate | Required evidence |
+| Priority | Gate | Evidence/status |
 |---|---|---|
-| Completed filesystem gate | Authorized R15 installation | Committed-source/bundle hashes verified in both maintained roots; B2.1/observer preserved |
-| Now | Authorized dual-wield + short-sword AAC release | Preserve the owner-reported one successful ray dodge; pass checks, commit/deploy, then measure damage preservation and survival |
-| Next game attempt | Establish actual backflip, ray avoidance and correct restoration | Short [R15 checklist](rocky/ROCKY_PLATEAU_15.md); report one concrete failure or actual completion |
-| Stabilization | Fix the observed ★15 bottleneck | Reproduce the selection/survival failure; targeted selector checks only when a real decision needs them |
-| Later | Compare loadouts, defense and travel | Matched build/difficulty/flags; full-run time plus deaths/interventions, no farming objective |
-| After a stable target | Expand difficulty and loop coverage | Separate recorded outcomes; do not infer Scout/phase support from unencountered cases |
+| Completed filesystem gate | Authorized R15 installation and runtime fix | Source/deployment hashes verified in both maintained roots; B2.1/observer preserved |
+| Completed gameplay gate | First successful ★15 dual-wield + AAC run | Owner confirms `1c696fe` stage completion and runtime-error resolution; no statistical reliability claim |
+| Now | Establish repeatability and comparable timing | A few matched ★15 runs with consistent timing boundaries, loadout/flags, completions, deaths/interventions and errors |
+| Next controlled comparison | Isolate AAC-specific benefit | Compare AAC on/off under matched conditions; aggregate clear time does not prove per-hand throughput or damage preservation |
+| If a new failure appears | Fix the observed bottleneck | Reproduce the failure; use targeted selector/mechanic checks, not a broad validation campaign |
+| Later | Compare loadouts, defense and travel | Preserve `1c696fe` as the successful comparison baseline; optimize measured completion time/reliability, never farming |
+| After repeatability | Expand difficulty and loop coverage | Separate recorded outcomes; one ★15 completion does not validate other difficulties, locations or loop boundaries |
 
-Heavy Hammer sequences, new active abilities and additional boss timing remain deferred. Short-sword AAC is explicitly authorized in the current Rocky-only candidate. Observer lifecycle/timing/completion/loop acceptance remains pending. Actual game build, baseline completion and the active script root still need gameplay evidence where not already recorded.
+The approximate owner timing improvement is an informal whole-strategy observation, not a formal multi-run benchmark or an AAC-specific speed claim. Individual recovery thresholds, selector variants, duplicate Vigor allocation, armor cases and observer lifecycle/timing/loop acceptance keep their existing verification limits. Actual game build, exact baseline conditions and active import root still need recorded evidence where missing.
 
-The detailed [earlier working plan](archive/ROCKY_PLATEAU_WORKING_PLAN.md) remains design background, not current implementation or deployment authorization. The [foundation roadmap](archive/FOUNDATION_ROADMAP.md) preserves earlier M0–M8 decisions, architecture proposals, test counts and milestone history. See [architecture](ARCHITECTURE.md) for the structure that actually exists.
+R16 advanced-combat research and R17 recording remain independent experimental branches; this milestone does not merge or deploy them. Heavy Hammer sequences, new active abilities and additional boss timing remain deferred. Short-sword AAC remains part of the successful Rocky baseline, with its detailed throughput unverified.
+
+The [earlier working plan](archive/ROCKY_PLATEAU_WORKING_PLAN.md) and [foundation roadmap](archive/FOUNDATION_ROADMAP.md) preserve historical design and milestone evidence. See [architecture](ARCHITECTURE.md) for implemented ownership. Preserve working scripts and rollback files; documentation work alone authorizes no gameplay deployment.

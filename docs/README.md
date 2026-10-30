@@ -7,12 +7,12 @@ This index owns project status/navigation. Each topic below has one authoritativ
 | Component | Status | Authoritative guide |
 |---|---|---|
 | B2.1-TS / `SpeedRunBasic` | Existing live baseline; deployments preserved. No recorded automated completion | [Baseline behavior/install](guides/BASIC_AUTOMATION.md) |
-| Rocky ★15 R15 / `SpeedRunRocky` | Shielded baseline reached Perfected; one owner-reported ray avoidance. Dual-wield + sword AAC release authorized; native performance unverified | [R15 decisions/bundle/activation/checklist](rocky/ROCKY_PLATEAU_15.md) |
+| Rocky ★15 R15 / `SpeedRunRocky` | `1c696fe`: first owner-confirmed successful ★15 dual-wield + AAC baseline; runtime error resolved. Approximate timing is informal; AAC-specific throughput/repeatability remain unverified | [R15 decisions/bundle/activation/checklist](rocky/ROCKY_PLATEAU_15.md) |
 | Original observer / `SpeedRun` | Loading/display owner-verified; lifecycle/timing/capture/loops unverified | [Observer installation](guides/INSTALLATION.md), [acceptance](guides/OBSERVER_ACCEPTANCE.md) |
 | Isolated selector diagnostic | Installed count-only in both known roots; native execution/matches unconfirmed | [Selector guide](gear/EQUIPMENT_SELECTOR_VALIDATION.md) |
 | R1 | Historical predecessor; no inherited R15 gameplay passes | [R1 record](archive/ROCKY_PLATEAU_CANDIDATE.md) |
 
-The active game script root remains unisolated. A native count, exact selected variant, completion, repeatability and measured speed are separate evidence gates. No new success or deployment is asserted by this reorganization.
+The active game script root remains unisolated. A native count, exact selected variant, completion, repeatability and measured speed are separate evidence gates. The [R15 results ledger](rocky/ROCKY_PLATEAU_TEST_RESULTS.md#successful-baseline-1c696fe) owns the confirmed completion and approximate timing; this documentation update makes no deployment.
 
 ## Current user guides — `guides/`
 
@@ -41,7 +41,7 @@ The active game script root remains unisolated. A native count, exact selected v
 
 - [R15 current candidate](rocky/ROCKY_PLATEAU_15.md) — source behavior, equipment, current manifest and future activation.
 - [Current identity crosswalk](rocky/ROCKY_EQUIPMENT_CROSSWALK.md) — FastGenShl is an owner-confirmed Towering nickname; distinct screenshot stats and saved-record joins remain separate.
-- [R15 acceptance/results](rocky/ROCKY_PLATEAU_TEST_RESULTS.md) — current outcome ledger; all game cases NOT RUN.
+- [R15 acceptance/results](rocky/ROCKY_PLATEAU_TEST_RESULTS.md) — authoritative owner-confirmed baseline, approximate timing limits and historical attempts; individual component checks remain separate.
 - [Public source research](rocky/ROCKY_PLATEAU_RESEARCH.md) — pinned sources, attribution/licenses and hypotheses; not current implementation instructions.
 
 ## History — `archive/`

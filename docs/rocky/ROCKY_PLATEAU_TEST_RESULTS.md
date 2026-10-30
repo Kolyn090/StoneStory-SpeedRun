@@ -1,19 +1,19 @@
 # Rocky R15 acceptance and results
 
-**R15 is committed locally and deployed for supervised testing; not yet verified in-game.** No ★15 automated completion is recorded. [Current checklist, selectors and bundle](ROCKY_PLATEAU_15.md) are authoritative; the [R1 test ledger](../archive/ROCKY_R1_TEST_RESULTS.md) is retained separately and supplies no R15 passes.
+**`1c696fe` is the first owner-confirmed successful Rocky Plateau ★15 dual-wield + AAC baseline.** The owner confirms stage completion and resolution of the previous line-290 runtime error. See [the successful-run record](#successful-baseline-1c696fe) for approximate timing and evidence limits. [Current implementation/checklist](ROCKY_PLATEAU_15.md) remains authoritative for behavior; the [R1 ledger](../archive/ROCKY_R1_TEST_RESULTS.md) supplies no R15 passes.
 
-Filesystem deployment on 2026-10-29: committed source `afdbb34`, eight Rocky files verified in both maintained roots, dependencies preserved. This is not a native LOAD pass; all in-game cases below remain NOT RUN.
+Current evidence summary: completion is confirmed for the reported run, not a measured success rate or independent validation of every component. Earlier deployment notes and failed/NOT RUN entries below are historical checkpoints; they are preserved rather than retroactively marked successful.
 
-| R15 case | Acceptance observation | Result |
+| R15 case | Acceptance observation | Current result |
 |---|---|---|
-| LOAD | R15 overlay at normal Rocky ★15; no native import/parser errors | Owner confirms gameplay after parser correction; new revision NOT RUN |
-| GEAR | Fire Sword and preferred FastGenShl nickname, or explicitly reported guarded fallback, match intended details | Fire Sword + FastGenShl confirmed at Bearer death; recovery NOT RUN |
-| PHASES | Actual Scout/Bearer/Elementalist/Perfected cases correctly identified | NOT RUN |
-| ARMOR | Compatible one-handed Hammer + shield; restoration when armor clears | NOT RUN |
-| GAPS | Combat ownership/equipment preserved through transformation; no Generic/travel override | NOT RUN |
-| SURVIVAL | Deaths, stalls, manual intervention and unsupported conditions recorded | FAIL: died against Bearer; later phases not reached |
-| COMPLETION | Owner confirms an actual unassisted ★15 completion | NOT RUN |
-| LOOPS/TIMING | Boundaries and timing independently checked before speed/reliability claims | NOT RUN |
+| LOAD | Current R15 executes without the previously reported native error | PASS, owner confirms `1c696fe` completion and runtime-error resolution |
+| GEAR | Actual equipment and fallback match intended roles | Earlier Fire Sword + FastGenShl observed; completion does not independently verify every selector or variant |
+| PHASES | Scout and boss phases handled through completion | Full stage completed; diagnostic recognition of each phase not separately verified |
+| ARMOR | Compatible armor counter and restoration | Targeted armor-case validation remains NOT RUN |
+| GAPS | Combat equipment retained through transformations | Completion confirmed; detailed ownership/transition trace not independently verified |
+| SURVIVAL | Completion, deaths and interventions reported | Reported run completed; total attempts, death count and intervention details not supplied |
+| COMPLETION | Owner confirms an actual ★15 completion; assistance details recorded separately | PASS: first owner-confirmed dual-wield + AAC baseline `1c696fe`; assistance details not supplied |
+| LOOPS/TIMING | Boundary and timer accuracy checked independently | Informal timing comparison recorded below; loops, timer accuracy and multi-run reliability remain unverified |
 
 One short record per attempt is enough:
 
@@ -24,6 +24,10 @@ time + metric; shield/fallback status; native error or short note.
 ```
 
 Keep failed attempts and unencountered cases explicit. Screenshot only a meaningful mismatch or failure; no per-frame campaign. Owner confirmation of the nickname is not confirmation that R15 loaded or completed. Store private inventory references in ignored local results, not this ledger.
+
+## Historical deployment checkpoint
+
+Filesystem deployment on 2026-10-29: committed source `afdbb34`, eight Rocky files verified in both maintained roots, dependencies preserved. This was filesystem evidence only; no native LOAD pass or in-game cases were confirmed at that checkpoint. The later owner-confirmed outcome is recorded separately above and in the successful-baseline entry.
 
 ## First supervised load attempt — FAIL
 
@@ -59,4 +63,21 @@ The owner now confirms the shielded R15 experimental Mind Stone backflip avoided
 
 ## Dual-Vigor configuration gate
 
-A second Vigor Sword may be crafted; none is assumed owned or independently equippable. Native two-copy allocation is NOT VERIFIED. The current candidate defaults to one Vigor + offense at recovery thresholds. A future confirmed two-copy configuration may opt into dual Vigor, including identical names, guarded by refreshed native counts and selector-overlap rules. Existing ray timing/body remain unchanged. No dual-wield/AAC clear-time improvement is established.
+A second Vigor Sword may be crafted; none is assumed owned or independently equippable. Native two-copy allocation is NOT VERIFIED. The current candidate defaults to one Vigor + offense at recovery thresholds. A future confirmed two-copy configuration may opt into dual Vigor, including identical names, guarded by refreshed native counts and selector-overlap rules. Existing ray timing/body remain unchanged. At that checkpoint, no dual-wield/AAC clear-time improvement had been reported. The later approximate whole-strategy timing is recorded in [the successful baseline](#successful-baseline-1c696fe).
+
+## Successful baseline: 1c696fe
+
+**Owner report recorded 2026-10-30.** Implementation `1c696fe` on `main` successfully completed Rocky Plateau ★15. The previous `RockyPlateau` line-290 member-on-non-object runtime error is resolved in this gameplay report. The dual-wield + AAC implementation works well enough, as part of the complete R15 strategy, to finish the stage. This is the **first owner-confirmed successful ★15 dual-wield + AAC baseline**.
+
+| Informal comparison | Owner-observed approximate value |
+|---|---|
+| Previous clear time | About 3 minutes; reference revision and matched conditions not supplied |
+| `1c696fe` clear time | About 2 minutes |
+| Approximate time saved | About 1 minute |
+| Estimated reduction in clear time | About 33%, calculated as `(3 - 2) / 3` |
+
+**Measurement limits:** these are owner-observed approximate timings, not formal multi-run benchmarks, exact frame measurements or an agent-run game test. One successful completion is explicitly confirmed; total attempt count, timing method/start-stop boundaries, exact earlier revision, build/platform, modifiers, loadout/flags, first-entry versus loop, deaths and manual interventions were not provided. Do not infer a completion percentage, precise mean/variance, repeatability, all-difficulty support or a guaranteed 33% improvement.
+
+**AAC evidence boundary:** the complete dual-wield + AAC strategy finished this run and the owner observed a shorter overall clear time. This does not isolate AAC's contribution, establish per-hand attack throughput, prove every cancel preserved damage, or separate weapon/loadout, recovery, travel, defense and diagnostics effects. AAC-specific throughput and causal speed claims still require matched comparisons with AAC enabled/disabled. Duplicate Vigor allocation and detailed selector/timing checks retain their existing individual verification status.
+
+Use `1c696fe` as the gameplay baseline for future comparisons. A lightweight next measurement should record a few repeat runs with the same difficulty, build, loadout and flags, consistent timing boundaries, completion/deaths/interventions and any errors. Keep R16/R17 experiments separate; this documentation milestone changes no scripts or deployments.
