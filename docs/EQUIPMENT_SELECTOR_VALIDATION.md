@@ -1,6 +1,6 @@
 # Equipment selector validation
 
-Status: source implemented and statically reviewed, **no in-game selector results yet**. Reviewed 2026-10-29 against the official manual displayed v4.35.2. B2.1, observer, Mind Stone text, gear CSVs, original export and normalized snapshot are unchanged. The diagnostic is prepared but has **not been installed into either game directory**.
+Status: source implemented and statically reviewed, **no in-game selector results yet**. Reviewed 2026-10-29 against the official manual displayed v4.35.2. B2.1, observer, Mind Stone text, gear CSVs, original export and normalized snapshot are unchanged. The diagnostic was subsequently installed **count-only in both known Stonescript roots on 2026-10-29**; see the deployment record below. Native loading/execution remains unconfirmed.
 
 ## Evidence and boundaries
 
@@ -58,7 +58,7 @@ The installer touches only the `EquipmentSelectorTest` namespace under the targe
   -StonescriptRoot 'E:\Steam\steamapps\common\Stone Story RPG\Stone Story_Data\StreamingAssets\Stonescript'
 ```
 
-Use the same candidate directory and repeat for your existing save-folder Stonescript root if the Steam copy is not the one resolved by your game. Supply that root explicitly; the tool does not discover/read game saves. Both roots must use the same diagnostic files when testing. No actual game-root installation has been performed in this milestone.
+Use the same candidate directory and repeat for your existing save-folder Stonescript root if the Steam copy is not the one resolved by your game. Supply that root explicitly; the tool does not discover/read game saves. Both roots must use the same diagnostic files when testing. The initial preparation did not install game-root files; the later authorized installation is recorded below.
 
 ## In-game acceptance sequence
 
@@ -78,3 +78,36 @@ Report each case as: `case/index; selector; hand; count; before/after hands; dis
 23 automated Python tests pass, including the existing importer suite and synthetic candidate/schema/privacy/determinism checks, plus an actual PowerShell installer run against a temporary fake game directory proving backup preservation, hash-matched copying and untouched unrelated Mind Stone fixture. The existing B2 static checker passes. Private generation/repeat produced the same 94 probes. This is **not Stonescript interpreter execution**. Helper/import forms, indentation, key inputs and APIs were checked against documentation; game parsing, copy counts, hand selection, one-shot timing and exact variants remain untested.
 
 Next gate: owner-confirmed import/count-only safety, then controlled exact-variant checks beginning with sword, wand and shield families used by B2.1. Collect displayed properties before introducing star/effect refinements. Integrate only individually confirmed selectors in a separate future milestone. Observer lifecycle, timing, completion, loops and location completion statuses remain unchanged.
+
+
+## Authorized deployment after missing-script report (2026-10-29)
+
+Owner-reported error: `Unable to find script EquipmentSelectorTest/main`.
+
+Inspection found that `EquipmentSelectorTest` was absent in **both** known Stonescript roots, while working `SpeedRun` and `SpeedRunBasic` namespaces existed in both. The earlier diagnostic milestone had prepared source/candidates without performing installation. Missing deployment explains the reported error; no validator gameplay-logic change was required.
+
+The unchanged existing installer now placed this exact structure beside `SpeedRunBasic` in both roots:
+
+```text
+Stonescript/
+  EquipmentSelectorTest/
+    main.txt
+    Candidates.txt
+```
+
+Roots: the supplied Steam `Stone Story_Data/StreamingAssets/Stonescript` directory and the existing player-data `Stonescript` directory under LocalLow. The active root has not been isolated by an in-game experiment; deploying identical files to both covers that uncertainty without reading or changing any active save.
+
+`main.txt` comes from `scripts/selector_validation/main.txt`. Its sole external dependency is `new EquipmentSelectorTest/Candidates`, satisfied by `Candidates.txt` from the existing private 94-case output used by the Rocky crosswalk. Arrays contain 94 aligned selectors/hand modes; case order is unchanged. Default `allowEquip = false` and visible diagnostics are preserved. Mind Stone text, observer, B2.1 and R1 were not edited or installed by this action.
+
+| Installed file | SHA-256, identical in both roots and source |
+|---|---|
+| `main.txt` | `10fb0c205521df9b0fec9a4d483e28fb9c378712f63c6ffcd083c4ced677637d` |
+| `Candidates.txt` | `05730ec1a7a8dbf08d045043a46ef88af71c8a07d5f44105f4c0df999871fbe3` |
+
+Before installation, existing observer/basic namespaces were copied and hash-verified under ignored `backups/selector-validator-install-20261029-6a456c79534147c18d26cbffb4f96977/`, with separate `steam` and `save-folder` subdirectories. Each records the validator namespace as absent before deployment. `before.json` records all 603 existing Stonescript file hashes; every one remains unchanged after installation. `installed.json` records the four newly deployed files. This guide's previous version is preserved in the same backup. Earlier backups remain untouched.
+
+Verification performed: eight existing selector/installer synthetic regression tests PASS; dependency/candidate/default-mode checks PASS; four source-to-deployment SHA-256 comparisons PASS; all 603 existing Stonescript files preserved. These are filesystem/static checks, **not native Stonescript parser or in-game execution tests**. No Git staging, commit or push occurred.
+
+To verify loading: save the current Mind Stone text locally, temporarily use only `import EquipmentSelectorTest/main`, ensure Mind Stone is enabled, then leave and start a fresh safe Rocky Plateau run. Expected overlay: `Selector test: no combat automation`, `Allow equip: false`, index, query and Copies count. Browse Left/Right and recount with Down. No equipment request is expected in count-only mode. Do not enable equip mode until loading/count-only behavior is confirmed. Report any Tab error with exact file/line/message. A successful import only establishes that test's loading, not exact-item matching or combat completion.
+
+Rollback: restore the saved Mind Stone text/loadout first. Because the validator namespace was absent before installation, deployment rollback removes only the two manifest-listed validator files in each root (and their directory if empty), after confirming no later user changes would be lost. Do not restore, delete or overwrite unrelated scripts or the working observer/basic namespaces. No rollback has been executed.
