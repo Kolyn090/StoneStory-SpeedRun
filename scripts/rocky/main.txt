@@ -131,7 +131,7 @@ func DrawRockyCandidate()
   >`0,20,Vigor matches:@equipment.recoveryCount@ @equipment.recoveryPairStatus@
 
 metrics.Observe()
-?config.showDiagnostics
+?config.showDiagnostics & rockyConfig.showDiagnostics
   ObservePerfectedTrace(string.Equals(locations.handler, "rocky") & loc.stars = rockyConfig.targetStars & rockyConfig.enabled)
   DrawRockyCandidate()
   DrawPerfectedTrace()

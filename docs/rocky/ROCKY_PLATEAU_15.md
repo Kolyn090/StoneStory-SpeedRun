@@ -305,3 +305,73 @@ Native counts refresh at existing preparation points (fresh entry/attachment), n
 The first playable deployment keeps the flag **false**: no second copy or independent allocation has been confirmed. Crafting a second Sword does not require duplicating gear-stat CSV rows. See [private inventory refresh](../gear/PRIVATE_INVENTORY_IMPORT.md#refresh-after-crafting-upgrading-or-renaming) for the offline evidence update; native runtime selection does not require private data deployment.
 
 Release validation: the previously failing alias test passes independently with its assertion intact; full suite **122 PASS**, Rocky-specific **71 PASS**; source/import, packaging preparation, shared B2 static checks, documentation links and diff checks PASS. The raw configuration CSVs/screenshots, private data/importer, both current game deployments and unrelated edits remain unchanged before release. The complete ray function matches shielded commit `f0bd449`. Native AAC, duplicate allocation and faster clear times remain unverified. Release is explicitly authorized for a single local commit/deployment, subject to final staged-tree checks; receipt records the exact commit/bundle/backup/outcome.
+
+## Native AAC assignment fix and quiet diagnostics — 2026-10-30
+
+The current Player.log recovered the actual dual-wield runtime failure:
+`SpeedRunRocky/locations/RockyPlateau line 290: Attempting to access member on a non-object.`
+Both maintained deployments matched main `876b0cf`; branch switching was not its cause.
+
+**Confirmed root cause (offline native interpreter):** in the complete statement,
+the ungrouped equality comparisons inside the AAC assignment let the native parser
+consume a complex expression as the assignment's `lvalue`, ending with
+`.offhandKind`. It then attempts a member write on a Boolean result. This is not a
+missing equipment object. Parsing the right-side expression in isolation does not
+reproduce the whole-statement trap. The Python subset harness splits the first
+assignment before translating comparisons and therefore missed this native behavior.
+
+`rockyConfig` and `equipment` are separate persistent `new` objects constructed in
+main before preparation/dispatch. Neither reference is reassigned. Preparation
+fills selector fields; `Pick` fills `pickedKind`; `Offhand` always fills
+`offhandKind`, including `shield` on missing second-weapon fallback. Configuration
+members were read earlier in this same function, and the equipment kind fields
+are read immediately before the failing line. Transformations and protected ray
+handling return before the ordinary AAC gate. Missing selectors do not turn the
+equipment container into a scalar. With valid native objects, each member access
+passes individually, but the original complete assignment reproduces the exact
+logged error with AAC both on and off.
+
+The fix explicitly groups the assignment RHS and its two comparisons:
+
+```text
+allowAAC = (rockyConfig.aacEnabled & (equipment.pickedKind = "sword") & (equipment.offhandKind = "sword") & !physicalOnly)
+```
+
+Native parsing now reports a simple `allowAAC` assignment target. This preserves
+the original eligibility rule and native comparison semantics. No null guard,
+weapon selector, threshold, AAC timing, Vigor policy or ray timing was changed.
+An actually missing/scalar configuration, missing `aacEnabled`, or absent equipment
+object still reports a configuration error; it is not silently treated as AAC off.
+
+The optional Rocky overlay now also requires `RockySettings.showDiagnostics`,
+default **false**. To restore the detailed overlay for a supervised run, set it true
+before starting; the existing shared `config.showDiagnostics` must also be true.
+The shared B2 setting is unchanged. Measurement, combat and the actual ray defense
+remain active when custom diagnostics are off. No `disable diagnostics` command
+was added: hold Tab for native errors, or read the local Unity `Player.log`.
+
+Regression evidence: full Python suite **128 PASS**, Rocky-specific **77 PASS**;
+the separate [native expression check](../../tools/Test-RockyNativeExpressions.ps1)
+passes **17** grammar/runtime checks using installed assemblies and synthetic objects.
+It reproduces the old error, checks the actual source gate's truth table, shield/
+hammer/wand/missing-offhand exclusions, and missing/invalid object/configuration cases.
+Run it with `-ManagedDirectory` pointing to the game's `Stone Story_Data/Managed`
+folder. It never imports gameplay scripts, creates a Unity component, runs combat
+commands or accesses storage/save data. Game assemblies are not distributed.
+
+Source/import, bundle preparation, shared B2 and documentation checks must pass
+before the authorized scoped commit/deployment. Back up all five deployed Rocky
+files in both roots; replace only the three changed Rocky files (main, settings,
+handler), verify all five against committed source, and preserve shared dependencies.
+On failure restore the replaced files and verify original hashes. The pre-fix
+`876b0cf` backup preserves this runtime fault; older shielded rollback backups remain
+the known ray-tested alternative and must not be overwritten.
+
+After installation, keep `import SpeedRunRocky/main` as the sole combat import and
+start a fresh supervised Rocky ★15 run. Expect the custom overlay to be absent,
+dual short-Sword combat to run without the line-290 error, and normal shield/armor
+fallbacks and 60%/85% Vigor recovery to remain intact. Observe boss transitions and
+the unchanged state-115/frame-23 Mind Stone sequence if reached. Report any fresh
+native error with filename/line from Player.log. Offline native language execution
+is stronger evidence than the Python model, but is **not an in-game combat fix
+confirmation**, completion result or measured speed improvement.

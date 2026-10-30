@@ -103,3 +103,21 @@ Owner reports one actual ray avoidance using the shielded R15 Mind sequence. Pre
 ## Duplicate equipment evidence
 
 Native copy counts, save record counts and stacked raw quantities are different. The manual documents best-match equip criteria but does not guarantee independent allocation of identical matches. Two Vigor recovery copies are supported after actual simultaneous-equipping confirmation: same criteria require native count>=2; named distinct criteria require one each and no intersecting native match. Default unverified/overlapping cases retain one healer plus offense. The alias regression used plain Python equality at a direct harness call; explicit documented string.IndexOf fixes substring matching while retaining the assertion. See [recovery copy rules](rocky/ROCKY_PLATEAU_15.md#duplicate-vigor-recovery-and-inventory-refresh).
+
+## Whole-statement assignment parsing — native evidence
+
+The 2026-10-30 R15 failure demonstrates that ungrouped `=` comparisons in a compound
+assignment can let the native grammar choose a member-expression assignment target
+instead of the intended variable. `allowAAC = a.flag & b.kind = "sword" & b.other =
+"sword" & !protected` reproduced a member-on-non-object error with valid objects.
+Group the complete RHS and comparisons explicitly, as documented in the
+[R15 fix evidence](rocky/ROCKY_PLATEAU_15.md#native-aac-assignment-fix-and-quiet-diagnostics--2026-10-30).
+The manual supports parentheses for prioritizing operations. This specific parser
+trap is installed-runtime evidence, not a claim that the manual specifies it.
+
+The Python policy harness translates the first assignment before expressions; it
+cannot certify the native whole-statement parse. `tools/Test-RockyNativeExpressions.ps1`
+adds an explicit offline native check using locally installed assemblies, without
+game imports/commands, saves or deployment. Missing real objects/config fields
+remain errors; do not hide them with arbitrary null guards. Custom overlay flags
+must not disable native Tab errors, combat or measurement.

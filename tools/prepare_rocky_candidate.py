@@ -95,6 +95,8 @@ def inspect(root):
     require('weapon = SelectBearerRecovery(' in tick
             and 'foe.armor > 0 | physicalOnly | blocked[1]' in handler,
             "Bearer recovery priority guard missing.")
+    require('allowAAC = (rockyConfig.aacEnabled & (equipment.pickedKind = "sword") & (equipment.offhandKind = "sword") & !physicalOnly)' in handler,
+            "AAC assignment must group RHS/comparisons for native parsing.")
     cycle = data["SpeedRunRocky/combat/AttackCycle.txt"].decode()
     require('new SpeedRunRocky/combat/AttackCycle' in main and 'attacks.Apply(' in handler,
             "Rocky AAC component missing.")

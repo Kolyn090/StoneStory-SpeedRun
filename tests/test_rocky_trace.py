@@ -78,7 +78,7 @@ class PerfectedTraceTests(unittest.TestCase):
 
     def test_diagnostics_gate_scope_and_top_rows(self):
         tail = self.main.split("metrics.Observe()", 1)[1]
-        self.assertRegex(tail, r'\?config.showDiagnostics\s+ObservePerfectedTrace\(string.Equals\(locations.handler, "rocky"\) & loc.stars = rockyConfig.targetStars & rockyConfig.enabled\)\s+DrawRockyCandidate\(\)\s+DrawPerfectedTrace\(\)\s+:\s+rayTraceActive = false')
+        self.assertRegex(tail, r'\?config.showDiagnostics & rockyConfig.showDiagnostics\s+ObservePerfectedTrace\(string.Equals\(locations.handler, "rocky"\) & loc.stars = rockyConfig.targetStars & rockyConfig.enabled\)\s+DrawRockyCandidate\(\)\s+DrawPerfectedTrace\(\)\s+:\s+rayTraceActive = false')
         draw = self.main.split("func DrawPerfectedTrace()", 1)[1].split("func DrawRockyCandidate()", 1)[0]
         self.assertIn('?!rayTraceActive', draw)
         self.assertIn('0,0,#red,R15 P3 *115*', draw)

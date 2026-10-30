@@ -1,5 +1,7 @@
 // Candidate-only policy. No verified star/enchantment ranking is implied.
 var enabled = true
+// Quiet by default: custom overlay only; native Tab/errors remain enabled.
+var showDiagnostics = false
 var targetStars = 15
 var preferMelee = true
 // Rocky-only aggressive candidate; false retains shielded combat.
