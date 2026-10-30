@@ -1,5 +1,5 @@
 // Original phase policy informed by the pinned sources in ROCKY_PLATEAU_RESEARCH.
-// No numeric foe.state/foe.time thresholds, AAC, dash or ability sequence.
+// Ray timing below is EXPERIMENTAL; no AAC or other attack timing is added.
 var bossLatched = false
 var encounter = "ordinary"
 var phase = "none"
@@ -12,8 +12,124 @@ var unknownAdaptive = false
 var lastWeapon = ""
 var lastElement = -1
 var lastKind = ""
+var bearerRecoveryActive = false
+var bearerRecoveryStatus = "inactive"
+
+var rayDodgeStatus = "idle"
+var rayDodgeReason = "none"
+var rayDodgeSeen = false
+var rayDodgeSpent = false
+var rayDodgeHolding = false
+var rayDodgeObservedAt = 0
+var rayDodgeTriggeredAt = -1
+var rayDodgeUntil = 0
+var rayDodgeCooldown = -1
+var rayDodgeAttempts = 0
+
+func ResetRayDodge()
+  rayDodgeStatus = "idle"
+  rayDodgeReason = "none"
+  rayDodgeSeen = false
+  rayDodgeSpent = false
+  rayDodgeHolding = false
+  rayDodgeObservedAt = 0
+  rayDodgeTriggeredAt = -1
+  rayDodgeUntil = 0
+  rayDodgeCooldown = -1
+  rayDodgeAttempts = 0
+
+func RayUnavailable(reason)
+  rayDodgeHolding = false
+  rayDodgeSpent = true
+  rayDodgeStatus = "unavailable"
+  rayDodgeReason = reason
+
+// True owns equipment for this frame. Trigger means equip requested, not dodge confirmed.
+func TryPerfectedRay(gear, equipment, rockyConfig)
+  ?!rockyConfig.rayDodgeEnabled
+    ResetRayDodge()
+    return false
+  ?phase ! "perfected" & phase ! "transition-gap"
+    ?rayDodgeHolding
+      rayDodgeStatus = "restored"
+      rayDodgeReason = "phase changed; recompute"
+    rayDodgeHolding = false
+    rayDodgeSeen = false
+    rayDodgeSpent = false
+    return false
+  ?foe & foe.hp <= 0
+    ?rayDodgeHolding
+      rayDodgeStatus = "restored"
+      rayDodgeReason = "target defeated; transition hold"
+    rayDodgeHolding = false
+    rayDodgeSeen = false
+    rayDodgeSpent = false
+    return false
+  ?phase = "perfected" & foe.state ! 115
+    rayDodgeSeen = false
+    rayDodgeSpent = false
+  ?rayDodgeHolding
+    ?totaltime >= rayDodgeUntil | totaltime - rayDodgeTriggeredAt >= rockyConfig.rayDodgeTimeoutFrames | totaltime < rayDodgeTriggeredAt
+      rayDodgeHolding = false
+      rayDodgeStatus = "restored"
+      rayDodgeReason = "hold ended; recompute"
+      return false
+    rayDodgeStatus = "holding"
+    strategy = "perfected-ray-holding"
+    gear.ApplyPair(equipment.mindStone, equipment.shield)
+    return true
+  ?phase = "transition-gap"
+    return false
+  ?foe.state ! 115
+    rayDodgeSeen = false
+    rayDodgeSpent = false
+    ?rayDodgeStatus = "armed"
+      rayDodgeStatus = "idle"
+      rayDodgeReason = "115 ended before trigger"
+    return false
+  ?!rayDodgeSeen
+    rayDodgeSeen = true
+    rayDodgeSpent = false
+    rayDodgeObservedAt = totaltime
+    rayDodgeStatus = "armed"
+    rayDodgeReason = "waiting for configured frame"
+  ?rayDodgeSpent
+    return false
+  ?rockyConfig.rayDodgeTriggerFrame < 0 | rockyConfig.rayDodgeHoldFrames <= 0 | rockyConfig.rayDodgeTimeoutFrames < rockyConfig.rayDodgeHoldFrames
+    RayUnavailable("invalid timing configuration")
+    return false
+  ?totaltime - rayDodgeObservedAt >= rockyConfig.rayDodgeTimeoutFrames | totaltime < rayDodgeObservedAt
+    RayUnavailable("arming timeout")
+    return false
+  ?foe = "undamageable" | foe.time < rockyConfig.rayDodgeTriggerFrame
+    return false
+  ?string.Equals(equipment.mindStone, "")
+    RayUnavailable("missing/ambiguous Mind Stone")
+    return false
+  ?!item.CanActivate()
+    RayUnavailable("abilities disabled")
+    return false
+  rayDodgeCooldown = item.GetCooldown("mind")
+  ?rayDodgeCooldown > 0 | rayDodgeCooldown < -1
+    RayUnavailable("Mind cooldown unavailable")
+    return false
+  rayDodgeSpent = true
+  rayDodgeHolding = true
+  rayDodgeTriggeredAt = totaltime
+  rayDodgeUntil = totaltime + rockyConfig.rayDodgeHoldFrames
+  rayDodgeAttempts = rayDodgeAttempts + 1
+  rayDodgeStatus = "triggered"
+  rayDodgeReason = "equip-only attempt; verify backflip"
+  ?rayDodgeCooldown = -1
+    rayDodgeReason = "unused/unknown cooldown; one trial"
+  strategy = "perfected-ray-triggered"
+  gear.ApplyPair(equipment.mindStone, equipment.shield)
+  return true
 
 func Reset()
+  ResetRayDodge()
+  bearerRecoveryActive = false
+  bearerRecoveryStatus = "inactive"
   bossLatched = false
   encounter = "ordinary"
   phase = "none"
@@ -80,13 +196,47 @@ func HoldTransition(gear, equipment)
       lastWeapon = equipment.physicalSword
   gear.ApplyPair(lastWeapon, equipment.shield)
 
+// Project recovery policy. Equipment availability is cached at preparation.
+func SelectBearerRecovery(weapon, kind, physicalOnly, wasRecovering, equipment, rockyConfig)
+  ?phase ! "bearer" | !rockyConfig.bearerRecoveryEnabled
+    return weapon
+  ?rockyConfig.bearerRecoveryEnterRatio <= 0 | rockyConfig.bearerRecoveryExitRatio > 1
+    bearerRecoveryStatus = "invalid thresholds"
+    return weapon
+  ?rockyConfig.bearerRecoveryEnterRatio >= rockyConfig.bearerRecoveryExitRatio
+    bearerRecoveryStatus = "invalid thresholds"
+    return weapon
+  ?kind ! "sword" | foe.armor > 0 | physicalOnly | blocked[1] | foe = "immune_to_physical"
+    bearerRecoveryStatus = "blocked by combat priority"
+    return weapon
+  ?string.Equals(equipment.bearerRecoverySword, "")
+    bearerRecoveryStatus = "missing/ambiguous Vigor; normal fallback"
+    return weapon
+  bearerRecoveryStatus = "normal HP"
+  ?hp <= maxhp * rockyConfig.bearerRecoveryEnterRatio
+    bearerRecoveryActive = true
+  :?wasRecovering & hp < maxhp * rockyConfig.bearerRecoveryExitRatio
+    bearerRecoveryActive = true
+  ?bearerRecoveryActive
+    bearerRecoveryStatus = "recovering"
+    strategy = "bearer-recovery-sword-shield"
+    equipment.pickedElement = 1
+    equipment.pickedKind = "sword"
+    return equipment.bearerRecoverySword
+  return weapon
+
 // True means this module owns the frame. False means no equipment was issued.
-func Tick(gear, settings, equipment, profile, combat)
+func Tick(gear, settings, equipment, rockyConfig, combat)
+  var wasRecovering
+  wasRecovering = bearerRecoveryActive
+  bearerRecoveryActive = false
+  bearerRecoveryStatus = "inactive"
   encounter = "ordinary"
   phase = "none"
   strategy = "shared"
   warning = "none"
-  ?!profile.enabled | loc.stars ! profile.targetStars
+  ?!rockyConfig.enabled | loc.stars ! rockyConfig.targetStars
+    ResetRayDodge()
     return false
   ?foe = "acronian_scout"
     encounter = "scout"
@@ -111,25 +261,35 @@ func Tick(gear, settings, equipment, profile, combat)
     encounter = "dysangelos"
     phase = "transition-gap"
   :
+    ResetRayDodge()
     return false
   gear.ClearRequest()
   // Do not allow a later shared fallback to mistake a boss gap for clear travel.
-  combat.travelBossSeen = true
+  ?bossLatched
+    combat.travelBossSeen = true
   combat.starUntil = 0
   ?gear.missing > 0
+    ?rayDodgeHolding | rayDodgeSeen
+      RayUnavailable("missing core gear")
     strategy = "missing-core-gear-manual"
     warning = "STOP: missing core gear"
     return true
   ?!ai.enabled | ai.paused
+    ?rayDodgeHolding | rayDodgeSeen
+      RayUnavailable("AI suspended")
     strategy = "ai-suspended"
     return true
   ?string.Equals(equipment.shield, "")
+    ?rayDodgeHolding | rayDodgeSeen
+      RayUnavailable("missing/ambiguous shield")
     strategy = "missing-rocky-shield-manual"
     warning = "STOP: shield missing/ambiguous; no new request"
     return true
   ?settings.usePotion & hp < maxhp * settings.potionHpRatio
     ?item.potion ! "empty" & item.CanActivate()
       activate potion
+  ?TryPerfectedRay(gear, equipment, rockyConfig)
+    return true
   ?phase = "transition-gap"
     HoldTransition(gear, equipment)
     return true
@@ -146,16 +306,16 @@ func Tick(gear, settings, equipment, profile, combat)
   ?phase = "elementalist" & preferred < 0
     warning = "element not recognized; allowed fallback"
   kind = "sword"
-  ?!profile.preferMelee | foe = "immune_to_physical"
+  ?!rockyConfig.preferMelee | foe = "immune_to_physical"
     kind = "wand"
   ?foe = "immune_to_ranged"
     kind = "sword"
   ?kind = "sword" & foe.armor > 0
     kind = "hammer"
   ?phase = "bearer"
-    preferred = profile.bearerElement
+    preferred = rockyConfig.bearerElement
   :?phase = "scout"
-    preferred = profile.scoutElement
+    preferred = rockyConfig.scoutElement
   :?phase = "perfected" & string.Equals(lastKind, kind)
     preferred = lastElement
   physicalOnly = unknownAdaptive | (phase = "unknown")
@@ -180,7 +340,8 @@ func Tick(gear, settings, equipment, profile, combat)
   ?equipment.usedFallback
     strategy = phase + "-" + equipment.pickedKind + "-fallback-shield"
     warning = "preferred damage family unavailable; fallback"
-  ?profile.useHealingSword & kind = "sword" & !physicalOnly
+  weapon = SelectBearerRecovery(weapon, kind, physicalOnly, wasRecovering, equipment, rockyConfig)
+  ?rockyConfig.useHealingSword & kind = "sword" & !physicalOnly & !bearerRecoveryActive
     ?hp < maxhp * settings.healingHpRatio & !blocked[1]
       ?!string.Equals(equipment.healingSword, "")
         weapon = equipment.healingSword

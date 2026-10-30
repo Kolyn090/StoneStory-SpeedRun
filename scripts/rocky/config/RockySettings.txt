@@ -2,8 +2,19 @@
 var enabled = true
 var targetStars = 15
 var preferMelee = true
-// Initial R15 policy keeps the requested damage family; no healing swaps.
+// Historical general healing stays off; Bearer recovery is separate.
 var useHealingSword = false
+// Initial project thresholds; not calibrated native lifesteal behavior.
+var bearerRecoveryEnabled = true
+var bearerRecoveryEnterRatio = 0.60
+var bearerRecoveryExitRatio = 0.85
+var bearerRecoverySword = "vigor sword dL -big +21"
+// EXPERIMENTAL: observed alive at 115:23, not a measured impact/dodge window.
+var rayDodgeEnabled = true
+var rayDodgeTriggerFrame = 23
+var rayDodgeHoldFrames = 30
+var rayDodgeTimeoutFrames = 90
+var mindStone = "mind stone"
 // P,V,A,F,I ordering matches the preserved basic settings.
 var bearerElement = 3
 var scoutElement = 3

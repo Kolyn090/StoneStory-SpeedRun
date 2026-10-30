@@ -117,6 +117,7 @@ class Foe:
         self.value = value
         self.buffs = SimpleNamespace(string=Text(buffs))
         self.armor, self.hp = armor, hp
+        self.state, self.time = 0, 0
     def __bool__(self): return bool(self.value)
     def __eq__(self, tag): return str(tag) in self.value
 
@@ -125,7 +126,10 @@ class Items:
     def __init__(self, counts):
         self.counts, self.queries, self.activations = counts, [], []
         self.potion = Text("empty")
+        self.cooldowns = {"mind": 0}
+        self.abilities_enabled = True
     def GetCount(self, selector):
         self.queries.append(str(selector))
         return self.counts.get(str(selector), 0)
-    def CanActivate(self): return True
+    def CanActivate(self): return self.abilities_enabled
+    def GetCooldown(self, ability): return self.cooldowns.get(str(ability), -1)

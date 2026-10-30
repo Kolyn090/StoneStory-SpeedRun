@@ -6,6 +6,8 @@ var elements = ["poison", "vigor", "aether", "fire", "ice"]
 var order = [3, 4, 1, 2, 0]
 var physicalSword = ""
 var healingSword = ""
+var bearerRecoverySword = ""
+var mindStone = ""
 var pickedElement = -1
 var pickedKind = ""
 var usedFallback = false
@@ -20,35 +22,41 @@ func Available(selector)
       return selector
   return ""
 
-func Prepare(settings, profile)
+func Prepare(settings, rockyConfig)
   swords.Clear()
   wands.Clear()
   hammers.Clear()
   missingPreferred = ""
   shield = ""
   shieldStatus = "FastGenShl disabled; Towering family fallback"
-  ?profile.fastGenShieldConfirmed
-    shield = Available(profile.preferredShield)
+  ?rockyConfig.fastGenShieldConfirmed
+    shield = Available(rockyConfig.preferredShield)
     ?!string.Equals(shield, "")
       shieldStatus = "FastGenShl nickname; one native match"
     :
       shieldStatus = "FastGenShl missing/ambiguous; Towering family fallback"
   ?string.Equals(shield, "")
-    shield = Available(profile.fallbackShield)
+    shield = Available(rockyConfig.fallbackShield)
   ?string.Equals(shield, "")
     shieldStatus = "STOP: missing/ambiguous fallback shield"
   for i = 0..4
-    swords.Add(Available(profile.swords[i]))
-    wands.Add(Available(profile.wands[i]))
-    hammers.Add(Available(profile.hammers[i]))
+    swords.Add(Available(rockyConfig.swords[i]))
+    wands.Add(Available(rockyConfig.wands[i]))
+    hammers.Add(Available(rockyConfig.hammers[i]))
     ?string.Equals(swords[i], "")
       missingPreferred = missingPreferred + " S:" + elements[i]
     ?string.Equals(wands[i], "")
       missingPreferred = missingPreferred + " W:" + elements[i]
     ?string.Equals(hammers[i], "")
       missingPreferred = missingPreferred + " H:" + elements[i]
-  physicalSword = Available(profile.physicalSword)
+  physicalSword = Available(rockyConfig.physicalSword)
   healingSword = Available(settings.healingSword)
+  mindStone = Available(rockyConfig.mindStone)
+  ?string.Equals(mindStone, "")
+    missingPreferred = missingPreferred + " mind"
+  bearerRecoverySword = Available(rockyConfig.bearerRecoverySword)
+  ?string.Equals(bearerRecoverySword, "")
+    missingPreferred = missingPreferred + " recovery-vigor"
   ?string.Equals(physicalSword, "")
     missingPreferred = missingPreferred + " physical"
   ?string.Equals(missingPreferred, "")

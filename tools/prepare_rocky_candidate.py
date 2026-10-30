@@ -37,6 +37,8 @@ def inspect(root):
                 continue
             code.append(re.sub(r'"[^"\n]*"', '""', line))
         cleaned = "\n".join(code)
+        require(not re.search(r"\bprofile\b", "\n".join(code)),
+                "Native reserved identifier profile in candidate code.")
         for left, right in (("(", ")"), ("[", "]")):
             require(cleaned.count(left) == cleaned.count(right), "Unbalanced candidate delimiter.")
         for module in re.findall(r"^\s*(?:var\s+\w+\s*=\s*)?(?:new|import)\s+([\w/]+)", text, re.M):
@@ -59,15 +61,24 @@ def inspect(root):
             "Missing-target boss transition guard missing.")
     require(not re.search(r"(?:^|\n)\s*(?:equip\w* |brew |loadout |activate (?!potion))", handler),
             "Unexpected native equipment/ability command in Rocky policy.")
-    require(not re.search(r"foe\.(state|time)\s*[=<>!]|item.GetCount|\bharvest\b", handler),
-            "Unverified timer, per-frame inventory query or harvesting policy.")
+    ray = handler.split("func TryPerfectedRay(", 1)[1].split("func Reset()", 1)[0]
+    non_ray = handler.split("func TryPerfectedRay(", 1)[0] + handler.split("func Reset()", 1)[1]
+    require(not re.search(r"foe\.(state|time)\s*[=<>!]", non_ray),
+            "Attack timing outside experimental ray helper.")
+    require(not re.search(r"item.GetCount|\bharvest\b", handler),
+            "Per-frame inventory query or harvesting policy.")
+    require('foe.state ! 115' in ray and 'rayDodgeSpent = true' in ray
+            and 'rayDodgeHolding' in ray and 'item.GetCooldown("mind")' in ray,
+            "Experimental ray event/cooldown guard missing.")
+    require(re.search(r'\?TryPerfectedRay\(gear, equipment, rockyConfig\)\s+return true', tick),
+            "Ray equipment ownership must return before ordinary combat.")
     require('string.Equals(tokens[n], "adaptive_defense_" + equipment.elements[i])' in handler,
             "Adaptive UID exact-token guard missing.")
     require('physicalOnly = unknownAdaptive | (phase = "unknown")' in handler,
             "Unknown-phase/adaptive fallback missing.")
     require("Available(" not in equipment.split("func FromChoices", 1)[1],
             "Selection must not search inventory every frame.")
-    require('loc.stars ! profile.targetStars' in tick, "Target difficulty guard missing.")
+    require('loc.stars ! rockyConfig.targetStars' in tick, "Target difficulty guard missing.")
     require('gear.Apply(' not in handler and 'gear.ApplyPair(weapon, equipment.shield)' in handler,
             "Specialized frame must retain the Rocky shield, not shared defaults.")
     profile = data["SpeedRunRocky/config/RockySettings.txt"].decode()
@@ -76,6 +87,14 @@ def inspect(root):
     require('var fastGenShieldConfirmed = true' in profile and 'var preferredShield = "FastGenShl"' in profile
             and 'item.GetCount(selector) = 1' in equipment,
             "Owner-confirmed nickname or ambiguous gear guard missing.")
+    require(re.search(r'\?bossLatched\s+combat.travelBossSeen = true', handler),
+            "Scout must not set the shared boss-travel latch.")
+    require('var bearerRecoveryEnabled =' in profile
+            and 'var bearerRecoverySword = "vigor sword dL -big +21"' in profile,
+            "Bearer recovery configuration missing.")
+    require('weapon = SelectBearerRecovery(' in tick
+            and 'foe.armor > 0 | physicalOnly | blocked[1]' in handler,
+            "Bearer recovery priority guard missing.")
     return data
 
 

@@ -77,3 +77,21 @@ Neither `ai.idle` nor target HP loss alone is proof that the player's attack com
 Record build/platform, revision, location/difficulty, exact loadout, resource policy, loop status, timing boundaries, sample size, failures, and median/best times. Preserve failed attempts rather than reporting only successful records. Measure travel, encounters, boss phases, and total completion separately. Do not compare the game's weighted location average as though it were an independent controlled trial mean.
 
 Before adoption, change one variable, compare repeated baseline/candidate runs, and verify the selected reliability target. No expected percentage improvement is established yet.
+
+## Native parser finding: reserved profile identifier
+
+Owner-reported R15 import failure was traced in the local game log to `Variable "profile" is reserved` at `SpeedRunRocky/main` line 8. Avoid `profile` for project variables and parameters; the candidate uses `rockyConfig`. This is native error evidence, not an exhaustive documented reserved-word list. An outer Mind Stone `Incomplete parsing` error can accompany this underlying imported-module failure. See [the R15 correction](rocky/ROCKY_PLATEAU_15.md#first-native-load-failure-and-minimal-parser-correction). Post-fix native execution remains pending.
+
+## R15 first gameplay evidence and recovery proposal
+
+Owner-reported: parser-corrected R15 ran, defeated Scout, then died against Bearer holding Fire Sword + FastGenShl; later phases were not reached. Post-Scout Triskelion failed to return. Source review found Scout incorrectly setting the shared boss-travel latch. Its Rocky-only correction and Bearer-only 60%/85% HP recovery hysteresis are implemented in the working tree but undeployed/unverified. See [current revision rules](rocky/ROCKY_PLATEAU_15.md#next-candidate-post-scout-travel-and-bearer-recovery). Existing no-target/nearby-enemy/walking/full-HP travel guards stay intact.
+
+Official syntax: `hp`, `maxhp`, arithmetic/comparisons, persistent variables and `vigor sword dL` are documented in the [manual](https://stonestoryrpg.com/stonescript/manual.html). Screenshot 0053 visibly says **109% chance to Lifesteal**, not a 109% damage-to-healing ratio. Exact recovery selector, healing amount, switch costs and ★15 survival remain in-game questions. No timed Bearer defense is added.
+
+## Perfected ray observation gate
+
+Owner reports the second ★15 trial defeated Scout/Bearer/Elementalist and reached Perfected, whose ray killed in one hit. This is a burst-survival failure; it does not validate historical state-115 timings. A working-tree diagnostic-only top-row trace uses documented state/time, distance, HP, total frames and named-color printing; it is undeployed/unverified. See [capture and evidence limits](rocky/ROCKY_PLATEAU_15.md#perfected-ray-timing-diagnostic--not-deployed). Last sampled state frames are not guaranteed exact impact frames. No new attack response or Mind Stone action is implemented.
+
+## State-115 alive sample and experimental dodge boundary
+
+Owner capture at Rocky ★15: Perfected 115:23, player 80/80 HP, distance 5, Poison Sword + FastGenShl, boss 12,964/30,000 HP; previous 114 reported 14 frames (a trace last-sample value is not necessarily complete duration). State 115 occurs while alive; actual impact frame remains unknown. A local, undeployed protected Mind Stone experiment uses configurable 23-frame trigger / 30-frame hold / 90-frame timeout; none is a verified avoidance window. Equip-only behavior is community evidence; unique selector match, actual backflip/cooldown, shield compatibility and ray avoidance still need native testing. See [the authoritative sequence and acceptance procedure](rocky/ROCKY_PLATEAU_15.md#experimental-perfected-mind-stone-sequence--local-only).

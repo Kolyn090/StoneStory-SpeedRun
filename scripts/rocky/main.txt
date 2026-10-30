@@ -5,19 +5,25 @@ var gear = new SpeedRunBasic/equipment/Catalog
 var locations = new SpeedRunBasic/locations/Dispatcher
 var combat = new SpeedRunBasic/combat/Generic
 var metrics = new SpeedRun/metrics/RunMetrics
-var profile = new SpeedRunRocky/config/RockySettings
+var rockyConfig = new SpeedRunRocky/config/RockySettings
 var equipment = new SpeedRunRocky/equipment/RockyGear
 var rocky = new SpeedRunRocky/locations/RockyPlateau
 var initialized = false
 var observedLoops = 0
 var rockyHandled = false
+// Observation only: bounded trace for a recorded Perfected ray calibration.
+var rayTraceActive = false
+var rayTraceState = -1
+var rayTraceTime = 0
+var rayTraceTransition = "entry"
+var rayTraceAfter115 = false
 
 ?loc.begin
   observedLoops = 0
   metrics.ResetSession()
   metrics.Begin("entry", true)
   gear.Prepare(config)
-  equipment.Prepare(config, profile)
+  equipment.Prepare(config, rockyConfig)
   combat.Reset()
   // A sub-location boundary must not erase a latched boss encounter.
   ?!initialized
@@ -30,12 +36,12 @@ var rockyHandled = false
   rocky.Reset()
   ?!initialized
     gear.Prepare(config)
-    equipment.Prepare(config, profile)
+    equipment.Prepare(config, rockyConfig)
   initialized = true
 :?!initialized
   metrics.Begin("attached", false)
   gear.Prepare(config)
-  equipment.Prepare(config, profile)
+  equipment.Prepare(config, rockyConfig)
   combat.Reset()
   rocky.Reset()
   initialized = true
@@ -44,12 +50,44 @@ rockyHandled = false
 locations.Update()
 ?config.enabled & locations.allowed
   ?string.Equals(locations.handler, "rocky")
-    rockyHandled = rocky.Tick(gear, config, equipment, profile, combat)
+    rockyHandled = rocky.Tick(gear, config, equipment, rockyConfig, combat)
   ?!rockyHandled
     combat.Tick(gear, config)
 :
   combat.strategy = "observer-only"
   gear.ClearRequest()
+
+// No attack meaning or dodge timing is inferred from the state number.
+func ObservePerfectedTrace(isRocky)
+  ?!isRocky | !foe
+    rayTraceActive = false
+    return
+  ?foe ! "dysangelos" | (foe ! "phase3" & foe ! "dysangelos_perfected")
+    rayTraceActive = false
+    return
+  ?!rayTraceActive
+    rayTraceTransition = "entry " + foe.state + ":" + foe.time + " @" + totaltime
+    rayTraceAfter115 = false
+  :?foe.state ! rayTraceState | foe.time < rayTraceTime
+    rayTraceTransition = "prev " + rayTraceState + ":" + rayTraceTime + " -> " + foe.state + ":" + foe.time + " @" + totaltime
+    rayTraceAfter115 = false
+    ?rayTraceState = 115
+      rayTraceAfter115 = true
+  rayTraceState = foe.state
+  rayTraceTime = foe.time
+  rayTraceActive = true
+
+func DrawPerfectedTrace()
+  ?!rayTraceActive
+    return
+  ?rayTraceState = 115
+    >`0,0,#red,R15 P3 *115* s:@rayTraceState@ f:@rayTraceTime@ HP:@hp@/@maxhp@
+  :?rayTraceAfter115
+    >`0,0,#yellow,R15 P3 AFTER 115 s:@rayTraceState@ f:@rayTraceTime@ HP:@hp@/@maxhp@
+  :
+    >`0,0,#cyan,R15 P3 s:@rayTraceState@ f:@rayTraceTime@ HP:@hp@/@maxhp@
+  >`0,1,#white,Last:@rayTraceTransition@ d:@foe.distance@
+  >`0,2,#yellow,Ray EXP:@rocky.rayDodgeStatus@ tries:@rocky.rayDodgeAttempts@ cd:@rocky.rayDodgeCooldown@
 
 func DrawRockyCandidate()
   var activeStrategy
@@ -61,7 +99,7 @@ func DrawRockyCandidate()
   ?!string.Equals(locations.handler, "rocky")
     activeEncounter = "shared-location"
     activePhase = "none"
-  :?loc.stars ! profile.targetStars
+  :?loc.stars ! rockyConfig.targetStars
     activeEncounter = "shared-difficulty"
     activePhase = "none"
   ?rockyHandled
@@ -81,7 +119,14 @@ func DrawRockyCandidate()
   >`0,12,@metrics.startKind@ t:@totaltime@ done:@metrics.currentCompletion@ loops:@observedLoops@
   >`0,13,Last:@metrics.lastCompletion@ count:@metrics.completedCount@ Tab=native errors
   >`0,14,Shield:@equipment.shieldStatus@
+  >`0,15,Recovery:@rocky.bearerRecoveryActive@ @rocky.bearerRecoveryStatus@ HP:@hp@/@maxhp@
+  >`0,16,Ray EXP:@rocky.rayDodgeStatus@ tries:@rocky.rayDodgeAttempts@ cd:@rocky.rayDodgeCooldown@
+  >`0,17,@rocky.rayDodgeReason@ at:@rocky.rayDodgeTriggeredAt@ until:@rocky.rayDodgeUntil@
 
 metrics.Observe()
 ?config.showDiagnostics
+  ObservePerfectedTrace(string.Equals(locations.handler, "rocky") & loc.stars = rockyConfig.targetStars & rockyConfig.enabled)
   DrawRockyCandidate()
+  DrawPerfectedTrace()
+:
+  rayTraceActive = false

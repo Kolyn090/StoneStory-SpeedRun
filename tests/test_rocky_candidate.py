@@ -28,6 +28,15 @@ class Gear:
 
 
 class PolicyTests(unittest.TestCase):
+    def test_native_reserved_profile_identifier_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            shutil.copytree(ROOT / "scripts", root / "scripts")
+            main = root / "scripts/rocky/main.txt"
+            main.write_text(main.read_text().replace("rockyConfig", "profile"))
+            with self.assertRaisesRegex(ValueError, "reserved identifier profile"):
+                PACKAGE.inspect(root)
+
     def setUp(self):
         self.strings = Strings()
         self.settings = SimpleNamespace(swords=Array(Text(x + " sword") for x in ("poison","vigor","aether","fire","ice")),
@@ -37,10 +46,10 @@ class PolicyTests(unittest.TestCase):
         counts = {str(x): 1 for family in (self.settings.swords, self.settings.wands, self.settings.hammers)
                   for x in family}
         counts.update({"stone sword -big +21": 1, "vigor sword dL": 1,
-                       "towering shield +21": 1, "FastGenShl": 1})
+                       "towering shield +21": 1, "FastGenShl": 1, "vigor sword dL -big +21": 1, "mind stone": 1})
         self.items = Items(counts)
         self.native = dict(string=self.strings, item=self.items, foe=Foe(), hp=100, maxhp=100,
-                           ai=SimpleNamespace(enabled=True, paused=False), loc=SimpleNamespace(stars=15))
+                           ai=SimpleNamespace(enabled=True, paused=False), loc=SimpleNamespace(stars=15), totaltime=0)
         self.profile = load_module(ROOT / "scripts/rocky/config/RockySettings.txt", self.native)
         # Synthetic labels keep policy assertions separate from native search claims.
         self.profile.swords = self.settings.swords
@@ -52,14 +61,15 @@ class PolicyTests(unittest.TestCase):
         self.gear = Gear()
         self.combat = SimpleNamespace(travelBossSeen=False, starUntil=100)
 
-    def frame(self, value="", buffs="", armor=0, hp=100, player_hp=100):
+    def frame(self, value="", buffs="", armor=0, hp=100, player_hp=100, foe_state=0, foe_time=0, total=0):
         state = Foe(value, buffs, armor, hp)
+        state.state, state.time = foe_state, foe_time
         # Compiled functions use their own global namespace, sharing fake native inputs.
         for obj in (self.handler, self.equipment):
             for name in dir(type(obj)):
                 method = getattr(type(obj), name)
                 if hasattr(method, "__globals__"):
-                    method.__globals__.update(foe=state, hp=player_hp)
+                    method.__globals__.update(foe=state, hp=player_hp, totaltime=total)
         self.gear.calls.clear()
         return self.handler.Tick(self.gear, self.settings, self.equipment, self.profile, self.combat)
 
@@ -135,6 +145,7 @@ class PolicyTests(unittest.TestCase):
         self.assertEqual(str(self.equipment.swords[3]), "")
 
     def test_low_hp_heal_is_blocked_by_adaptive_and_armor_has_priority(self):
+        self.profile.bearerRecoveryEnabled = False
         self.profile.useHealingSword = True  # Optional historical R1 behavior, off in R15.
         self.frame("dysangelos phase1", player_hp=20)
         self.assertEqual(self.gear.calls, ["vigor sword dL"])
@@ -191,12 +202,12 @@ class PolicyTests(unittest.TestCase):
         self.assertEqual(list(self.handler.blocked), [False] * 5)
         self.assertFalse(self.frame())
 
-    def test_r15_default_low_hp_keeps_fire_and_armor_rule(self):
+    def test_r15_low_hp_keeps_scout_fire_and_bearer_armor_priority(self):
         self.frame("acronian_scout vigor", player_hp=10)
         self.assertEqual(self.gear.calls, ["fire sword"])
         self.assertEqual(self.gear.lastShield, "FastGenShl")
         self.frame("dysangelos phase1", player_hp=10)
-        self.assertEqual(self.gear.calls, ["fire sword"])
+        self.assertEqual(self.gear.calls, ["vigor sword dL -big +21"])
         self.frame("dysangelos phase1", armor=20, player_hp=10)
         self.assertEqual(self.gear.calls, ["fire hammer"])
 
@@ -265,6 +276,317 @@ class PolicyTests(unittest.TestCase):
         self.assertEqual(self.gear.lastShield, "FastGenShl")
 
 
+    def test_bearer_recovery_hysteresis_and_fixed_shield(self):
+        for hp, recovering in [(100, False), (61, False), (60, True), (70, True),
+                               (84, True), (85, False), (70, False), (60, True)]:
+            self.frame("dysangelos phase1", player_hp=hp)
+            self.assertEqual(self.handler.bearerRecoveryActive, recovering)
+            self.assertEqual(self.gear.calls, ["vigor sword dL -big +21" if recovering else "fire sword"])
+            self.assertEqual(self.gear.lastShield, "FastGenShl")
+        self.assertEqual(str(self.handler.strategy), "bearer-recovery-sword-shield")
+
+    def test_recovery_thresholds_are_configurable_and_invalid_values_fall_back(self):
+        self.profile.bearerRecoveryEnterRatio = .3
+        self.profile.bearerRecoveryExitRatio = .5
+        self.frame("dysangelos phase1", player_hp=40)
+        self.assertFalse(self.handler.bearerRecoveryActive)
+        self.frame("dysangelos phase1", player_hp=30)
+        self.assertTrue(self.handler.bearerRecoveryActive)
+        self.frame("dysangelos phase1", player_hp=50)
+        self.assertFalse(self.handler.bearerRecoveryActive)
+        for entry, exit in [(0, .8), (.6, .6), (.9, .6), (.6, 1.1), (-.1, .8)]:
+            self.profile.bearerRecoveryEnterRatio = entry
+            self.profile.bearerRecoveryExitRatio = exit
+            self.frame("dysangelos phase1", player_hp=10)
+            self.assertFalse(self.handler.bearerRecoveryActive)
+            self.assertEqual(self.gear.calls, ["fire sword"])
+            self.assertEqual(str(self.handler.bearerRecoveryStatus), "invalid thresholds")
+
+    def test_recovery_missing_or_ambiguous_weapon_and_disabled_fall_back(self):
+        for count in [0, 2]:
+            self.items.counts["vigor sword dL -big +21"] = count
+            self.equipment.Prepare(self.settings, self.profile)
+            self.frame("dysangelos phase1", player_hp=10)
+            self.assertFalse(self.handler.bearerRecoveryActive)
+            self.assertEqual(self.gear.calls, ["fire sword"])
+            self.assertIn("missing/ambiguous", str(self.handler.bearerRecoveryStatus))
+        self.items.counts["vigor sword dL -big +21"] = 1
+        self.equipment.Prepare(self.settings, self.profile)
+        self.profile.bearerRecoveryEnabled = False
+        self.frame("dysangelos phase1", player_hp=10)
+        self.assertEqual(self.gear.calls, ["fire sword"])
+
+    def test_recovery_yields_to_armor_even_when_hammer_is_missing(self):
+        self.frame("dysangelos phase1", player_hp=20)
+        self.frame("dysangelos phase1", armor=5, player_hp=20)
+        self.assertFalse(self.handler.bearerRecoveryActive)
+        self.assertEqual(self.gear.calls, ["fire hammer"])
+        for selector in list(self.items.counts):
+            if "hammer" in selector: self.items.counts[selector] = 0
+        self.equipment.Prepare(self.settings, self.profile)
+        self.frame("dysangelos phase1", armor=5, player_hp=20)
+        self.assertFalse(self.handler.bearerRecoveryActive)
+        self.assertEqual(self.gear.calls, ["fire sword"])
+
+    def test_recovery_yields_to_immunity_and_adaptive_constraints(self):
+        for target, buffs in [("dysangelos phase1 immune_to_physical", ""),
+                              ("dysangelos phase1 immune_to_physical immune_to_ranged", ""),
+                              ("dysangelos phase1", "adaptive_defense_vigor:1:9"),
+                              ("dysangelos phase1", "adaptive_new:1:9")]:
+            self.frame(target, buffs=buffs, player_hp=20)
+            self.assertFalse(self.handler.bearerRecoveryActive)
+            self.assertNotIn("vigor sword dL -big +21", self.gear.calls)
+        self.frame("dysangelos phase1 immune_to_ranged", player_hp=20)
+        self.assertTrue(self.handler.bearerRecoveryActive)  # Compatible melee remains valid.
+
+    def test_recovery_yields_to_gaps_and_resets_outside_bearer(self):
+        for next_target, hp in [("", 100), ("dysangelos phase1 undamageable", 100),
+                                ("dysangelos phase1", 0), ("dysangelos phase2 fire", 100),
+                                ("dysangelos phase3", 100), ("acronian_scout", 100), ("insect", 100)]:
+            self.handler.Reset()
+            self.frame("dysangelos phase1", player_hp=20)
+            last_pair = list(self.gear.calls)
+            self.frame(next_target, hp=hp, player_hp=20)
+            self.assertFalse(self.handler.bearerRecoveryActive)
+            if next_target in ("", "dysangelos phase1 undamageable") or hp == 0:
+                self.assertEqual(self.gear.calls, last_pair)  # Hold previous combat pair, no new recovery decision.
+            self.frame("dysangelos phase1", player_hp=70)
+            self.assertEqual(self.gear.calls, ["fire sword"])  # No stale recovery latch.
+        self.frame("dysangelos phase1", player_hp=20)
+        self.handler.Reset()
+        self.assertFalse(self.handler.bearerRecoveryActive)
+
+    def test_recovery_no_new_inventory_queries_and_ai_suspension_clears_indicator(self):
+        queries = len(self.items.queries)
+        self.frame("dysangelos phase1", player_hp=20)
+        self.frame("dysangelos phase1", player_hp=70)
+        self.assertEqual(len(self.items.queries), queries)
+        self.native["ai"].paused = True
+        self.frame("dysangelos phase1", player_hp=20)
+        self.assertFalse(self.handler.bearerRecoveryActive)
+        self.assertEqual(self.gear.calls, [])
+
+    def test_post_scout_shared_travel_reinstates_triskelion_only_with_all_guards(self):
+        self.frame("acronian_scout")
+        self.frame("acronian_scout", hp=0)
+        self.assertFalse(self.combat.travelBossSeen)
+        self.assertFalse(self.handler.bossLatched)
+        self.assertFalse(self.frame())  # Rocky releases ordinary target-free travel to Generic.
+        foe = Foe()
+        foe.count = 0
+        self.native.update(foe=foe, pickup=False, totaltime=100, boss=Text("boss"))
+        self.native["ai"].walking = True
+        self.settings.triskelionTravelEnabled = True
+        self.settings.passiveStarEnabled = False
+        self.gear.triskelion = Text("triskelion")
+        shared = load_module(ROOT / "scripts/basic/combat/Generic.txt", self.native)
+        shared.travelBossSeen = self.combat.travelBossSeen
+        shared.Tick(self.gear, self.settings)
+        self.assertEqual(self.gear.calls[-1], "triskelion")
+        globals_ = type(shared).CanTravelWithTriskelion.__globals__
+        for block in ["injured", "nearby", "targeted", "not-walking", "boss", "disabled", "missing"]:
+            with self.subTest(block=block):
+                globals_["hp"] = 99 if block == "injured" else 100
+                foe.value = "insect" if block == "targeted" else ""
+                foe.count = 1 if block == "nearby" else 0
+                self.native["ai"].walking = block != "not-walking"
+                shared.travelBossSeen = block == "boss"
+                self.settings.triskelionTravelEnabled = block != "disabled"
+                self.gear.triskelion = Text("") if block == "missing" else Text("triskelion")
+                self.assertFalse(shared.CanTravelWithTriskelion(self.gear, self.settings))
+
+    def test_dysangelos_still_latches_travel_and_owns_transformations(self):
+        self.frame("acronian_scout")
+        self.assertFalse(self.combat.travelBossSeen)
+        self.frame("dysangelos phase1")
+        self.assertTrue(self.combat.travelBossSeen)
+        self.assertTrue(self.handler.bossLatched)
+        self.assertTrue(self.frame())
+        self.assertTrue(self.combat.travelBossSeen)
+        self.assertEqual(str(self.handler.phase), "transition-gap")
+        self.assertEqual(self.gear.calls, ["fire sword"])
+
+
+    def test_ray_arms_triggers_once_holds_and_recomputes_armor_element(self):
+        self.frame("dysangelos phase3", foe_state=115, foe_time=22, total=100)
+        self.assertEqual(str(self.handler.rayDodgeStatus), "armed")
+        self.assertEqual(self.gear.calls, ["fire sword"])
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=101)
+        self.assertEqual(str(self.handler.rayDodgeStatus), "triggered")
+        self.assertEqual(self.gear.calls, ["mind stone"])
+        self.assertEqual(self.gear.lastShield, "FastGenShl")
+        self.assertEqual(self.handler.rayDodgeAttempts, 1)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=101)
+        self.assertEqual(str(self.handler.rayDodgeStatus), "holding")
+        self.assertEqual(self.handler.rayDodgeAttempts, 1)
+        self.frame("dysangelos phase3", armor=10, buffs="adaptive_defense_fire:1:9", foe_state=115, foe_time=52, total=130)
+        self.assertEqual(self.gear.calls, ["mind stone"])
+        self.frame("dysangelos phase3", armor=10, buffs="adaptive_defense_fire:1:9", foe_state=115, foe_time=53, total=131)
+        self.assertEqual(str(self.handler.rayDodgeStatus), "restored")
+        self.assertEqual(self.gear.calls, ["ice hammer"])
+        self.assertEqual(self.gear.lastShield, "FastGenShl")
+        for time in (54, 55, 80):
+            self.frame("dysangelos phase3", foe_state=115, foe_time=time, total=132+time)
+            self.assertEqual(self.handler.rayDodgeAttempts, 1)
+            self.assertNotIn("mind stone", self.gear.calls)
+        self.frame("dysangelos phase3", foe_state=2, total=230)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=240)
+        self.assertEqual(self.handler.rayDodgeAttempts, 2)
+
+    def test_ray_custom_trigger_and_hold_duration(self):
+        self.profile.rayDodgeTriggerFrame = 5
+        self.profile.rayDodgeHoldFrames = 3
+        self.frame("dysangelos phase3", foe_state=115, foe_time=4, total=10)
+        self.assertEqual(str(self.handler.rayDodgeStatus), "armed")
+        self.frame("dysangelos phase3", foe_state=115, foe_time=5, total=11)
+        self.assertEqual(self.handler.rayDodgeUntil, 14)
+        self.frame("dysangelos phase3", foe_state=32, total=13)
+        self.assertEqual(self.gear.calls, ["mind stone"])
+        self.frame("dysangelos phase3", foe_state=32, total=14)
+        self.assertEqual(self.gear.calls, ["fire sword"])
+        self.assertEqual(str(self.handler.rayDodgeStatus), "restored")
+
+    def test_ray_missing_ambiguous_mind_and_cooldown_do_not_retry_same_event(self):
+        for count in (0, 2):
+            self.handler.Reset()
+            self.items.counts["mind stone"] = count
+            self.equipment.Prepare(self.settings, self.profile)
+            self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=50)
+            self.assertEqual(str(self.handler.rayDodgeStatus), "unavailable")
+            self.assertEqual(self.gear.calls, ["fire sword"])
+            self.items.counts["mind stone"] = 1
+            self.equipment.Prepare(self.settings, self.profile)
+            self.frame("dysangelos phase3", foe_state=115, foe_time=24, total=51)
+            self.assertEqual(self.handler.rayDodgeAttempts, 0)
+        self.handler.Reset()
+        self.items.cooldowns["mind"] = 20
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=100)
+        self.items.cooldowns["mind"] = 0
+        self.frame("dysangelos phase3", foe_state=115, foe_time=44, total=121)
+        self.assertEqual(self.handler.rayDodgeAttempts, 0)
+        self.assertEqual(str(self.handler.rayDodgeStatus), "unavailable")
+
+    def test_ray_unknown_unused_cooldown_is_explicit_single_experiment(self):
+        self.items.cooldowns["mind"] = -1
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=1)
+        self.assertEqual(self.gear.calls, ["mind stone"])
+        self.assertIn("unused/unknown", str(self.handler.rayDodgeReason))
+        self.assertEqual(self.items.activations, [])  # Equip-only; no invented activation.
+
+    def test_ray_armed_timeout_and_hold_deadline_never_lock_forever(self):
+        self.profile.rayDodgeTriggerFrame = 100
+        self.profile.rayDodgeHoldFrames = 3
+        self.profile.rayDodgeTimeoutFrames = 10
+        self.frame("dysangelos phase3", foe_state=115, foe_time=0, total=100)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=0, total=110)
+        self.assertEqual(str(self.handler.rayDodgeStatus), "unavailable")
+        self.assertIn("timeout", str(self.handler.rayDodgeReason))
+        self.assertEqual(self.gear.calls, ["fire sword"])
+        self.handler.Reset()
+        self.profile.rayDodgeTriggerFrame = 23
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=200)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=400)
+        self.assertFalse(self.handler.rayDodgeHolding)
+        self.assertEqual(str(self.handler.rayDodgeStatus), "restored")
+        self.assertEqual(self.gear.calls, ["fire sword"])
+        self.assertEqual(self.handler.rayDodgeAttempts, 1)
+
+    def test_ray_phase_change_disabled_and_reset_cancel_hold(self):
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=100)
+        self.frame("dysangelos phase2 poison", foe_state=115, foe_time=24, total=101)
+        self.assertFalse(self.handler.rayDodgeHolding)
+        self.assertEqual(self.gear.calls, ["ice sword"])
+        self.assertEqual(str(self.handler.rayDodgeStatus), "restored")
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=200)
+        self.handler.Reset()
+        self.assertEqual(self.handler.rayDodgeAttempts, 0)
+        self.assertFalse(self.handler.rayDodgeHolding)
+        self.profile.rayDodgeEnabled = False
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=300)
+        self.assertEqual(self.gear.calls, ["fire sword"])
+
+    def test_ray_target_gap_retains_exclusive_hold_then_restores_previous_combat(self):
+        self.frame("dysangelos phase3", foe_state=32, total=1)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=2)
+        self.assertTrue(self.frame(total=3))
+        self.assertEqual(self.gear.calls, ["mind stone"])
+        self.assertTrue(self.combat.travelBossSeen)
+        self.assertTrue(self.frame(total=32))
+        self.assertEqual(self.gear.calls, ["fire sword"])
+        self.assertEqual(str(self.handler.rayDodgeStatus), "restored")
+
+    def test_ray_exit_before_trigger_disarms_and_same_state_timer_reset_does_not_retry(self):
+        self.frame("dysangelos phase3", foe_state=115, foe_time=10, total=10)
+        self.frame("dysangelos phase3", foe_state=32, total=11)
+        self.assertEqual(str(self.handler.rayDodgeStatus), "idle")
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=12)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=0, total=42)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=65)
+        self.assertEqual(self.handler.rayDodgeAttempts, 1)
+        self.assertEqual(self.gear.calls, ["fire sword"])
+
+    def test_ray_ai_ability_shield_guards_and_invalid_timing(self):
+        self.items.abilities_enabled = False
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23)
+        self.assertEqual(str(self.handler.rayDodgeStatus), "unavailable")
+        self.assertEqual(self.gear.calls, ["fire sword"])
+        self.items.abilities_enabled = True
+        self.handler.Reset()
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=1)
+        self.native["ai"].paused = True
+        self.frame("dysangelos phase3", foe_state=115, foe_time=24, total=2)
+        self.assertFalse(self.handler.rayDodgeHolding)
+        self.assertEqual(self.gear.calls, [])
+        self.native["ai"].paused = False
+        for trigger, hold, timeout in [(-1, 30, 90), (23, 0, 90), (23, 30, 5)]:
+            self.handler.Reset()
+            self.profile.rayDodgeTriggerFrame = trigger
+            self.profile.rayDodgeHoldFrames = hold
+            self.profile.rayDodgeTimeoutFrames = timeout
+            self.frame("dysangelos phase3", foe_state=115, foe_time=23)
+            self.assertEqual(str(self.handler.rayDodgeStatus), "unavailable")
+            self.assertEqual(self.gear.calls, ["fire sword"])
+
+    def test_ray_never_runs_outside_perfected_or_queries_inventory_per_frame(self):
+        queries = len(self.items.queries)
+        for target in ("acronian_scout", "dysangelos phase1", "dysangelos phase2 fire"):
+            self.frame(target, foe_state=115, foe_time=23)
+            self.assertNotIn("mind stone", self.gear.calls)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23)
+        self.assertEqual(len(self.items.queries), queries)
+        self.assertEqual(self.gear.calls, ["mind stone"])
+        self.assertEqual(self.gear.lastShield, "FastGenShl")
+        self.assertEqual(self.handler.lastWeapon, "aether sword")  # Mind never becomes cached combat weapon.
+
+
+    def test_ray_shield_loss_and_dead_target_cancel_protected_hold(self):
+        self.frame("dysangelos phase3", foe_state=32, total=1)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=2)
+        self.equipment.shield = Text("")
+        self.frame("dysangelos phase3", foe_state=115, foe_time=24, total=3)
+        self.assertFalse(self.handler.rayDodgeHolding)
+        self.assertEqual(self.gear.calls, [])
+        self.equipment.shield = Text("FastGenShl")
+        self.handler.Reset()
+        self.frame("dysangelos phase3", foe_state=32, total=10)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=11)
+        self.frame("dysangelos phase3", hp=0, foe_state=115, foe_time=24, total=12)
+        self.assertFalse(self.handler.rayDodgeHolding)
+        self.assertEqual(self.gear.calls, ["fire sword"])
+        self.assertEqual(str(self.handler.rayDodgeStatus), "restored")
+
+    def test_ray_observed_exit_during_hold_allows_a_subsequent_ray(self):
+        self.profile.rayDodgeHoldFrames = 3
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=10)
+        self.frame("dysangelos phase3", foe_state=114, total=11)
+        self.assertEqual(self.gear.calls, ["mind stone"])
+        self.frame("dysangelos phase3", foe_state=115, foe_time=1, total=12)
+        self.frame("dysangelos phase3", foe_state=115, foe_time=2, total=13)
+        self.assertEqual(self.gear.calls, ["fire sword"])
+        self.frame("dysangelos phase3", foe_state=115, foe_time=23, total=14)
+        self.assertEqual(self.handler.rayDodgeAttempts, 2)
+
+
 class SourceAndBundleTests(unittest.TestCase):
     def test_static_contracts_and_no_live_paths(self):
         data = PACKAGE.inspect(ROOT)
@@ -287,6 +609,12 @@ class SourceAndBundleTests(unittest.TestCase):
 
     def test_guard_regressions_are_rejected(self):
         for relative, before, after in [
+            ("locations/RockyPlateau.txt", 'rayDodgeSpent = true', 'rayDodgeSpent = false'),
+            ("locations/RockyPlateau.txt", '?TryPerfectedRay(gear, equipment, rockyConfig)\n    return true',
+             'TryPerfectedRay(gear, equipment, rockyConfig)'),
+            ("locations/RockyPlateau.txt", '?bossLatched\n    combat.travelBossSeen = true',
+             '?true\n    combat.travelBossSeen = true'),
+            ("config/RockySettings.txt", 'var bearerRecoveryEnabled = true', 'var missingRecoveryConfig = true'),
             ("main.txt", 'new SpeedRunBasic/config/Settings', 'new Missing/config/Settings'),
             ("main.txt", "?!rockyHandled", "?true"),
             ("locations/RockyPlateau.txt", 'phase = "transition-gap"', 'phase = "gap"'),
