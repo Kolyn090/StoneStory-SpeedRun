@@ -1,0 +1,45 @@
+// Candidate-only policy. No verified star/enchantment ranking is implied.
+var enabled = true
+// Quiet by default: custom overlay only; native Tab/errors remain enabled.
+var showDiagnostics = false
+var targetStars = 15
+var preferMelee = true
+// Rocky-only aggressive candidate; false retains shielded combat.
+var dualWieldEnabled = true
+var dualRecoveryEnabled = true
+// Optional actual nicknames, appended to the known one-handed dL criteria.
+var vigorRecoveryNameA = ""
+var vigorRecoveryNameB = ""
+// Set only after observing two physical copies equipped simultaneously with these criteria.
+var dualVigorVerified = false
+var aacEnabled = true
+// Stable Star offhand during clear travel; no pulse, waiting or detour policy.
+var clearTravelStarEnabled = true
+// Historical general healing stays off; Bearer recovery is separate.
+var useHealingSword = false
+// Initial project thresholds; not calibrated native lifesteal behavior.
+var bearerRecoveryEnabled = true
+var bearerRecoveryEnterRatio = 0.60
+var bearerRecoveryExitRatio = 0.85
+var bearerRecoverySword = "vigor sword dL -big +21"
+// EXPERIMENTAL: observed alive at 115:23, not a measured impact/dodge window.
+var rayDodgeEnabled = true
+var rayDodgeTriggerFrame = 23
+var rayDodgeHoldFrames = 30
+var rayDodgeTimeoutFrames = 90
+var mindStone = "mind stone"
+// P,V,A,F,I ordering matches the preserved basic settings.
+var bearerElement = 3
+var scoutElement = 3
+// Documented forms, observed owned profiles; native/exact matches remain unverified.
+var swords = ["poison sword -big +21", "vigor sword -big +21", "aether sword -big +21", "fire sword -big +21", "ice sword -big +21"]
+var wands = ["poison wand +21", "vigor wand +21", "aether wand +21", "fire wand +21", "ice wand +21"]
+var hammers = ["poison hammer -heavy +21", "vigor hammer -heavy +21", "aether hammer -heavy +21", "fire hammer -heavy +21", "ice hammer -heavy +21"]
+// Screenshot 0064 is enchanted; do not exclude socketed base-family variants.
+var physicalSword = "stone sword -big +21"
+// Owner confirms FastGenShl is the nickname of their Towering Shield.
+// Nickname matching is owner-reported; this candidate's native query is untested.
+var fastGenShieldConfirmed = true
+var preferredShield = "FastGenShl"
+// Base-family fallback only; do not assume it selects a different physical item.
+var fallbackShield = "towering shield +21"

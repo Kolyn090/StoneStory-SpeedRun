@@ -1,0 +1,163 @@
+// Project policy, not a native game AI. Thresholds require in-game validation.
+var melee = false
+var strategy = "initializing"
+var starWindowUsed = false
+var starUntil = 0
+var starNextFrame = 0
+var travelBossSeen = false
+
+func Reset()
+  melee = false
+  strategy = "initializing"
+  starWindowUsed = false
+  starUntil = 0
+  starNextFrame = 0
+  travelBossSeen = false
+
+func CanTravelWithTriskelion(gear, settings)
+  ?!settings.triskelionTravelEnabled | string.Equals(gear.triskelion, "")
+    return false
+  ?travelBossSeen | foe | foe.count > 0 | !ai.walking | hp < maxhp
+    return false
+  return true
+
+// Low-priority policy only: ordinary travel calls this before applying equipment.
+// Poll documented pickup state; there is no assumed pickup event/instance API.
+func TryPassiveStar(gear, settings)
+  ?!settings.passiveStarEnabled
+    starUntil = 0
+    return false
+  ?travelBossSeen | foe | foe.count > 0 | !ai.walking | hp < maxhp
+    starUntil = 0
+    return false
+  ?settings.passiveStarDistance <= 0 | settings.passiveStarDistance > 10
+    return false
+  ?settings.passiveStarHoldFrames <= 0
+    return false
+  ?settings.passiveStarCooldownFrames < settings.passiveStarHoldFrames
+    return false
+  ?string.Equals(gear.starStone, "")
+    return false
+  ?!pickup
+    return false
+  ?pickup.distance >= settings.passiveStarDistance
+    starUntil = 0
+    return false
+  ?totaltime < starUntil
+    return true
+  ?starWindowUsed | totaltime < starNextFrame
+    return false
+  starWindowUsed = true
+  starUntil = totaltime + settings.passiveStarHoldFrames
+  starNextFrame = totaltime + settings.passiveStarCooldownFrames
+  return true
+
+// Community weakness mapping; verify elemental matchups on installed build.
+func WeakElement()
+  ?foe = vigor
+    return 0
+  ?foe = aether
+    return 1
+  ?foe = fire
+    return 2
+  ?foe = ice
+    return 3
+  ?foe = poison
+    return 4
+  return -1
+
+func Tick(gear, settings)
+  gear.ClearRequest()
+  ?settings.passiveStarEnabled | settings.triskelionTravelEnabled
+    ?foe = boss
+      travelBossSeen = true
+  ?settings.passiveStarEnabled
+    ?!pickup
+      starWindowUsed = false
+      starUntil = 0
+  ?gear.missing > 0
+    starUntil = 0
+    strategy = "missing-core-gear-manual"
+    return
+  ?!ai.enabled | ai.paused
+    starUntil = 0
+    strategy = "ai-suspended"
+    return
+  // Optional potion consumption only; never brew or auto-refill resources.
+  ?settings.usePotion & hp < maxhp * settings.potionHpRatio
+    ?item.potion ! empty & item.CanActivate()
+      activate potion
+  ?!foe
+    melee = false
+    strategy = "travel-shield"
+    // A non-targeted enemy still prevents travel gear; prepare ranged combat.
+    ?foe.count > 0
+      starUntil = 0
+      strategy = "threat-ready-shield"
+      gear.Apply(gear.defaultWand)
+      return
+    var travelWeapon
+    var travelOffhand
+    var useTriskelion
+    travelWeapon = gear.defaultSword
+    travelOffhand = gear.shield
+    useTriskelion = CanTravelWithTriskelion(gear, settings)
+    ?useTriskelion
+      strategy = "travel-triskelion"
+      travelWeapon = gear.triskelion
+    // No farming/waiting. Star uses R while Triskelion remains in L.
+    ?TryPassiveStar(gear, settings)
+      ?useTriskelion
+        strategy = "travel-triskelion-star"
+        travelOffhand = gear.starStone
+      :
+        strategy = "travel-star-passive"
+        travelWeapon = gear.starStone
+    gear.ApplyPair(travelWeapon, travelOffhand)
+    return
+  // Any targeted enemy takes the combat path, including ranged/far targets.
+  starUntil = 0
+  ?foe = undamageable
+    strategy = "undamageable-wait"
+    gear.Apply(gear.defaultWand)
+    return
+  ?foe = immune_to_physical & foe = immune_to_ranged
+    strategy = "immunity-conflict-manual"
+    // Manual combat conditions must not leave a travel-only pair equipped.
+    gear.Apply(gear.defaultWand)
+    return
+  ?foe.distance <= settings.meleeEnter
+    melee = true
+  :?foe.distance > settings.meleeExit
+    melee = false
+  var kind
+  kind = "sword"
+  strategy = "melee-shield"
+  ?!melee | foe = boss
+    kind = "wand"
+    strategy = "ranged-shield"
+  ?foe.GetCount(20) >= settings.aoeThreshold
+    kind = "wand"
+    strategy = "crowd-wand-shield"
+  ?foe = immune_to_ranged
+    kind = "sword"
+    strategy = "ranged-immune-melee"
+  ?foe = immune_to_physical
+    kind = "wand"
+    strategy = "physical-immune-magic"
+  ?kind = "sword" & foe.armor > 0
+    kind = "hammer"
+    strategy = "armor-hammer-shield"
+  var weapon
+  weapon = gear.Weapon(kind, WeakElement())
+  ?hp < maxhp * settings.healingHpRatio & kind ! "wand"
+    ?!string.Equals(gear.healingSword, "")
+      weapon = gear.healingSword
+      strategy = "healing-sword-shield"
+  ?string.Equals(weapon, "")
+    // Fallback within the required damage mode; never bypass immunity rules.
+    ?kind = "hammer"
+      weapon = gear.defaultSword
+    ?string.Equals(weapon, "")
+      strategy = "missing-weapon-manual"
+  gear.Apply(weapon)

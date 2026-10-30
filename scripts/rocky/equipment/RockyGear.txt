@@ -1,0 +1,205 @@
+// Strict preferred availability: never label a generic fallback as an element.
+var swords = []
+var wands = []
+var hammers = []
+var elements = ["poison", "vigor", "aether", "fire", "ice"]
+var order = [3, 4, 1, 2, 0]
+var physicalSword = ""
+var healingSword = ""
+var bearerRecoverySword = ""
+var mindStone = ""
+var recoverySwordL = ""
+var recoverySwordR = ""
+var recoveryCount = 0
+var distinctRecoveryPair = false
+var recoveryPairStatus = "not prepared"
+var offhandKind = "shield"
+var pickedElement = -1
+var pickedKind = ""
+var usedFallback = false
+var missingPreferred = ""
+var shield = ""
+var shieldStatus = "not prepared"
+
+func Available(selector)
+  ?!string.Equals(selector, "")
+    // Reject ambiguity instead of silently picking a possibly different variant.
+    ?item.GetCount(selector) = 1
+      return selector
+  return ""
+
+func PrepareRecovery(rockyConfig)
+  var selectorA
+  var selectorB
+  var countA
+  var countB
+  var overlap
+  recoverySwordL = ""
+  recoverySwordR = ""
+  distinctRecoveryPair = false
+  recoveryPairStatus = "no qualifying Vigor"
+  recoveryCount = item.GetCount(rockyConfig.bearerRecoverySword)
+  selectorA = rockyConfig.bearerRecoverySword
+  selectorB = rockyConfig.bearerRecoverySword
+  ?!string.Equals(rockyConfig.vigorRecoveryNameA, "")
+    selectorA = selectorA + " " + rockyConfig.vigorRecoveryNameA
+  ?!string.Equals(rockyConfig.vigorRecoveryNameB, "")
+    selectorB = selectorB + " " + rockyConfig.vigorRecoveryNameB
+  countA = item.GetCount(selectorA)
+  countB = item.GetCount(selectorB)
+  ?countA > 0
+    recoverySwordL = selectorA
+  :?countB > 0
+    recoverySwordL = selectorB
+  ?!string.Equals(recoverySwordL, "")
+    recoveryPairStatus = "single Vigor; dual-copy behavior unverified"
+  ?!rockyConfig.dualVigorVerified
+    return
+  ?string.Equals(selectorA, selectorB)
+    ?countA >= 2
+      distinctRecoveryPair = true
+      recoverySwordR = selectorB
+      recoveryPairStatus = "owner-verified identical-copy allocation"
+  :
+    // AND-combined filters detect overlapping matches; no save IDs or indices.
+    overlap = item.GetCount(selectorA + " " + selectorB)
+    ?countA = 1 & countB = 1 & overlap = 0
+      distinctRecoveryPair = true
+      recoverySwordR = selectorB
+      recoveryPairStatus = "owner-verified disjoint native criteria"
+    :
+      recoveryPairStatus = "single fallback; ambiguous/overlapping criteria"
+
+func Prepare(settings, rockyConfig)
+  swords.Clear()
+  wands.Clear()
+  hammers.Clear()
+  missingPreferred = ""
+  shield = ""
+  shieldStatus = "FastGenShl disabled; Towering family fallback"
+  ?rockyConfig.fastGenShieldConfirmed
+    shield = Available(rockyConfig.preferredShield)
+    ?!string.Equals(shield, "")
+      shieldStatus = "FastGenShl nickname; one native match"
+    :
+      shieldStatus = "FastGenShl missing/ambiguous; Towering family fallback"
+  ?string.Equals(shield, "")
+    shield = Available(rockyConfig.fallbackShield)
+  ?string.Equals(shield, "")
+    shieldStatus = "STOP: missing/ambiguous fallback shield"
+  for i = 0..4
+    swords.Add(Available(rockyConfig.swords[i]))
+    wands.Add(Available(rockyConfig.wands[i]))
+    hammers.Add(Available(rockyConfig.hammers[i]))
+    ?string.Equals(swords[i], "")
+      missingPreferred = missingPreferred + " S:" + elements[i]
+    ?string.Equals(wands[i], "")
+      missingPreferred = missingPreferred + " W:" + elements[i]
+    ?string.Equals(hammers[i], "")
+      missingPreferred = missingPreferred + " H:" + elements[i]
+  physicalSword = Available(rockyConfig.physicalSword)
+  healingSword = Available(settings.healingSword)
+  mindStone = Available(rockyConfig.mindStone)
+  ?string.Equals(mindStone, "")
+    missingPreferred = missingPreferred + " mind"
+  PrepareRecovery(rockyConfig)
+  bearerRecoverySword = Available(rockyConfig.bearerRecoverySword)
+  ?string.Equals(bearerRecoverySword, "")
+    missingPreferred = missingPreferred + " recovery-vigor"
+  ?string.Equals(physicalSword, "")
+    missingPreferred = missingPreferred + " physical"
+  ?string.Equals(missingPreferred, "")
+    missingPreferred = "none"
+
+func FromChoices(choices, preferred, blocked)
+  ?preferred >= 0 & preferred < 5
+    ?!blocked[preferred] & !string.Equals(choices[preferred], "")
+      pickedElement = preferred
+      return choices[preferred]
+  for n = 0..4
+    var index
+    index = order[n]
+    ?!blocked[index] & !string.Equals(choices[index], "")
+      pickedElement = index
+      return choices[index]
+  return ""
+
+func Pick(kind, preferred, blocked, physicalOnly)
+  pickedElement = -1
+  pickedKind = kind
+  usedFallback = false
+  ?physicalOnly
+    pickedKind = "physical-sword"
+    return physicalSword
+  var choices
+  var result
+  choices = swords
+  ?kind = "wand"
+    choices = wands
+  :?kind = "hammer"
+    choices = hammers
+  result = FromChoices(choices, preferred, blocked)
+  ?!string.Equals(result, "")
+    return result
+  usedFallback = true
+  ?kind = "hammer"
+    result = FromChoices(swords, preferred, blocked)
+    ?!string.Equals(result, "")
+      pickedKind = "sword"
+      return result
+  ?kind ! "wand"
+    pickedKind = "physical-sword"
+    return physicalSword
+  return ""
+
+// Pair-conflict guard, NOT an item-instance identity API.
+func SameWeapon(a, b)
+  ?distinctRecoveryPair
+    ?(string.Equals(a, recoverySwordL) & string.Equals(b, recoverySwordR)) | (string.Equals(a, recoverySwordR) & string.Equals(b, recoverySwordL))
+      return false
+  ?string.Equals(a, b)
+    return true
+  // Explicit substring API also works at direct synthetic-test boundaries.
+  ?string.IndexOf(a, "vigor sword") >= 0 & string.IndexOf(b, "vigor sword") >= 0
+    return true
+  return false
+
+func SecondChoice(choices, weaponL, blocked, preferred)
+  ?preferred >= 0
+    ?!blocked[preferred] & !string.Equals(choices[preferred], "") & !SameWeapon(choices[preferred], weaponL)
+      return choices[preferred]
+  for n = 0..4
+    var i
+    i = order[n]
+    ?!blocked[i] & !string.Equals(choices[i], "") & !SameWeapon(choices[i], weaponL)
+      return choices[i]
+  return ""
+
+func Offhand(kind, weaponL, blocked)
+  var result
+  result = ""
+  offhandKind = kind
+  ?kind = "wand"
+    result = SecondChoice(wands, weaponL, blocked, -1)
+  :?kind = "hammer"
+    result = SecondChoice(hammers, weaponL, blocked, 1)
+  :
+    offhandKind = "sword"
+    ?!string.Equals(physicalSword, "") & !SameWeapon(physicalSword, weaponL)
+      result = physicalSword
+    :
+      result = SecondChoice(swords, weaponL, blocked, -1)
+  ?string.Equals(result, "")
+    offhandKind = "shield"
+    result = shield
+  return result
+
+// Spare validated short swords only; never steal an item from the other hand.
+func CancelDummy(weaponL, weaponR, otherDummy, blocked)
+  ?!string.Equals(physicalSword, "") & !SameWeapon(physicalSword, weaponL) & !SameWeapon(physicalSword, weaponR) & !SameWeapon(physicalSword, otherDummy)
+    return physicalSword
+  for n = 0..4
+    ?!blocked[n] & !string.Equals(swords[n], "")
+      ?!SameWeapon(swords[n], weaponL) & !SameWeapon(swords[n], weaponR) & !SameWeapon(swords[n], otherDummy)
+        return swords[n]
+  return ""

@@ -1,0 +1,86 @@
+// Original bounded AAC: community state-3 recovery plus observed target loss.
+// This is not native hit attribution or proof of throughput improvement.
+var lastLeft = ""
+var lastRight = ""
+var lastFoe = ""
+var lastHp = 0
+var lastArmor = 0
+var leftState = -1
+var rightState = -1
+var leftId = ""
+var rightId = ""
+var lastFrame = -1
+var status = "idle"
+var cancelsL = 0
+var cancelsR = 0
+var lossSamples = 0
+var observedLoss = 0
+var startedAt = -1
+
+func ResetCycle()
+  lastLeft = ""
+  lastRight = ""
+  lastFoe = ""
+  leftState = -1
+  rightState = -1
+  leftId = ""
+  rightId = ""
+  lastFrame = -1
+  status = "protected/reset"
+
+func Reset()
+  ResetCycle()
+  cancelsL = 0
+  cancelsR = 0
+  lossSamples = 0
+  observedLoss = 0
+  startedAt = -1
+
+func Apply(gear, weaponL, weaponR, dummyLeft, dummyRight, allowAAC)
+  var samePair
+  var damageSeen
+  var cancelLeft
+  var cancelRight
+  samePair = string.Equals(lastLeft, weaponL) & string.Equals(lastRight, weaponR) & string.Equals(lastFoe, foe.id) & totaltime = lastFrame + 1
+  damageSeen = samePair & (foe.hp < lastHp | foe.armor < lastArmor)
+  cancelLeft = false
+  cancelRight = false
+  status = "normal"
+  ?startedAt < 0
+    startedAt = totaltime
+  ?damageSeen
+    lossSamples = lossSamples + 1
+    ?foe.hp < lastHp
+      observedLoss = observedLoss + lastHp - foe.hp
+    ?foe.armor < lastArmor
+      observedLoss = observedLoss + lastArmor - foe.armor
+  ?allowAAC & damageSeen
+    // Only post-hit edges on a stable, actual short-sword identity.
+    ?item.left.state = 3 & leftState ! 3 & string.Equals(leftId, item.left.id)
+      ?item.left.id = "sword" & item.left.id ! "big" & item.left.id ! "long" & !string.Equals(dummyLeft, "")
+        cancelLeft = true
+    ?item.right.state = 3 & rightState ! 3 & string.Equals(rightId, item.right.id)
+      ?item.right.id = "sword" & item.right.id ! "big" & item.right.id ! "long" & !string.Equals(dummyRight, "")
+        cancelRight = true
+  lastLeft = weaponL
+  lastRight = weaponR
+  lastFoe = foe.id
+  lastHp = foe.hp
+  lastArmor = foe.armor
+  leftState = item.left.state
+  rightState = item.right.state
+  leftId = item.left.id
+  rightId = item.right.id
+  lastFrame = totaltime
+  ?cancelLeft
+    equipL @dummyLeft@
+    cancelsL = cancelsL + 1
+    status = "cancel-L"
+  ?cancelRight
+    equipR @dummyRight@
+    cancelsR = cancelsR + 1
+    status = "cancel-R"
+  ?cancelLeft & cancelRight
+    status = "cancel-LR"
+  // Restore the current policy pair in this same frame, not a stale saved pair.
+  gear.ApplyPair(weaponL, weaponR)

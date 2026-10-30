@@ -1,0 +1,68 @@
+// Candidate automation. Mind Stone: import SpeedRunBasic/main
+// Depends on the preserved SpeedRun/metrics/RunMetrics.txt observer module.
+var config = new SpeedRunBasic/config/Settings
+var gear = new SpeedRunBasic/equipment/Catalog
+var locations = new SpeedRunBasic/locations/Dispatcher
+var combat = new SpeedRunBasic/combat/Generic
+var metrics = new SpeedRun/metrics/RunMetrics
+var initialized = false
+var observedLoops = 0
+
+?loc.begin
+  observedLoops = 0
+  metrics.ResetSession()
+  metrics.Begin("entry", true)
+  gear.Prepare(config)
+  combat.Reset()
+  initialized = true
+:?loc.loop
+  observedLoops++
+  metrics.Begin("loop", true)
+  combat.Reset()
+  ?!initialized
+    gear.Prepare(config)
+  initialized = true
+:?!initialized
+  metrics.Begin("attached", false)
+  gear.Prepare(config)
+  combat.Reset()
+  initialized = true
+
+locations.Update()
+?config.enabled & locations.allowed
+  combat.Tick(gear, config)
+:
+  combat.strategy = "observer-only"
+  gear.ClearRequest()
+
+func DrawTest()
+  var condition
+  condition = "UNTESTED; Tab shows native errors"
+  ?!locations.allowed
+    condition = "unsupported-location; observer-only"
+  :?!config.enabled
+    condition = "automation-disabled"
+  :?gear.missing > 0
+    condition = "STOP: missing core gear"
+  :?combat.strategy = "immunity-conflict-manual"
+    condition = "STOP: immunity conflict"
+  :?combat.strategy = "undamageable-wait"
+    condition = "WAIT: undamageable target"
+  :?!string.Equals(gear.notice, "")
+    condition = gear.notice
+  >`0,0,B2.1-TS @loc.id@ *@loc.stars@ -> @locations.handler@
+  >`0,1,Strategy: @combat.strategy@ (@gear.requestMode@)
+  >`0,2,Want L/2H: @gear.selectedWeapon@
+  >`0,3,Want R: @gear.selectedShield@
+  >`0,4,Have L: @item.left@
+  >`0,5,Have R: @item.right@
+  >`0,6,Missing core: @gear.missingCore@
+  >`0,7,Unavailable S:@gear.unavailableSwords@ W:@gear.unavailableWands@ H:@gear.unavailableHammers@
+  >`0,8,Unavailable base:@gear.unavailableBase@
+  >`0,9,@condition@ Move frames:@player.framesPerMove@
+  >`0,10,@metrics.startKind@ t:@totaltime@ done:@metrics.currentCompletion@ loops:@observedLoops@
+  >`0,11,Last:@metrics.lastCompletion@ count:@metrics.completedCount@
+
+metrics.Observe()
+?config.showDiagnostics
+  DrawTest()

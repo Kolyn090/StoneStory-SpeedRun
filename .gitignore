@@ -216,3 +216,30 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local deployment snapshots and machine-specific artifacts (never source)
+/backups/
+/deployments/
+/artifacts/
+/test-results/
+/.local/
+.vscode/*.local.json
+*.code-workspace
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+.env.*
+!.env.example
+
+data/raw/player_save
+
+photograph/screenshot
+photograph/captures
+photograph/cropped

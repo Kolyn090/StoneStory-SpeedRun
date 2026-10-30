@@ -1,0 +1,147 @@
+// Owns equipment only while a bounded experimental sequence is active.
+// No effect UIDs, effect-active claims, potion consumption or boss timers.
+var options = null
+var mask = ""
+var dash = ""
+var action = "none"
+var actionStage = "idle"
+var status = "disabled"
+var selector = ""
+var ability = ""
+var targetId = ""
+var startedAt = 0
+var activatedAt = -1
+var maskAttempts = 0
+var dashAttempts = 0
+var lastMaskAttempt = -1000000
+var lastDashAttempt = -1000000
+
+func Reset()
+  action = "none"
+  actionStage = "idle"
+  status = "idle"
+  selector = ""
+  ability = ""
+  targetId = ""
+  activatedAt = -1
+  maskAttempts = 0
+  dashAttempts = 0
+  lastMaskAttempt = -1000000
+  lastDashAttempt = -1000000
+
+func Prepare(settings)
+  options = settings
+  mask = ""
+  dash = ""
+  ?options.maskEnabled
+    ?item.GetCount(options.maskSelector) = 1
+      mask = options.maskSelector
+  ?options.dashEnabled
+    ?item.GetCount(options.dashSelector) = 1
+      dash = options.dashSelector
+  // Cache refresh is not a run boundary; main resets budgets with Rocky.Reset.
+
+func Cancel(reason)
+  action = "none"
+  actionStage = "idle"
+  status = reason
+  selector = ""
+  ability = ""
+
+func EquipProtected(gear)
+  gear.selectedWeapon = selector
+  gear.selectedShield = ""
+  gear.requestMode = "protected-experiment"
+  equip @selector@
+
+func Arm(kind, selected, cooldownId)
+  action = kind
+  actionStage = "equipping"
+  selector = selected
+  ability = cooldownId
+  targetId = foe.id
+  startedAt = totaltime
+  activatedAt = -1
+  ?kind = "mask"
+    maskAttempts = maskAttempts + 1
+    lastMaskAttempt = totaltime
+  :
+    dashAttempts = dashAttempts + 1
+    lastDashAttempt = totaltime
+  status = kind + "-armed"
+
+func TryCombat(gear, equipment, recovering, physicalOnly, phase)
+  ?Type(options) ! "object"
+    return false
+  ?!options.maskEnabled & !options.dashEnabled
+    ?action ! "none"
+      Cancel("disabled")
+    return false
+  // No boss phase is eligible. R15 owns transitions, armor, resistance and healing.
+  ?phase ! "scout" | !foe | recovering | physicalOnly | foe.armor > 0
+    Cancel("priority-or-phase")
+    return false
+  ?equipment.pickedKind ! "sword" | equipment.offhandKind ! "sword" | foe = "immune_to_physical" | foe = "immune_to_ranged"
+    Cancel("equipment-or-immunity-constraint")
+    return false
+  ?!ai.enabled | ai.paused | hp < maxhp * options.minHpRatio | foe = "undamageable" | foe.hp <= 0
+    Cancel("unsafe-or-healing")
+    return false
+  ?options.equipTimeoutFrames < 1 | options.equipTimeoutFrames > 30 | options.postActivationHoldFrames < 1 | options.postActivationHoldFrames > 30
+    Cancel("invalid-bounds")
+    return false
+  ?!string.Equals(action, "none")
+    ?!string.Equals(targetId, foe.id) | totaltime < startedAt
+      Cancel("target-changed")
+      return false
+    ?action = "dash"
+      ?!options.dashEnabled | !ai.walking | foe.distance <= options.dashMinDistance | foe.distance > options.dashMaxDistance
+        Cancel("dash-ineligible")
+        return false
+    :
+      ?!options.maskEnabled | foe.distance > options.maskMaxDistance | foe.hp < options.maskMinEnemyHp
+        Cancel("mask-ineligible")
+        return false
+    ?actionStage = "holding"
+      ?totaltime - activatedAt >= options.postActivationHoldFrames
+        Cancel("restored-recompute-current-loadout")
+        return false
+      EquipProtected(gear)
+      status = action + "-holding"
+      return true
+    ?totaltime - startedAt >= options.equipTimeoutFrames
+      Cancel("unavailable-timeout")
+      return false
+    ?!item.CanActivate() | item.GetCooldown(ability) > 0
+      Cancel("unavailable-cooldown-or-global")
+      return false
+    EquipProtected(gear)
+    // Require a later frame and the correct live right-hand item before activate R.
+    ?totaltime > startedAt & item.CanActivate(ability)
+      ?(action = "mask" & item.right = "mask") | (action = "dash" & item.right = "quarterstaff")
+        activate R
+        activatedAt = totaltime
+        actionStage = "holding"
+        status = action + "-triggered-unconfirmed"
+    return true
+  ?!item.CanActivate()
+    status = "unavailable-global"
+    return false
+  ?options.maskEnabled & foe.distance <= options.maskMaxDistance & foe.hp >= options.maskMinEnemyHp
+    ?options.maskMaxAttempts >= 1 & options.maskMaxAttempts <= 3 & options.maskRetryFrames >= 600
+      ?maskAttempts < options.maskMaxAttempts & totaltime - lastMaskAttempt >= options.maskRetryFrames
+        ?!string.Equals(mask, "") & item.GetCooldown("mask") <= 0
+          Arm("mask", mask, "mask")
+          EquipProtected(gear)
+          return true
+        status = "mask-unavailable-or-cooldown"
+  ?options.dashEnabled & ai.walking & foe.distance > options.dashMinDistance & foe.distance <= options.dashMaxDistance
+    ?options.dashMinDistance >= 17 & options.dashMaxDistance > options.dashMinDistance & options.dashMaxDistance <= 46
+      ?options.dashMaxAttempts >= 1 & options.dashMaxAttempts <= 3 & options.dashRetryFrames >= 132
+        ?dashAttempts < options.dashMaxAttempts & totaltime - lastDashAttempt >= options.dashRetryFrames
+          ?!string.Equals(dash, "") & item.GetCooldown("quarterstaff") <= 0
+            Arm("dash", dash, "quarterstaff")
+            EquipProtected(gear)
+            return true
+          status = "dash-unavailable-or-cooldown"
+  return false

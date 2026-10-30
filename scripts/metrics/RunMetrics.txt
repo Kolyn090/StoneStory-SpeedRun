@@ -1,0 +1,41 @@
+// Observer only. All functions below are project helpers, not native APIs.
+// No frame-body work: main calls this object's functions explicitly.
+var startFrame = 0
+var startKind = "attached"
+var fullRun = false
+var completionArmed = false
+var currentCompletion = -1
+var lastCompletion = -1
+var completedCount = 0
+
+func ResetSession()
+  lastCompletion = -1
+  completedCount = 0
+
+func Begin(kind, fromBoundary)
+  startFrame = totaltime
+  startKind = kind
+  fullRun = fromBoundary
+  completionArmed = false
+  currentCompletion = -1
+
+func ElapsedFrames()
+  return totaltime - startFrame
+
+func Observe()
+  // Require a zero before accepting a positive completion value.
+  // This avoids counting an old lbtime at a loop boundary.
+  ?fullRun & currentCompletion < 0
+    ?lbtime = 0
+      completionArmed = true
+    :?completionArmed & lbtime > 0
+      currentCompletion = lbtime
+      lastCompletion = currentCompletion
+      completedCount++
+
+func Draw(loops)
+  >`0,1,SpeedRun observer | @startKind@ | loops seen: @loops@
+  >`0,2,Observed interval: @ElapsedFrames()@ frames
+  >`0,3,Location: @time@ | accumulated: @totaltime@
+  >`0,4,Current completion: @currentCompletion@ | last: @lastCompletion@
+  >`0,5,Full completions seen: @completedCount@ | full run: @fullRun@
