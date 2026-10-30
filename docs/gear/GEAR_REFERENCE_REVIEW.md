@@ -1,5 +1,7 @@
 # Gear reference validation and integration review
 
+**Owner correction (2026-10-29): FastGenShl is a Towering Shield nickname, not Compound Shield.** The owner also reports it can be used as an in-game name reference. Earlier Compound-to-0010 identity/probe suggestions in this historical review are superseded; do not use Compound queries to identify FastGenShl. Keep screenshot 0010 and 0065 stat/effect profiles separate. Existing private crosswalk files are preserved historical hypotheses and must not be treated as corrected exact-instance joins. See [current R15 selector policy](../rocky/ROCKY_PLATEAU_15.md).
+
 Reviewed 2026-10-29. Scope: offline reference data only. No CSV corrections, gameplay changes, selector generation, deployment, staging, commits or pushes are part of this review.
 
 ## Result
@@ -52,13 +54,13 @@ Blank numeric counts: damage/DPS/range each 17; armor generation/armor each 44; 
 
 There are nine repeated-name groups: Poison/Vigor/Fire/Ice Crossbows and all five elemental Shields. Three same-name groups also have identical displayed numerical profiles: Fire Crossbow 0020/0021, Ice Crossbow 0022/0023 and Vigor Shield 0038/0039. Their effect lists distinguish them. Never deduplicate by name, stats, family or upgrade string. Matching screenshot IDs must remain distinct until independent evidence proves duplication.
 
-For comparison only, the tool folds `Æther`/`Aether`, `Tailsman`/`Talisman`, and legacy `Quaterstaff` spelling. It proposes `DashStaff` ↔ Quarterstaff, `FastGenShl` ↔ Compound Shield and `BoG` ↔ Blade of the Fallen God as aliases. Custom-name screenshots confirm the custom names and stats, not the underlying base-family identity. These aliases remain hypotheses, even when numerical profiles match. None is a Stonescript selector.
+For comparison only, the tool folds `Æther`/`Aether`, `Tailsman`/`Talisman`, and legacy `Quaterstaff` spelling. It proposes `DashStaff` ↔ Quarterstaff and `BoG` ↔ Blade of the Fallen God as tentative aliases. FastGenShl ↔ Towering Shield is now owner-confirmed base-family information; the previous Compound association is superseded. Custom-name screenshots confirm the custom names and stats, not the underlying base-family identity. DashStaff and BoG remain hypotheses, even when numerical profiles match. The owner-confirmed FastGenShl family still does not identify a unique saved instance. None is a Stonescript selector.
 
 ## Comparison with the legacy tables
 
 ### Base numerical profiles
 
-42/46 offensive rows have at least one same-family candidate matching **damage, DPS and range**. All 20 defensive rows have at least one candidate matching available **armor generation, armor and evade**. A blank new value is excluded from comparison, not treated as a match to legacy zero. These results include the explicit tentative aliases above. They do not compare effects, prove item identity, or certify 42/20 records as correct.
+42/46 offensive rows have at least one same-family candidate matching **damage, DPS and range**. After the owner correction, 19/20 defensive rows have at least one candidate matching available **armor generation, armor and evade**. A blank new value is excluded from comparison, not treated as a match to legacy zero. These results include the explicit tentative aliases above. They do not compare effects, prove item identity, or certify 42/19 records as correct. The legacy Compound Shield row now has no family candidate. FastGenShl matches the Towering family but conflicts numerically with the legacy 14-armor profile; the separate 0065 profile still matches that legacy row. This replaces the earlier 20/20 result based on the incorrect alias.
 
 The four offensive exceptions are:
 
@@ -124,7 +126,7 @@ Evidence base: `photograph/` plus each row's `source_image` (for example `photog
 
 | Screenshot IDs | Confirmed visible content / limits |
 |---|---|
-| 0010, 0011 | Custom displayed names FastGenShl/DashStaff; armor/sec 1.75; armor 35/13.4; stun 1.4s on shield; staff 16/34.29/range 5 and 4.4s mini-dash cooldown. Base item aliases remain inferred |
+| 0010, 0011 | Custom displayed names FastGenShl/DashStaff; armor/sec 1.75; armor 35/13.4; stun 1.4s on shield; staff 16/34.29/range 5 and 4.4s mini-dash cooldown. FastGenShl base family is now owner-confirmed Towering; DashStaff alias remains inferred |
 | 0015, 0016 | Poison variants 80/88.89/75%/x12/+6 with Weaken versus 17/85/33%/x6/+93 without visible Weaken |
 | 0017, 0018 | Vigor variants 80/88.89/75%/x12/+6 with 24% lifesteal versus 17/85/33%/x6/+93 without visible lifesteal |
 | 0019 | Æther Crossbow 17/85/33%/x6/+93 vs Fire; no 34% unmake in visible text |
@@ -194,7 +196,7 @@ Base profiles only. O = offensive damage/DPS/range; D = defensive armor/sec/armo
 
 | Screenshot | Display name | O matching rows | D matching rows | Effect fragments |
 |---|---|---|---|---:|
-| screenshot_0010 | FastGenShl | — | 2 | 2 |
+| screenshot_0010 | FastGenShl | — | — | 2 |
 | screenshot_0011 | DashStaff | 2 | 3 | 3 |
 | screenshot_0015 | Poison Crossbow | 3 | — | 6 |
 | screenshot_0016 | Poison Crossbow | 4 | — | 4 |

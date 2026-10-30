@@ -1,5 +1,7 @@
 # Basic automation coverage
 
+> This matrix describes the generic B2.1 baseline. The separate [Rocky R15 candidate](../rocky/ROCKY_PLATEAU_15.md) exists but is uncommitted, undeployed and not game-verified; it does not change any completion cell below.
+
 2026-10-29: implementation candidate only. **No location or difficulty has a verified automated completion.** A named dispatch route is not a support claim. The original observer's loading test does not validate this new entry point.
 
 ## Scope and sources
@@ -8,7 +10,7 @@ The initial scope is the eight main locations named in the official manual's loc
 
 ## Matrix
 
-Each named route is implemented in `scripts/basic/locations/Dispatcher.txt` and invokes the same `combat/Generic.txt` policy through the entry point. No dedicated boss scripts are implemented. All difficulties use the same candidate logic, with no tested difficulty range.
+Each named route is implemented in `scripts/basic/locations/Dispatcher.txt` and invokes the same `combat/Generic.txt` policy through the entry point. This baseline matrix excludes the separate R15 boss specialization. All difficulties use the same candidate logic, with no tested difficulty range.
 
 | Location / route | Implementation | Automated completion tests | Difficulties verified | Specialized logic to investigate if generic fails |
 |---|---|---|---|---|

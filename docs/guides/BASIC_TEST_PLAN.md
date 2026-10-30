@@ -1,18 +1,12 @@
-# B2 testing and stabilization
+# B2.1-TS baseline testing
 
-Current revision: **B2.1-TS**. Follow [TRISKELION_TRAVEL.md](TRISKELION_TRAVEL.md) for movement, stable slots, ranged threat/first-attack transitions, benchmark toggles and the movement-frame diagnostic. All older header/slot descriptions below are historical. No completion status changes from this source/deployment milestone.
-
-Current revision: **B2.1-PS**. First follow [PASSIVE_STAR_STONE.md](PASSIVE_STAR_STONE.md): Star Stone is allowed only in safe ordinary travel with nearby targeted pickups, with bounded duration and a benchmark off switch. Expect no shovel or harvest strategy. The B2.1-NR description below is historical; all existing completion statuses remain unchanged.
-
-Current revision: **B2.1-NR**. Optional harvesting is removed; preserve mandatory passage/interactions. Follow [RESOURCE_POLICY.md](RESOURCE_POLICY.md) for this change's tests. Historical B2 expectations are superseded where noted below; no prior completion status changes.
-
-Status: prepared for owner testing; **all eight location completion tests remain NOT RUN**. No advanced boss logic or AAC is introduced. The original observer and all prior backups are preserved. B2 uses the existing five modules and the unchanged original metrics dependency.
+This procedure tests the installed generic `SpeedRunBasic/main` baseline, not R15. All eight location-completion results remain NOT RUN. Use [R15's short checklist](../rocky/ROCKY_PLATEAU_15.md#short-in-game-checklist--after-authorized-installation) for the separate candidate after deployment authorization. Old B2/NR/PS introductions are preserved in [revision history](../archive/BASELINE_REVISION_NOTES.md).
 
 ## Deployment and minimal settings
 
-Both live `SpeedRunBasic` roots must contain identical copies of `main.txt`, `config/Settings.txt`, `equipment/Catalog.txt`, `locations/Dispatcher.txt`, and `combat/Generic.txt`. Each root must also contain the existing `SpeedRun/metrics/RunMetrics.txt` dependency. The deployment verification record is [DEPLOYMENT_BASIC_B2_20261029.md](DEPLOYMENT_BASIC_B2_20261029.md).
+Both live `SpeedRunBasic` roots must contain identical copies of `main.txt`, `config/Settings.txt`, `equipment/Catalog.txt`, `locations/Dispatcher.txt`, and `combat/Generic.txt`. Each root must also contain the existing `SpeedRun/metrics/RunMetrics.txt` dependency. The deployment verification record is [DEPLOYMENT_BASIC_B2_20261029.md](../archive/DEPLOYMENT_BASIC_B2_20261029.md).
 
-Settings: `enabled = true`, `showDiagnostics = true`, `usePotion = false`; other combat thresholds are unchanged. No harvesting setting, automated brewing, resource refill, file logging, exception interception, or permanent storage is introduced. The `B2.1-NR` overlay header identifies this policy revision.
+Settings: `enabled = true`, `showDiagnostics = true`, `usePotion = false`; other combat thresholds are unchanged. No harvesting setting, automated brewing, resource refill, file logging, exception interception, or permanent storage is introduced. The `B2.1-TS` overlay header identifies the installed baseline.
 
 Inventory audits run on initialization/fresh manual entry only. Their cached results are not refreshed after inventory changes until the next manual restart. Each visible frame prints a fixed twelve lines; with diagnostics off no diagnostic strings are built or rendered. No added per-frame inventory search or history array exists. Actual processing overhead is unmeasured.
 
@@ -20,7 +14,7 @@ Inventory audits run on initialization/fresh manual entry only. Their cached res
 
 | Display | Meaning / action |
 |---|---|
-| `B2 location *difficulty -> handler` | Actual `loc.id`, numeric difficulty, selected named route; report mismatches |
+| `B2.1-TS location *difficulty -> handler` | Actual `loc.id`, numeric difficulty, selected named route; report mismatches |
 | Strategy / request mode | Decision currently taken; `none` means no equipment commands this frame. Current generic policy uses one-handed combat/travel requests; no harvest strategy |
 | Want L/2H and Want R | Current-frame selectors, not guaranteed exact inventory items. No optional shovel request should appear |
 | Have L / Have R | Native equipped-item descriptions. A blank left hand can be normal for two-handed gear |

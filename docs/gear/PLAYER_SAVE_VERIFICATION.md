@@ -1,5 +1,7 @@
 # Private player save verification
 
+> Dated evidence report of the initial offline export, not a current directory listing or game-load certification. Use [the importer workflow](PRIVATE_INVENTORY_IMPORT.md) for regeneration; private original/derived data stays unchanged.
+
 Inspection date: 2026-10-29. Scope: local, read-only structural and inventory analysis. No raw save upload, game import, active-save edit, selector generation, combat change, or deployment was performed. This report contains schema names, sanitized aggregates and generic item-type examples, not player names, account identifiers, custom tag text, random seeds, or embedded scripts.
 
 ## Input and privacy

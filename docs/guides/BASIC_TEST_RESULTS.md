@@ -1,5 +1,7 @@
 # Owner-reported basic automation results
 
+> Scope: preserved B2/B2.1 baseline evidence. B2.1-TS is the live baseline; old trial rows remain unchanged. R15 results belong to the [separate ledger](../rocky/ROCKY_PLATEAU_TEST_RESULTS.md). No completion is promoted by documentation work.
+
 Diagnostic revision: B2. Created 2026-10-29. **No basic-automation in-game completion has been reported.** Original observer loading/display verification remains separate (DEP-01 in OBSERVER_ACCEPTANCE.md).
 
 Current correction candidate: B2.1. B2's equipment-module load failure is recorded below; no corrected-version completion or switching pass has been reported.

@@ -1,6 +1,8 @@
 # Rocky Plateau source research and integration plan
 
-Implementation follow-up (2026-10-29): a separate, uninstalled **Rocky R1** candidate now exists under `scripts/rocky/`. It implements encounter/phase ownership, transition-gap holding, strict cached elemental selection, armor/adaptive handling and diagnostics. Shared B2.1-TS is unchanged. No community numeric timings, timed dodges, AAC or movement abilities are integrated. See [candidate/installation limits](ROCKY_PLATEAU_CANDIDATE.md) and [pending game-test records](ROCKY_PLATEAU_TEST_RESULTS.md). Preparation left all work, including this previously untracked report, unstaged and uncommitted. The owner subsequently authorized local commits for review; deployment remains unauthorized. The original research-only scope below is historical.
+> Research/source evidence, not current deployment instructions. R1 implementation notes below are historical; the authoritative current candidate is [R15](ROCKY_PLATEAU_15.md). Community techniques and old timing constants remain unverified for this game installation.
+
+Implementation follow-up (2026-10-29): a separate, uninstalled **Rocky R1** candidate now exists under `scripts/rocky/`. It implements encounter/phase ownership, transition-gap holding, strict cached elemental selection, armor/adaptive handling and diagnostics. Shared B2.1-TS is unchanged. No community numeric timings, timed dodges, AAC or movement abilities are integrated. See [candidate/installation limits](../archive/ROCKY_PLATEAU_CANDIDATE.md) and [pending game-test records](ROCKY_PLATEAU_TEST_RESULTS.md). Preparation left all work, including this previously untracked report, unstaged and uncommitted. The owner subsequently authorized local commits for review; deployment remains unauthorized. The original research-only scope below is historical.
 
 Reviewed 2026-10-29. Target: game/manual **4.35.2**. Scope: research and design only; no gameplay, deployment, importer, selector-validator or private-inventory changes. Current baseline is B2.1-TS, repository revision `19332d7`; its installed copies are preserved. Loading of the original observer is user-confirmed, but recent automation, selectors, movement, phase handling and timing correctness do not inherit that confirmation.
 
@@ -122,7 +124,7 @@ Mind Stone/backflip, shield approach and quarterstaff jump are not interchangeab
 
 ## Personal equipment feasibility, without promoting selectors
 
-The private normalized snapshot was read locally, without modifying it or uploading contents. All statements below are sanitized record-family observations; source pointers, signatures, custom names and account data remain private. See [selector validation status](EQUIPMENT_SELECTOR_VALIDATION.md) and [inventory import semantics](PRIVATE_INVENTORY_IMPORT.md).
+The private normalized snapshot was read locally, without modifying it or uploading contents. All statements below are sanitized record-family observations; source pointers, signatures, custom names and account data remain private. See [selector validation status](../gear/EQUIPMENT_SELECTOR_VALIDATION.md) and [inventory import semantics](../gear/PRIVATE_INVENTORY_IMPORT.md).
 
 | Relevant family observed | Local records | What this enables investigating / what is not established |
 |---|---|---|

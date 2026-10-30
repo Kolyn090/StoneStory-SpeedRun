@@ -1,5 +1,9 @@
 # Rocky R1 candidate: not installed / not game verified
 
+> Historical record. Preserved behavior, timings, test counts and commands describe that development stage. This is not a current deployment or implementation guide. Start at the [documentation index](../README.md) and [current R15 guide](../rocky/ROCKY_PLATEAU_15.md).
+
+**Current source is the later [Rocky R15 candidate](../rocky/ROCKY_PLATEAU_15.md), prepared but not deployed.** The R1 behavior/bundle details below are historical. Do not use the older hard-coded R1 digest for the ★15 candidate; use the R15 review guide and current manifest. Shared deployments remain unchanged.
+
 2026-10-29. Objective: reliable Rocky Plateau completion before tuning speed or other locations. This milestone prepares a separate `SpeedRunRocky/main` entry point. **No candidate has been installed into the game.** Preparation originally remained unstaged/uncommitted; the owner subsequently authorized local commits for review. Deployment still requires separate explicit authorization; nothing is pushed. The existing B2.1-TS and original observer remain unchanged. The pre-existing uncommitted research report is retained and extended.
 
 ## Files and architecture
@@ -51,7 +55,7 @@ An adaptive-looking token with unknown representation triggers physical fallback
 
 No hardcoded numeric boss-state schedule, timed dodge, AAC, Moondial cycling, quarterstaff/dash trick, summons, Mask/Bardiche/hammer activation or complex potion strategy. These require separate calibration. In particular, **reliable phase-3 survival is not established**; this shielded equipment candidate may still die or be stunned by attacks requiring avoidance. It is not an all-difficulty completion claim. A failure there should drive a narrowly tested defensive follow-up, not guessed source timers.
 
-Community sources are the pinned original research references: [Rocky research](ROCKY_PLATEAU_RESEARCH.md), [asHOH Rocky](https://github.com/asHOH/Stonescript-for-Stone-Story-RPG/blob/856875b08c7e27247efe4aeb2bbc697d1595091a/00_rocky_plateau.txt), [Scribble phase/effect logic](https://github.com/livercat/scribble/blob/53ad8f0712d8373f999f97a22fcde0ff2f6b049f/scribble.dev.txt). This is a separately written implementation, not copied source; no upstream code or numeric timing constants are vendored. Native APIs were checked against the [official manual](https://stonestoryrpg.com/stonescript/manual.html). Community element preferences, UID spellings and exact current phase identities still require game observation.
+Community sources are the pinned original research references: [Rocky research](../rocky/ROCKY_PLATEAU_RESEARCH.md), [asHOH Rocky](https://github.com/asHOH/Stonescript-for-Stone-Story-RPG/blob/856875b08c7e27247efe4aeb2bbc697d1595091a/00_rocky_plateau.txt), [Scribble phase/effect logic](https://github.com/livercat/scribble/blob/53ad8f0712d8373f999f97a22fcde0ff2f6b049f/scribble.dev.txt). This is a separately written implementation, not copied source; no upstream code or numeric timing constants are vendored. Native APIs were checked against the [official manual](https://stonestoryrpg.com/stonescript/manual.html). Community element preferences, UID spellings and exact current phase identities still require game observation.
 
 ## Checks and offline bundle
 
@@ -65,7 +69,7 @@ python -B tools/prepare_rocky_candidate.py --prepare
 
 The packager creates `artifacts/rocky-r1/<manifest-digest>/SpeedRunRocky/` plus `manifest.json`. Artifacts are Git-ignored. The digest derives from all four candidate files and six shared/baseline files. Only the four candidate modules are packaged for future copying; shared files must already match the manifest. Identical builds are no-op; differing/incomplete existing bundles are rejected, never overwritten. The tool never discovers game roots, reads saves, deploys files or runs staging/commit commands.
 
-The test-only evaluator runs actual candidate function source against synthetic state. It models only the syntax subset used here; it cannot prove game parsing, real native searches, physical effects, frame scheduling, true variable lifetime or location reset behavior. These are **source-policy/static tests**, not in-game execution. Main dispatch, imports, reset guards and forbidden timer/equipment operations also have source checks. Use [ROCKY_PLATEAU_TEST_RESULTS.md](ROCKY_PLATEAU_TEST_RESULTS.md) for real results.
+The test-only evaluator runs actual candidate function source against synthetic state. It models only the syntax subset used here; it cannot prove game parsing, real native searches, physical effects, frame scheduling, true variable lifetime or location reset behavior. These are **source-policy/static tests**, not in-game execution. Main dispatch, imports, reset guards and forbidden timer/equipment operations also have source checks. Use [ROCKY_PLATEAU_TEST_RESULTS.md](../rocky/ROCKY_PLATEAU_TEST_RESULTS.md) for real results.
 
 Final checks: **46 tests passed** (30 existing regressions and 16 candidate policy/source/bundle tests); the shared basic static checker and new source/import checks pass. No native interpreter or in-game execution was performed. Final prepared bundle: `artifacts/rocky-r1/34a7246830dcccb753b6972db488ec800d2b48a1f0ce125242aaa34dbdf53758/`. Its four candidate files match source; dependency hashes identify the unchanged B2.1-TS/observer baseline. Earlier immutable preparation output is retained but is not the finalized candidate. All game cases remain NOT RUN.
 

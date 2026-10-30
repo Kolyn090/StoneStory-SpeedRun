@@ -16,7 +16,7 @@ Preserve interactions and tool use genuinely required to progress (for example a
 
 ## Performance objective
 
-Current priority: broad basic automation coverage, correctness, and reliability before advanced speed optimization. Long term, minimize Stone Story RPG completion time while maintaining an explicitly agreed reliability target. Optimize measured in-game results, with maintainable code that supports continued tuning.
+Current priority: reliable Rocky Plateau ★15 through the separate R15 candidate before other-stage expansion or advanced speed optimization. Long term, minimize Stone Story RPG completion time while maintaining an explicitly agreed reliability target. Optimize measured in-game results, with maintainable code that supports continued tuning.
 
 ## Required research
 
@@ -46,8 +46,12 @@ Current priority: broad basic automation coverage, correctness, and reliability 
 
 ## Current scope
 
-The original observer is in `scripts/main.txt` and `scripts/metrics/RunMetrics.txt`; read `docs/INSTALLATION.md`. Its loading/import execution and visible diagnostics are user-verified (2026-10-29); lifecycle, timing, completion and loops remain unverified. Keep it available for rollback.
+Read [the documentation index](docs/README.md) first, then the knowledge base and roadmap above. [Architecture](docs/ARCHITECTURE.md) describes implemented modules. Historical documents are evidence, not current deployment or authorization instructions.
 
-The authorized basic automation candidate is separate in `scripts/basic/`, deployed as `SpeedRunBasic`, reusing the original metrics module. Read `docs/BASIC_AUTOMATION.md` and `docs/LOCATION_COVERAGE.md`. Named routes do not prove completion support; all new combat and location/difficulty results remain untested. Use only one entry point in Mind Stone. Back up working files before deployment and preserve unrelated scripts and gear CSVs. Add boss specialization only in response to evidence that generic behavior is inadequate; advanced speed optimizations are deferred.
+**B2.1-TS is the existing live baseline. R15 is implemented but uncommitted, undeployed, and not yet verified in-game.** The [R15 guide](docs/rocky/ROCKY_PLATEAU_15.md) owns candidate equipment, fallback, bundle and future activation; the [R15 ledger](docs/rocky/ROCKY_PLATEAU_TEST_RESULTS.md) owns actual test outcomes. R1 is historical. Do not combine their behavior or treat static passes as native execution/completion.
 
-Active phase: B2 testing/stabilization. Read `docs/BASIC_TEST_PLAN.md` and record owner reports in `docs/BASIC_TEST_RESULTS.md`. Begin with Rocky Plateau and fix shared defects first. Do not mark a location/difficulty successfully automated without explicit owner confirmation of an actual unassisted completion; keep assisted outcomes separate. Preserve every historical backup and the original observer. No advanced boss strategies or AAC in this phase.
+Keep the original observer and live B2.1 deployments intact. The observer's loading/display is owner-verified; resets, timing, captures and loops remain pending in [observer acceptance](docs/guides/OBSERVER_ACCEPTANCE.md). The isolated selector diagnostic is deployed count-only, with no confirmed native execution; its [guide](docs/gear/EQUIPMENT_SELECTOR_VALIDATION.md) is separate from automation.
+
+Use [the current crosswalk](docs/rocky/ROCKY_EQUIPMENT_CROSSWALK.md) for owner-confirmed FastGenShl identity and [gear review](docs/gear/GEAR_REFERENCE_REVIEW.md) for screenshot evidence. Preserve private exports, derived/probe outputs, CSVs and all backups. Verify only selectors needed for a real combat decision; do not start another broad campaign.
+
+Current authorization must explicitly permit deployment, staging, commits or pushes before taking those actions. Preserve all existing uncommitted R15 work. Only owner-confirmed actual unassisted completion can establish a supported difficulty. No new Heavy Hammer sequence, active ability, advanced boss timing or AAC is implied by organization or historical plans.

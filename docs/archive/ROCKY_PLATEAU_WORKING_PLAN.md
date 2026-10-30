@@ -1,5 +1,9 @@
 # Rocky Plateau working plan
 
+> Historical record. Preserved behavior, timings, test counts and commands describe that development stage. This is not a current deployment or implementation guide. Start at the [documentation index](../README.md) and [current R15 guide](../rocky/ROCKY_PLATEAU_15.md).
+
+**Owner correction (2026-10-29): FastGenShl is a Towering Shield nickname, not Compound Shield.** The owner also reports it can be used as an in-game name reference. Earlier Compound-to-0010 identity/probe suggestions in this historical review are superseded; do not use Compound queries to identify FastGenShl. Keep screenshot 0010 and 0065 stat/effect profiles separate. Existing private crosswalk files are preserved historical hypotheses and must not be treated as corrected exact-instance joins. See [current R15 selector policy](../rocky/ROCKY_PLATEAU_15.md).
+
 Prepared 2026-10-29. **Planning only.** This document proposes later work; it authorizes no implementation, deployment, selector changes or Git operations. Existing scripts, equipment CSVs, private inputs, validator and deployments remain unchanged.
 
 ## 1. Executive summary

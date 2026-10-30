@@ -1,5 +1,7 @@
 # B2 diagnostic update deployment record
 
+> Historical record. Preserved behavior, timings, test counts and commands describe that development stage. This is not a current deployment or implementation guide. Start at the [documentation index](../README.md) and [current R15 guide](../rocky/ROCKY_PLATEAU_15.md).
+
 Date: 2026-10-29. Scope: shared diagnostic stabilization only. No advanced boss behavior or AAC. Native parser execution, new-import success, location completions and measurement accuracy are unverified pending owner tests.
 
 ## Preservation and backups
@@ -33,4 +35,4 @@ Both roots contain the same five source modules: main, config/Settings, equipmen
 
 Source static lint and B2 contract checks pass. Both deployment roots have matching imports/files; original observer, historical backup, and inventory hashes are checked for preservation. No location's NOT RUN status changes from these checks.
 
-Use the existing `import SpeedRunBasic/main`, start a fresh Rocky Plateau run, and look for the `B2` header. Follow [BASIC_TEST_PLAN.md](BASIC_TEST_PLAN.md); record actual results in [BASIC_TEST_RESULTS.md](BASIC_TEST_RESULTS.md). Roll back to the unchanged observer with `import SpeedRun/main`. Do not restore full game saves.
+Use the existing `import SpeedRunBasic/main`, start a fresh Rocky Plateau run, and look for the `B2` header. Follow [BASIC_TEST_PLAN.md](../guides/BASIC_TEST_PLAN.md); record actual results in [BASIC_TEST_RESULTS.md](../guides/BASIC_TEST_RESULTS.md). Roll back to the unchanged observer with `import SpeedRun/main`. Do not restore full game saves.

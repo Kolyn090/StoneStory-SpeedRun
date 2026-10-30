@@ -1,5 +1,7 @@
 # Rocky R1 acceptance and results
 
+> Historical record. Preserved behavior, timings, test counts and commands describe that development stage. This is not a current deployment or implementation guide. Start at the [documentation index](../README.md) and [current R15 guide](../rocky/ROCKY_PLATEAU_15.md).
+
 Status 2026-10-29: candidate prepared only; **NOT INSTALLED / ALL GAME TESTS NOT RUN**. No Rocky difficulty is completion-confirmed. Static/model checks are not acceptance results. See [candidate instructions](ROCKY_PLATEAU_CANDIDATE.md).
 
 | Case | Expected observation | Result |

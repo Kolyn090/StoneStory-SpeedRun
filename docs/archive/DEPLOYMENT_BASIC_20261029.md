@@ -1,5 +1,7 @@
 # Basic candidate deployment record
 
+> Historical record. Preserved behavior, timings, test counts and commands describe that development stage. This is not a current deployment or implementation guide. Start at the [documentation index](../README.md) and [current R15 guide](../rocky/ROCKY_PLATEAU_15.md).
+
 Date: 2026-10-29. File installation and hash verification only; no game execution of this candidate was performed.
 
 ## Backups made before deployment
@@ -36,6 +38,6 @@ Preserved metrics SHA256: `6B5DCC9D5D12794BAA89456828884E02A4071B043C9DADB12CEE9
 
 ## Activation and rollback
 
-To test, replace the old Mind Stone entry with `import SpeedRunBasic/main` and start a fresh manual run. Do not enable both entry points. Diagnostics are enabled, potion use is disabled. For rollback, restore `import SpeedRun/main`; original files remain available. See [BASIC_AUTOMATION.md](BASIC_AUTOMATION.md) for full instructions and [LOCATION_COVERAGE.md](LOCATION_COVERAGE.md) for all NOT RUN completion statuses.
+To test, replace the old Mind Stone entry with `import SpeedRunBasic/main` and start a fresh manual run. Do not enable both entry points. Diagnostics are enabled, potion use is disabled. For rollback, restore `import SpeedRun/main`; original files remain available. See [BASIC_AUTOMATION.md](../guides/BASIC_AUTOMATION.md) for full instructions and [LOCATION_COVERAGE.md](../guides/LOCATION_COVERAGE.md) for all NOT RUN completion statuses.
 
 Static checks passed on the source candidate; no native parser execution, combat completion, reliability, or timing accuracy is claimed. The prior user-reported loading/display pass applies only to the original observer.

@@ -1,16 +1,10 @@
-# Basic automation candidate
+# B2.1-TS live baseline
 
-Current revision **B2.1-TS** adds configurable Triskelion travel: clear movement uses Triskelion L + shield R; bounded passive collection uses Triskelion L + Star Stone R. Every targeted foe enters existing combat selection without the old 22-unit travel shortcut. Immunity conflicts restore wand/shield for manual handling. Combat selection rules otherwise remain unchanged. See [TRISKELION_TRAVEL.md](TRISKELION_TRAVEL.md); earlier PS/NR notes below describe historical behavior.
+**Current installed baseline: B2.1-TS (`SpeedRunBasic/main`).** Its deployed files are preserved. Automated completion, exact gear selection and movement benefit remain unverified; installed does not mean successfully automated. The original observer's loading/display pass is separate.
 
-Current revision: **B2.1-PS** adds configurable passive attraction with Star Stone L + shield R only in safe ordinary travel. It never adds optional shovel harvesting or collection detours. See [PASSIVE_STAR_STONE.md](PASSIVE_STAR_STONE.md); physical range, timings and completion benefit remain unverified. Earlier B2.1-NR policy below records the shovel-removal baseline; the current bounded Star Stone exception supersedes its general prohibition on collection-only swaps.
+This page is authoritative for shared architecture, generic combat and B2.1 installation/rollback. For the implemented but uncommitted, undeployed and not game-verified Rocky ★15 candidate, use [R15](../rocky/ROCKY_PLATEAU_15.md). Do not mix entry points or apply R15 equipment rules to the live baseline.
 
-Current policy revision: **B2.1-NR** removes optional resource harvesting. Resources are incidental; movement, combat, boss completion and run time take priority. Earlier B2/B2.1 reports are historical. See [RESOURCE_POLICY.md](RESOURCE_POLICY.md) for the source audit, backup/deployment evidence and progression test gate. Mandatory interactions remain in scope; no blanket native-interaction suppression is applied.
-
-Status: source-reviewed, not parsed or executed in-game. Priority is broad basic coverage and reliability; speed optimizations, AAC, dash sequences and boss timing are deferred. See [coverage matrix](LOCATION_COVERAGE.md).
-
-Current stabilization build: **B2**. Follow [BASIC_TEST_PLAN.md](BASIC_TEST_PLAN.md), starting with Rocky Plateau; record results in [BASIC_TEST_RESULTS.md](BASIC_TEST_RESULTS.md). No completion status changes without explicit owner confirmation. See [SELECTOR_API_AUDIT.md](SELECTOR_API_AUDIT.md) for API and selector review.
-
-Correction **B2.1** supersedes the B2 diagnostic header: `Harvest()` was rejected as reserved by the game, preventing the catalog object from loading. It is now `EquipHarvestTool()`; its call site and diagnostic revision are the only runtime changes. See [BUG_HARVEST_RESERVED.md](BUG_HARVEST_RESERVED.md). The B2 test sequence still applies, with B2.1 expected in the header; corrected import/execution remains pending owner retest.
+Current travel/slot rules are maintained in [Triskelion travel](../TRISKELION_TRAVEL.md) and [passive collection](../PASSIVE_STAR_STONE.md). Older B2/NR/PS introductions and the reserved-name correction remain in [revision history](../archive/BASELINE_REVISION_NOTES.md) and the archive. See [baseline tests](BASIC_TEST_PLAN.md), [results](BASIC_TEST_RESULTS.md) and [coverage](LOCATION_COVERAGE.md).
 
 ## Architecture
 
@@ -48,7 +42,7 @@ Crossbows in the inventory are promising ranged candidates but remove the shield
 
 The candidate is installed side-by-side under `SpeedRunBasic` in both existing script roots. Existing `SpeedRun` files and Mind Stone text are not overwritten. A timestamped backup of each known-working `SpeedRun` directory is created before candidate deployment. The deployment report records exact backup paths. If a candidate destination already exists with different contents, deployment stops rather than overwriting it.
 
-See [DEPLOYMENT_BASIC_20261029.md](DEPLOYMENT_BASIC_20261029.md) for the initial installation; [DEPLOYMENT_BASIC_B2_20261029.md](DEPLOYMENT_BASIC_B2_20261029.md) records the diagnostic update and its separate candidate backups. Historical reports are retained.
+See [DEPLOYMENT_BASIC_20261029.md](../archive/DEPLOYMENT_BASIC_20261029.md) for the initial installation; [DEPLOYMENT_BASIC_B2_20261029.md](../archive/DEPLOYMENT_BASIC_B2_20261029.md) records the diagnostic update and its separate candidate backups. Historical reports are retained.
 
 For manual installation: back up the current `SpeedRun` directory, copy the contents of `scripts/basic/` into `Stonescript/SpeedRunBasic/`, and keep `SpeedRun/metrics/RunMetrics.txt` in place. Do not copy the `basic` folder as an extra path level.
 
