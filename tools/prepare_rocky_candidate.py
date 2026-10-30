@@ -39,7 +39,7 @@ def inspect(root):
         cleaned = "\n".join(code)
         for left, right in (("(", ")"), ("[", "]")):
             require(cleaned.count(left) == cleaned.count(right), "Unbalanced candidate delimiter.")
-        for module in re.findall(r"\bnew ([\w/]+)", text):
+        for module in re.findall(r"^\s*(?:var\s+\w+\s*=\s*)?(?:new|import)\s+([\w/]+)", text, re.M):
             require(module + ".txt" in paths, "Unresolved candidate import.")
     main = data["SpeedRunRocky/main.txt"].decode()
     handler = data["SpeedRunRocky/locations/RockyPlateau.txt"].decode()
@@ -55,7 +55,7 @@ def inspect(root):
             "Repeated begin must not erase the latched boss context.")
     require("return false" not in tick.split("gear.ClearRequest()", 1)[1],
             "Handled frame may fall through after equipment ownership.")
-    require('bossLatched & !foe' in tick and 'phase = "transition-gap"' in tick and 'HoldTransition(gear)' in tick,
+    require('bossLatched & !foe' in tick and 'phase = "transition-gap"' in tick and 'HoldTransition(gear, equipment)' in tick,
             "Missing-target boss transition guard missing.")
     require(not re.search(r"(?:^|\n)\s*(?:equip\w* |brew |loadout |activate (?!potion))", handler),
             "Unexpected native equipment/ability command in Rocky policy.")
@@ -67,12 +67,21 @@ def inspect(root):
             "Unknown-phase/adaptive fallback missing.")
     require("Available(" not in equipment.split("func FromChoices", 1)[1],
             "Selection must not search inventory every frame.")
+    require('loc.stars ! profile.targetStars' in tick, "Target difficulty guard missing.")
+    require('gear.Apply(' not in handler and 'gear.ApplyPair(weapon, equipment.shield)' in handler,
+            "Specialized frame must retain the Rocky shield, not shared defaults.")
+    profile = data["SpeedRunRocky/config/RockySettings.txt"].decode()
+    require('var targetStars = 15' in profile and 'var useHealingSword = false' in profile,
+            "R15 scope or stable damage defaults changed.")
+    require('var fastGenShieldConfirmed = true' in profile and 'var preferredShield = "FastGenShl"' in profile
+            and 'item.GetCount(selector) = 1' in equipment,
+            "Owner-confirmed nickname or ambiguous gear guard missing.")
     return data
 
 
 def prepare(root):
     data = inspect(root)
-    manifest = {"format_version": 1, "candidate": "Rocky R1; NOT GAME VERIFIED",
+    manifest = {"format_version": 1, "candidate": "Rocky R15; NOT GAME VERIFIED",
                 "files": {name: hashlib.sha256(value).hexdigest() for name, value in sorted(data.items())}}
     raw = (json.dumps(manifest, sort_keys=True, indent=2) + "\n").encode()
     key = hashlib.sha256(raw).hexdigest()

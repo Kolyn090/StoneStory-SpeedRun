@@ -1,8 +1,21 @@
 // Candidate-only policy. No verified star/enchantment ranking is implied.
 var enabled = true
+var targetStars = 15
 var preferMelee = true
-var useHealingSword = true
+// Initial R15 policy keeps the requested damage family; no healing swaps.
+var useHealingSword = false
 // P,V,A,F,I ordering matches the preserved basic settings.
 var bearerElement = 3
 var scoutElement = 3
-var physicalSword = "stone sword -big -socket"
+// Documented forms, observed owned profiles; native/exact matches remain unverified.
+var swords = ["poison sword -big +21", "vigor sword -big +21", "aether sword -big +21", "fire sword -big +21", "ice sword -big +21"]
+var wands = ["poison wand +21", "vigor wand +21", "aether wand +21", "fire wand +21", "ice wand +21"]
+var hammers = ["poison hammer -heavy +21", "vigor hammer -heavy +21", "aether hammer -heavy +21", "fire hammer -heavy +21", "ice hammer -heavy +21"]
+// Screenshot 0064 is enchanted; do not exclude socketed base-family variants.
+var physicalSword = "stone sword -big +21"
+// Owner confirms FastGenShl is the nickname of their Towering Shield.
+// Nickname matching is owner-reported; this candidate's native query is untested.
+var fastGenShieldConfirmed = true
+var preferredShield = "FastGenShl"
+// Base-family fallback only; do not assume it selects a different physical item.
+var fallbackShield = "towering shield +21"

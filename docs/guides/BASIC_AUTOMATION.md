@@ -2,7 +2,7 @@
 
 **Current installed baseline: B2.1-TS (`SpeedRunBasic/main`).** Its deployed files are preserved. Automated completion, exact gear selection and movement benefit remain unverified; installed does not mean successfully automated. The original observer's loading/display pass is separate.
 
-This page is authoritative for shared architecture, generic combat and B2.1 installation/rollback. For the implemented but uncommitted, undeployed and not game-verified Rocky ★15 candidate, use [R15](../rocky/ROCKY_PLATEAU_15.md). Do not mix entry points or apply R15 equipment rules to the live baseline.
+This page is authoritative for shared architecture, generic combat and B2.1 installation/rollback. For the Rocky ★15 candidate, now committed locally but still undeployed and not game-verified, use [R15](../rocky/ROCKY_PLATEAU_15.md). Do not mix entry points or apply R15 equipment rules to the live baseline.
 
 Current travel/slot rules are maintained in [Triskelion travel](../TRISKELION_TRAVEL.md) and [passive collection](../PASSIVE_STAR_STONE.md). Older B2/NR/PS introductions and the reserved-name correction remain in [revision history](../archive/BASELINE_REVISION_NOTES.md) and the archive. See [baseline tests](BASIC_TEST_PLAN.md), [results](BASIC_TEST_RESULTS.md) and [coverage](LOCATION_COVERAGE.md).
 

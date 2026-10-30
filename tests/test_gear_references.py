@@ -13,6 +13,10 @@ SPEC.loader.exec_module(V)
 
 
 class GearReferenceTests(unittest.TestCase):
+    def test_owner_confirmed_shield_nickname_is_not_compound(self):
+        self.assertEqual(V.family('FastGenShl'), 'towering shield')
+        self.assertNotEqual(V.family('FastGenShl'), V.family('Compound Shield'))
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

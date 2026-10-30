@@ -6,7 +6,7 @@
 
 Initial scan read all 44 Markdown files outside `.git`: 28 project-owned pages (25 in docs, root README/AGENTS and the data-adjacent note), five backup copies, one private generated test note and ten third-party environment license pages. Backup/private/dependency pages are immutable reference material and were not reorganized. The original gear note remains byte-identical. The [index](README.md) identifies one current authority per topic.
 
-R15 is implemented but uncommitted, undeployed, and not yet verified in-game. B2.1-TS is the existing live baseline. R1 is historical; its tests and bundle instructions cannot certify R15.
+At completion of the documentation-organization pass, R15 was implemented but uncommitted, undeployed, and not yet verified in-game. B2.1-TS is the existing live baseline. R1 is historical; its tests and bundle instructions cannot certify R15.
 
 ## Moved or archived original pages
 
@@ -58,4 +58,9 @@ R15 is implemented but uncommitted, undeployed, and not yet verified in-game. B2
 
 Validation completed: all 73 tests PASS (65 pre-existing tests plus 8 documentation-checker cases); Rocky source/import contracts PASS. The offline documentation checker reports zero errors. Final offline validation: 40 owned Markdown pages, 223 local links/anchors and 17 explicit documentation references checked, zero errors. All 99 external-link occurrences were retained without network fetching. All pre-existing non-Markdown project/tool/test/data/backup/deployment files match their pre-cleanup hashes, preserving the exact uncommitted R15 implementation. No script/test/tool path references needed updating because existing gameplay/tooling contains no literal Markdown paths.
 
-All original fenced Markdown code blocks are checked for retention in the reorganized/current/archive corpus, allowing documentation-path rebasing. This preserves historical commands and examples without treating them as current authorization. External links are syntax-preserved only, not fetched. The Git index remains empty and HEAD/history unchanged. No in-game test follows from documentation validation.
+All original fenced Markdown code blocks are checked for retention in the reorganized/current/archive corpus, allowing documentation-path rebasing. This preserves historical commands and examples without treating them as current authorization. External links are syntax-preserved only, not fetched. At completion of that organization pass, the Git index was empty and HEAD/history unchanged. No in-game test follows from documentation validation.
+
+
+## Subsequent authorized local checkpoints
+
+The owner subsequently authorized separate documentation and R15 local commits. R15 is now committed locally, remains undeployed and unverified in-game, and has no recorded ★15 completion. The earlier no-staging/commit and preservation statements above describe the organization pass before these separately authorized checkpoints. No deployment, push or history rewrite is part of checkpointing. Current status remains in the [index](README.md).

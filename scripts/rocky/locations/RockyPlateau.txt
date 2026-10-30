@@ -72,11 +72,13 @@ func UpdateAdaptive(text, equipment)
   ?!anyKnown
     unknownAdaptive = true
 
-func HoldTransition(gear)
+func HoldTransition(gear, equipment)
   strategy = "transition-shield"
   ?string.Equals(lastWeapon, "")
-    lastWeapon = gear.defaultSword
-  gear.Apply(lastWeapon)
+    lastWeapon = equipment.FromChoices(equipment.swords, 3, blocked)
+    ?string.Equals(lastWeapon, "")
+      lastWeapon = equipment.physicalSword
+  gear.ApplyPair(lastWeapon, equipment.shield)
 
 // True means this module owns the frame. False means no equipment was issued.
 func Tick(gear, settings, equipment, profile, combat)
@@ -84,7 +86,7 @@ func Tick(gear, settings, equipment, profile, combat)
   phase = "none"
   strategy = "shared"
   warning = "none"
-  ?!profile.enabled
+  ?!profile.enabled | loc.stars ! profile.targetStars
     return false
   ?foe = "acronian_scout"
     encounter = "scout"
@@ -121,15 +123,19 @@ func Tick(gear, settings, equipment, profile, combat)
   ?!ai.enabled | ai.paused
     strategy = "ai-suspended"
     return true
+  ?string.Equals(equipment.shield, "")
+    strategy = "missing-rocky-shield-manual"
+    warning = "STOP: shield missing/ambiguous; no new request"
+    return true
   ?settings.usePotion & hp < maxhp * settings.potionHpRatio
     ?item.potion ! "empty" & item.CanActivate()
       activate potion
   ?phase = "transition-gap"
-    HoldTransition(gear)
+    HoldTransition(gear, equipment)
     return true
   ?foe = "undamageable" | foe.hp <= 0
     phase = phase + "-transition"
-    HoldTransition(gear)
+    HoldTransition(gear, equipment)
     return true
   UpdateAdaptive(foe.buffs.string, equipment)
   var preferred
@@ -148,7 +154,7 @@ func Tick(gear, settings, equipment, profile, combat)
     kind = "hammer"
   ?phase = "bearer"
     preferred = profile.bearerElement
-  :?phase = "scout" & preferred < 0
+  :?phase = "scout"
     preferred = profile.scoutElement
   :?phase = "perfected" & string.Equals(lastKind, kind)
     preferred = lastElement
@@ -160,12 +166,12 @@ func Tick(gear, settings, equipment, profile, combat)
   ?foe = "immune_to_physical" & foe = "immune_to_ranged"
     strategy = "immunity-conflict-manual"
     warning = "STOP: conflicting immunities"
-    gear.Apply(gear.defaultWand)
+    gear.ApplyPair("", equipment.shield)
     return true
   ?physicalOnly & foe = "immune_to_physical"
     strategy = "adaptive-immunity-manual"
     warning = "STOP: physical fallback cannot damage target"
-    gear.Apply(gear.defaultWand)
+    gear.ApplyPair("", equipment.shield)
     return true
   weapon = equipment.Pick(kind, preferred, blocked, physicalOnly)
   strategy = phase + "-" + kind + "-shield"
@@ -181,12 +187,13 @@ func Tick(gear, settings, equipment, profile, combat)
         equipment.pickedElement = 1
         strategy = phase + "-healing-shield"
   ?string.Equals(weapon, "")
-    weapon = gear.defaultWand
     strategy = "no-safe-selector-manual"
-    warning = "STOP: no strict allowed selector; generic wand needs inspection"
+    warning = "STOP: no strict allowed weapon; shield only, inspect manually"
+    gear.ApplyPair("", equipment.shield)
+    return true
   lastWeapon = weapon
   lastElement = equipment.pickedElement
-  lastKind = kind
+  lastKind = equipment.pickedKind
   lastPhase = phase
-  gear.Apply(weapon)
+  gear.ApplyPair(weapon, equipment.shield)
   return true

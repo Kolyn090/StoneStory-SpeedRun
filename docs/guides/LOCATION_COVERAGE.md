@@ -1,6 +1,6 @@
 # Basic automation coverage
 
-> This matrix describes the generic B2.1 baseline. The separate [Rocky R15 candidate](../rocky/ROCKY_PLATEAU_15.md) exists but is uncommitted, undeployed and not game-verified; it does not change any completion cell below.
+> This matrix describes the generic B2.1 baseline. The separate [Rocky R15 candidate](../rocky/ROCKY_PLATEAU_15.md) is committed locally, undeployed and not game-verified; it does not change any completion cell below.
 
 2026-10-29: implementation candidate only. **No location or difficulty has a verified automated completion.** A named dispatch route is not a support claim. The original observer's loading test does not validate this new entry point.
 

@@ -10,10 +10,13 @@ var pickedElement = -1
 var pickedKind = ""
 var usedFallback = false
 var missingPreferred = ""
+var shield = ""
+var shieldStatus = "not prepared"
 
 func Available(selector)
   ?!string.Equals(selector, "")
-    ?item.GetCount(selector) > 0
+    // Reject ambiguity instead of silently picking a possibly different variant.
+    ?item.GetCount(selector) = 1
       return selector
   return ""
 
@@ -22,12 +25,28 @@ func Prepare(settings, profile)
   wands.Clear()
   hammers.Clear()
   missingPreferred = ""
+  shield = ""
+  shieldStatus = "FastGenShl disabled; Towering family fallback"
+  ?profile.fastGenShieldConfirmed
+    shield = Available(profile.preferredShield)
+    ?!string.Equals(shield, "")
+      shieldStatus = "FastGenShl nickname; one native match"
+    :
+      shieldStatus = "FastGenShl missing/ambiguous; Towering family fallback"
+  ?string.Equals(shield, "")
+    shield = Available(profile.fallbackShield)
+  ?string.Equals(shield, "")
+    shieldStatus = "STOP: missing/ambiguous fallback shield"
   for i = 0..4
-    swords.Add(Available(settings.swords[i]))
-    wands.Add(Available(settings.wands[i]))
-    hammers.Add(Available(settings.hammers[i]))
+    swords.Add(Available(profile.swords[i]))
+    wands.Add(Available(profile.wands[i]))
+    hammers.Add(Available(profile.hammers[i]))
     ?string.Equals(swords[i], "")
       missingPreferred = missingPreferred + " S:" + elements[i]
+    ?string.Equals(wands[i], "")
+      missingPreferred = missingPreferred + " W:" + elements[i]
+    ?string.Equals(hammers[i], "")
+      missingPreferred = missingPreferred + " H:" + elements[i]
   physicalSword = Available(profile.physicalSword)
   healingSword = Available(settings.healingSword)
   ?string.Equals(physicalSword, "")

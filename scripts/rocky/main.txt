@@ -61,9 +61,12 @@ func DrawRockyCandidate()
   ?!string.Equals(locations.handler, "rocky")
     activeEncounter = "shared-location"
     activePhase = "none"
+  :?loc.stars ! profile.targetStars
+    activeEncounter = "shared-difficulty"
+    activePhase = "none"
   ?rockyHandled
     activeStrategy = rocky.strategy
-  >`0,0,Rocky R1 UNTESTED | @loc.id@ *@loc.stars@ -> @locations.handler@
+  >`0,0,Rocky R15 UNTESTED | @loc.id@ *@loc.stars@ -> @locations.handler@
   >`0,1,Owner Rocky:@rockyHandled@ Encounter:@activeEncounter@ Phase:@activePhase@
   >`0,2,Strategy:@activeStrategy@ Last phase:@rocky.lastPhase@
   >`0,3,Want L:@gear.selectedWeapon@
@@ -73,10 +76,11 @@ func DrawRockyCandidate()
   >`0,7,Warning:@rocky.warning@ Shared:@gear.notice@ Core:@gear.missingCore@
   >`0,8,Foe:@foe.id@ state:@foe.state@ time:@foe.time@ Armor:@foe.armor@
   >`0,9,Adaptive unknown:@rocky.unknownAdaptive@ Buffs:@foe.buffs.string@
-  >`0,10,Strict sword/physical misses:@equipment.missingPreferred@
+  >`0,10,Strict missing/ambiguous:@equipment.missingPreferred@
   >`0,11,Shared misses:@gear.unavailableBase@ Move frames:@player.framesPerMove@
   >`0,12,@metrics.startKind@ t:@totaltime@ done:@metrics.currentCompletion@ loops:@observedLoops@
   >`0,13,Last:@metrics.lastCompletion@ count:@metrics.completedCount@ Tab=native errors
+  >`0,14,Shield:@equipment.shieldStatus@
 
 metrics.Observe()
 ?config.showDiagnostics

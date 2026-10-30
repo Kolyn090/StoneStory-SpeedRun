@@ -62,11 +62,12 @@ def read_table(path, schema):
 
 
 def family(name):
-    # Comparison aliases only. Never Stonescript selectors or confirmed identities.
+    # Comparison families only. Never native selectors or unique saved-instance IDs.
     name = name.casefold().replace('æ', 'ae').replace('tailsman', 'talisman')
     name = re.sub(r' [12]$', '', name)
     return {'quaterstaff': 'quarterstaff', 'dashstaff': 'quarterstaff',
-            'fastgenshl': 'compound shield', 'bog': 'blade of the fallen god'}.get(name, name)
+            # Owner confirms this nickname's base family; stats remain separate.
+            'fastgenshl': 'towering shield', 'bog': 'blade of the fallen god'}.get(name, name)
 
 
 def comparisons(attributes, legacy, fields):

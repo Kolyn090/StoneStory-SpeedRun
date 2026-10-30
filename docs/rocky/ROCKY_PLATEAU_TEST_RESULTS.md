@@ -1,6 +1,6 @@
 # Rocky R15 acceptance and results
 
-**R15 is implemented but uncommitted, undeployed, and not yet verified in-game.** No ★15 automated completion is recorded. [Current checklist, selectors and bundle](ROCKY_PLATEAU_15.md) are authoritative; the [R1 test ledger](../archive/ROCKY_R1_TEST_RESULTS.md) is retained separately and supplies no R15 passes.
+**R15 is implemented and committed locally, undeployed, and not yet verified in-game.** No ★15 automated completion is recorded. [Current checklist, selectors and bundle](ROCKY_PLATEAU_15.md) are authoritative; the [R1 test ledger](../archive/ROCKY_R1_TEST_RESULTS.md) is retained separately and supplies no R15 passes.
 
 | R15 case | Acceptance observation | Result |
 |---|---|---|

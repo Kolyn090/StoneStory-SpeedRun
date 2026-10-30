@@ -1,6 +1,6 @@
 # Current development roadmap
 
-R15 is **implemented but uncommitted, undeployed, and not yet verified in-game**. B2.1-TS remains the existing live baseline. [The documentation index](README.md) owns the project-status table; [the R15 guide](rocky/ROCKY_PLATEAU_15.md) owns current equipment, fallback, bundle and activation details.
+R15 is **implemented and committed locally, undeployed, and not yet verified in-game**. B2.1-TS remains the existing live baseline. [The documentation index](README.md) owns the project-status table; [the R15 guide](rocky/ROCKY_PLATEAU_15.md) owns current equipment, fallback, bundle and activation details.
 
 | Priority | Next gate | Required evidence |
 |---|---|---|
