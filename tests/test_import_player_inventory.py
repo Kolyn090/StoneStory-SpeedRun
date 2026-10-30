@@ -30,6 +30,22 @@ def encoded(data):
 
 
 class SchemaTests(unittest.TestCase):
+    def test_crafted_copies_and_renamed_variants_preserve_records_without_instance_claims(self):
+        first = item(el="Vigor", abs=["lifesteal"], ra={"lv": 21, "ql": 12, "sSS": 18})
+        before, _ = IMPORTER.normalize(encoded(fixture(first)))
+        after, summary = IMPORTER.normalize(encoded(fixture(first, copy.deepcopy(first))))
+        self.assertEqual(len(before["inventory_records"]), 1)
+        self.assertEqual(len(after["inventory_records"]), 2)
+        self.assertEqual(summary["exact_duplicate_record_excess"], 1)
+        renamed = copy.deepcopy(first)
+        renamed["da"]["tag"] = "PRIVATE-NEW-NAME"
+        changed, changed_summary = IMPORTER.normalize(encoded(fixture(renamed, first)))
+        self.assertEqual(len(changed["inventory_records"]), 2)
+        self.assertTrue(all(r["element_raw"] == "Vigor" for r in changed["inventory_records"]))
+        self.assertTrue(all(r["upgrade_raw"] == 8192 for r in changed["inventory_records"]))
+        self.assertNotIn("PRIVATE-NEW-NAME", IMPORTER.canonical(changed_summary).decode())
+        self.assertTrue(all("instance_id" not in r and "independently_equippable" not in r for r in changed["inventory_records"]))
+
     def test_variants_and_identical_duplicates_preserved(self):
         first = item(ra={"lv": 21, "ql": 12, "sSS": 18},
                      sra={"lv": 21, "ql": 13, "sSS": 19}, tag="PRIVATE-TAG")

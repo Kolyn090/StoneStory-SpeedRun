@@ -95,3 +95,11 @@ Owner reports the second ★15 trial defeated Scout/Bearer/Elementalist and reac
 ## State-115 alive sample and experimental dodge boundary
 
 Owner capture at Rocky ★15: Perfected 115:23, player 80/80 HP, distance 5, Poison Sword + FastGenShl, boss 12,964/30,000 HP; previous 114 reported 14 frames (a trace last-sample value is not necessarily complete duration). State 115 occurs while alive; actual impact frame remains unknown. A local, undeployed protected Mind Stone experiment uses configurable 23-frame trigger / 30-frame hold / 90-frame timeout; none is a verified avoidance window. Equip-only behavior is community evidence; unique selector match, actual backflip/cooldown, shield compatibility and ray avoidance still need native testing. See [the authoritative sequence and acceptance procedure](rocky/ROCKY_PLATEAU_15.md#experimental-perfected-mind-stone-sequence--local-only).
+
+## Dual-wield/AAC evidence boundary
+
+Owner reports one actual ray avoidance using the shielded R15 Mind sequence. Preserve its23/30/90 settings and equipment ownership. The new Rocky-only dual-wield/AAC candidate treats item state3 as community-described post-hit recovery, corroborates with target HP/armor loss and cancels only stable short-sword edges per hand. The manual supports state/time/equip APIs but not guaranteed hit attribution. No Hammer/Wand/two-handed AAC, guessed pickup-disable API or additional boss timer is added. Native throughput and damage preservation need matched runs; details and gear provenance are authoritative in [R15](rocky/ROCKY_PLATEAU_15.md#dual-wield-and-aac-candidate).
+
+## Duplicate equipment evidence
+
+Native copy counts, save record counts and stacked raw quantities are different. The manual documents best-match equip criteria but does not guarantee independent allocation of identical matches. Two Vigor recovery copies are supported after actual simultaneous-equipping confirmation: same criteria require native count>=2; named distinct criteria require one each and no intersecting native match. Default unverified/overlapping cases retain one healer plus offense. The alias regression used plain Python equality at a direct harness call; explicit documented string.IndexOf fixes substring matching while retaining the assertion. See [recovery copy rules](rocky/ROCKY_PLATEAU_15.md#duplicate-vigor-recovery-and-inventory-refresh).

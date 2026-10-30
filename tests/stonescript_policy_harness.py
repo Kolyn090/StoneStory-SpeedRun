@@ -101,6 +101,10 @@ def load_module(path, native):
             body.append(prefix + f"for {var} in range({expr(begin)}, ({expr(end)}) + 1):")
         elif code.startswith("return"):
             body.append(prefix + "return " + (expr(code[7:]) if len(code) > 6 else "None"))
+        elif code.startswith(("equipL ", "equipR ")):
+            hand = "L" if code.startswith("equipL ") else "R"
+            selector = code.split(" ", 1)[1].strip("@")
+            body.append(prefix + "item.equips.append((" + repr(hand) + ", str(" + expr(selector) + ")))")
         elif code == "activate potion": body.append(prefix + "item.activations.append('potion')")
         elif " = " in code:
             left, right = code.split(" = ", 1)
@@ -118,6 +122,8 @@ class Foe:
         self.buffs = SimpleNamespace(string=Text(buffs))
         self.armor, self.hp = armor, hp
         self.state, self.time = 0, 0
+        self.id = Text(value)
+        self.count = 0
     def __bool__(self): return bool(self.value)
     def __eq__(self, tag): return str(tag) in self.value
 
@@ -128,6 +134,9 @@ class Items:
         self.potion = Text("empty")
         self.cooldowns = {"mind": 0}
         self.abilities_enabled = True
+        self.equips = []
+        self.left = SimpleNamespace(id=Text("socketed_sword"), state=0, time=0)
+        self.right = SimpleNamespace(id=Text("sword"), state=0, time=0)
     def GetCount(self, selector):
         self.queries.append(str(selector))
         return self.counts.get(str(selector), 0)

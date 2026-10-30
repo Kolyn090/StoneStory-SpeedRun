@@ -52,3 +52,11 @@ Diagnostic bundle `fd83389c293c664363cbe844c61fb02217be78ad782b0505cb6b6a7725dbe
 ## Owner diagnostic capture — alive at 115:23
 
 At ★15: Perfected state115/time23, player HP80/80, distance5, Poison Sword + FastGenShl, boss12,964/30,000. Previous state114 reported14frames; distinguish last sampled frame from full duration if derived from overlay. This verifies a live observation in115; impact, safe trigger and dodge duration are unknown. The local experimental sequence is NOT DEPLOYED / NOT RUN. Future results must separately record equip request, actual backflip, shield retention, damage avoided, equipment restoration, repeated attempts/errors and full-run outcome.
+
+## Owner report: one successful ray avoidance
+
+The owner now confirms the shielded R15 experimental Mind Stone backflip avoided the lethal Perfected ray on one ★15 attempt. Full completion, repeatability and exact impact timing remain unconfirmed. The dual-wield/AAC candidate is authorized for a supervised release; native tests are NOT RUN. Record pair availability, recovery, per-hand AAC progress versus target loss, phase/armor choices, resource pauses, ray outcome, full-run completion/deaths and comparable timing before claiming an improvement.
+
+## Dual-Vigor configuration gate
+
+A second Vigor Sword may be crafted; none is assumed owned or independently equippable. Native two-copy allocation is NOT VERIFIED. The current candidate defaults to one Vigor + offense at recovery thresholds. A future confirmed two-copy configuration may opt into dual Vigor, including identical names, guarded by refreshed native counts and selector-overlap rules. Existing ray timing/body remain unchanged. No dual-wield/AAC clear-time improvement is established.

@@ -8,7 +8,7 @@ import re
 import sys
 
 OWN = ["main.txt", "config/RockySettings.txt", "equipment/RockyGear.txt",
-       "locations/RockyPlateau.txt"]
+       "locations/RockyPlateau.txt", "combat/AttackCycle.txt"]
 BASE = ["main.txt", "config/Settings.txt", "equipment/Catalog.txt",
         "combat/Generic.txt", "locations/Dispatcher.txt"]
 
@@ -70,7 +70,7 @@ def inspect(root):
     require('foe.state ! 115' in ray and 'rayDodgeSpent = true' in ray
             and 'rayDodgeHolding' in ray and 'item.GetCooldown("mind")' in ray,
             "Experimental ray event/cooldown guard missing.")
-    require(re.search(r'\?TryPerfectedRay\(gear, equipment, rockyConfig\)\s+return true', tick),
+    require(re.search(r'\?TryPerfectedRay\(gear, equipment, rockyConfig\)\s+attacks.ResetCycle\(\)\s+return true', tick),
             "Ray equipment ownership must return before ordinary combat.")
     require('string.Equals(tokens[n], "adaptive_defense_" + equipment.elements[i])' in handler,
             "Adaptive UID exact-token guard missing.")
@@ -95,6 +95,15 @@ def inspect(root):
     require('weapon = SelectBearerRecovery(' in tick
             and 'foe.armor > 0 | physicalOnly | blocked[1]' in handler,
             "Bearer recovery priority guard missing.")
+    cycle = data["SpeedRunRocky/combat/AttackCycle.txt"].decode()
+    require('new SpeedRunRocky/combat/AttackCycle' in main and 'attacks.Apply(' in handler,
+            "Rocky AAC component missing.")
+    require('item.left.state = 3' in cycle and 'item.right.state = 3' in cycle
+            and 'damageSeen' in cycle and 'leftState ! 3' in cycle and 'rightState ! 3' in cycle,
+            "AAC post-hit edge guards missing.")
+    require('gear.ApplyPair(weaponL, weaponR)' in cycle
+            and not re.search(r'item.GetCount|activate |brew |loadout ', cycle),
+            "AAC restoration or native boundary failed.")
     return data
 
 

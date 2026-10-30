@@ -8,6 +8,7 @@ var metrics = new SpeedRun/metrics/RunMetrics
 var rockyConfig = new SpeedRunRocky/config/RockySettings
 var equipment = new SpeedRunRocky/equipment/RockyGear
 var rocky = new SpeedRunRocky/locations/RockyPlateau
+var attacks = new SpeedRunRocky/combat/AttackCycle
 var initialized = false
 var observedLoops = 0
 var rockyHandled = false
@@ -25,6 +26,7 @@ var rayTraceAfter115 = false
   gear.Prepare(config)
   equipment.Prepare(config, rockyConfig)
   combat.Reset()
+  attacks.Reset()
   // A sub-location boundary must not erase a latched boss encounter.
   ?!initialized
     rocky.Reset()
@@ -33,6 +35,7 @@ var rayTraceAfter115 = false
   observedLoops++
   metrics.Begin("loop", true)
   combat.Reset()
+  attacks.Reset()
   rocky.Reset()
   ?!initialized
     gear.Prepare(config)
@@ -43,6 +46,7 @@ var rayTraceAfter115 = false
   gear.Prepare(config)
   equipment.Prepare(config, rockyConfig)
   combat.Reset()
+  attacks.Reset()
   rocky.Reset()
   initialized = true
 
@@ -50,7 +54,7 @@ rockyHandled = false
 locations.Update()
 ?config.enabled & locations.allowed
   ?string.Equals(locations.handler, "rocky")
-    rockyHandled = rocky.Tick(gear, config, equipment, rockyConfig, combat)
+    rockyHandled = rocky.Tick(gear, config, equipment, rockyConfig, combat, attacks)
   ?!rockyHandled
     combat.Tick(gear, config)
 :
@@ -122,6 +126,9 @@ func DrawRockyCandidate()
   >`0,15,Recovery:@rocky.bearerRecoveryActive@ @rocky.bearerRecoveryStatus@ HP:@hp@/@maxhp@
   >`0,16,Ray EXP:@rocky.rayDodgeStatus@ tries:@rocky.rayDodgeAttempts@ cd:@rocky.rayDodgeCooldown@
   >`0,17,@rocky.rayDodgeReason@ at:@rocky.rayDodgeTriggeredAt@ until:@rocky.rayDodgeUntil@
+  >`0,18,AAC:@attacks.status@ L/R:@attacks.cancelsL@/@attacks.cancelsR@ loss:@attacks.observedLoss@ samples:@attacks.lossSamples@ since:@attacks.startedAt@
+  >`0,19,Move:@ai.walking@ Pause:@ai.paused@ Pickup:@pickup@ d:@pickup.distance@
+  >`0,20,Vigor matches:@equipment.recoveryCount@ @equipment.recoveryPairStatus@
 
 metrics.Observe()
 ?config.showDiagnostics

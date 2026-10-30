@@ -261,3 +261,7 @@ Base profiles only. O = offensive damage/DPS/range; D = defensive armor/sec/armo
 | screenshot_0075 | Reset Wand | 47 | — | 5 |
 | screenshot_0076 | Crossbow | — | — | 2 |
 | screenshot_0077 | Stone Crossbow | — | — | 3 |
+
+## Configuration evidence versus owned copies
+
+The 65 description records and 258 fragments describe observed configurations, not a maintained count of owned instances. Another identical crafted copy reuses its reviewed configuration evidence; changed enchantments/abilities retain distinct records/provenance. The existing private importer preserves duplicate records and raw stacks without claiming native independent equipping. No CSV/schema migration is needed for copy-count support. Use [the refresh workflow](PRIVATE_INVENTORY_IMPORT.md#refresh-after-crafting-upgrading-or-renaming); runtime recovery checks native availability and a scoped observed-dual-copy flag, never source indices or save IDs.

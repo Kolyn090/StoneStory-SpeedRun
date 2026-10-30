@@ -2,6 +2,17 @@
 var enabled = true
 var targetStars = 15
 var preferMelee = true
+// Rocky-only aggressive candidate; false retains shielded combat.
+var dualWieldEnabled = true
+var dualRecoveryEnabled = true
+// Optional actual nicknames, appended to the known one-handed dL criteria.
+var vigorRecoveryNameA = ""
+var vigorRecoveryNameB = ""
+// Set only after observing two physical copies equipped simultaneously with these criteria.
+var dualVigorVerified = false
+var aacEnabled = true
+// Stable Star offhand during clear travel; no pulse, waiting or detour policy.
+var clearTravelStarEnabled = true
 // Historical general healing stays off; Bearer recovery is separate.
 var useHealingSword = false
 // Initial project thresholds; not calibrated native lifesteal behavior.

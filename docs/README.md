@@ -7,7 +7,7 @@ This index owns project status/navigation. Each topic below has one authoritativ
 | Component | Status | Authoritative guide |
 |---|---|---|
 | B2.1-TS / `SpeedRunBasic` | Existing live baseline; deployments preserved. No recorded automated completion | [Baseline behavior/install](guides/BASIC_AUTOMATION.md) |
-| Rocky ★15 R15 / `SpeedRunRocky` | **Travel/recovery deployed: Scout/Bearer/Elementalist defeated, one-hit Perfected ray death. Diagnostic observed alive at115:23; experimental Mind release authorized for local commit/deployment; timing and native behavior unverified** | [R15 decisions/bundle/activation/checklist](rocky/ROCKY_PLATEAU_15.md) |
+| Rocky ★15 R15 / `SpeedRunRocky` | Shielded baseline reached Perfected; one owner-reported ray avoidance. Dual-wield + sword AAC release authorized; native performance unverified | [R15 decisions/bundle/activation/checklist](rocky/ROCKY_PLATEAU_15.md) |
 | Original observer / `SpeedRun` | Loading/display owner-verified; lifecycle/timing/capture/loops unverified | [Observer installation](guides/INSTALLATION.md), [acceptance](guides/OBSERVER_ACCEPTANCE.md) |
 | Isolated selector diagnostic | Installed count-only in both known roots; native execution/matches unconfirmed | [Selector guide](gear/EQUIPMENT_SELECTOR_VALIDATION.md) |
 | R1 | Historical predecessor; no inherited R15 gameplay passes | [R1 record](archive/ROCKY_PLATEAU_CANDIDATE.md) |

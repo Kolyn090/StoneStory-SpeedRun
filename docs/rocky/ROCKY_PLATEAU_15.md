@@ -1,6 +1,6 @@
 # Rocky Plateau ★15: first playable R15 candidate
 
-Status: **experimental Perfected Mind Stone release authorized for local commit and supervised deployment; timing and native dodge behavior remain unverified**. Existing travel, Bearer recovery, elemental and armor rules are retained. The owner reached Perfected but has not completed ★15.
+Status: **dual-wield + sword AAC candidate authorized for one scoped local commit/deployment after checks**. The shielded R15 at `f0bd449` remains the pre-release rollback. Owner reports one successful Perfected ray avoidance; no full-stage completion or speed improvement is established.
 
 ## Decisions
 
@@ -217,3 +217,91 @@ Local experimental revision checks: **100 automated tests PASS**, including **45
 The owner explicitly authorized finalizing, locally committing and deploying the completed experimental sequence. No combat redesign or timing changes accompany this release. Earlier local-only/undeployed statements above describe implementation checkpoints; this section supersedes their authorization status. Deployment succeeds only after source/deployed hashes pass; its commit, bundle, backup and outcome are recorded in the ignored deployment receipt and reported to the owner. A verification failure requires restoring and verifying the backup.
 
 The release includes the R15 parser correction, post-Scout travel fix, Bearer recovery and recording trace as necessary previously uncommitted prerequisites. The unrelated workflow-policy/general status edits are excluded. Private inputs, generated bundles and deployment backups are never committed. The first supervised dodge run must establish actual backflip, FastGenShl retention, ray avoidance and recomputed combat restoration separately; **23/30/90 timing remains experimental**. No in-game success is implied by committing/deploying this checkpoint.
+
+## Dual-wield and AAC candidate
+
+Authorized 2026-10-30. Builds on shielded `f0bd449`, not a replacement combat engine. `TryPerfectedRay` and trigger/hold/timeout **23/30/90** are preserved byte-for-byte in the normalized function body. The owner reports one actual ray avoidance; this is one-trial evidence, not universal timing or reliable full completion. No new boss attack timers, abilities or potion policy are added.
+
+### Candidate roles and evidence
+
+| Condition | Default pair, subject to cached unique availability |
+|---|---|
+| Scout / Bearer | Fire short Sword L + Stone Sword R |
+| Elementalist | Existing counter-element short Sword L + Stone Sword R |
+| Perfected | Existing stable non-excluded elemental short Sword L + Stone Sword R |
+| Armor | Existing compatible elemental Hammer L + a distinct allowed one-handed Hammer R, preferring Vigor then existing allowed order |
+| Physical immunity | Existing compatible Wand L + a distinct allowed Wand R; no AAC |
+| Low HP, compatible unarmored melee | Prefer two independently verified Vigor copies; otherwise keep one Vigor plus compatible offense without alias hand stealing |
+| Unknown phase/adaptive format | Existing strict physical + FastGenShl fallback, no AAC |
+| Missing distinct second weapon | Keep compatible L + FastGenShl; do not request the same unique item twice |
+| Perfected ray | Unchanged Mind Stone L + FastGenShl R protected sequence |
+| Transformation | Keep the last logical combat pair, never an AAC dummy; ray ownership/deadline remains higher priority |
+| Clear travel before latched Dysangelos | Existing safe Triskelion L criteria; stable Star R if configured and available, otherwise a distinct physical weapon where possible |
+
+The original **65 attribute rows / 258 effect fragments** remain unchanged. Initial candidates use screenshot-derived displayed profiles: Fire Sword0055 **18/108/range5**, flat **+85 vs Ice** (visually checked); Stone Sword0064 **70/150/range5**, critical25%/x12 (transcription); Vigor Sword0053 **18/108/range5**, **109% chance to Lifesteal** (visually checked); Fire Hammer0027 **28/84/range5, 6.6x armored** (visually checked); Vigor Hammer0025 **100/136.36/range5, 2.4x armored** (transcription). No above-100 chance is interpreted as healing percentage and no flat elemental bonus is treated as a multiplier. See [gear evidence](../gear/GEAR_REFERENCE_REVIEW.md).
+
+The private normalized snapshot has one short Sword per element, one one-handed Hammer per element and the Towering/Mind/Triskelion roles. Two same-element swords are therefore not assumed. The two saved basic-sword profiles do not establish a unique native instance; existing `stone sword -big +21` must pass the one-copy query, or R falls back to a distinct allowed short Sword, then shield. This is a conditional default, not a claimed optimal DPS ranking or newly confirmed native selector. The initial saved snapshot has one Vigor short-sword record. Generic and dL criteria are treated as potentially overlapping unless a specifically verified recovery-copy configuration establishes otherwise; the duplicate-copy rules below supersede the original single-copy restriction. No private IDs, new selector campaign or runtime CSV parsing is added.
+
+### Recovery and conservative defense
+
+`dualWieldEnabled = true`, `dualRecoveryEnabled = true`, `aacEnabled = true` are independent Rocky settings. The existing **<=60% entry / >=85% exit** ratios remain configurable and now apply to compatible Scout/all known boss-phase melee when dual mode is on. Armor, immunity/adaptive constraints, protected ray and transformations outrank recovery. Missing/ambiguous dL keeps ordinary combat. With dual mode false, the earlier shielded/Bearer-only recovery behavior remains available.
+
+FastGenShl remains the owner-confirmed Towering nickname, never Compound Shield. It is used for the unchanged ray, unresolved/unsupported combat, or missing compatible offhand. There is no new guessed signal for temporarily shielding ordinary major attacks; absent validated timing, conservative shield fallbacks remain. Its attacker stun is not assumed effective against every boss. Removing it from normal combat can reduce survivability despite lifesteal; measure deaths as well as clear time.
+
+### Sword AAC and equipment ownership
+
+New candidate-only `combat/AttackCycle.txt` is the final ordinary dual-combat executor. It snapshots both actual hand IDs/states and target HP/armor before native writes. AAC requires a **new state-3 edge in that hand**, stable planned pair and actual short-sword ID across consecutive sampled frames, same foe type ID, and observed target HP or armor decrease. Windup states, stale repeated3, pair/identity changes, missing spare selectors, shields, Hammers, Wands, two-handed items, transitions and protected Mind frames do not get cancellation. Hammer recovery is deliberately excluded until independently tested.
+
+Eligible hands briefly receive distinct cached spare short Swords, excluding both live pair members and Vigor aliases, then the current desired pair is restored **in the same frame** through `ApplyPair`. There is one coherent ordinary-combat owner; intermediate commands here are intentional AAC, not competing policy requests. A hand without a spare is left untouched. No automatic forging, weak-item assumption, queued multi-frame dummy hold or per-frame inventory query is introduced. Higher-priority branches reset cycle sampling and return before AAC. `lastWeapon`/`lastOffhand` always store logical combat items, not dummies.
+
+Native support is limited to APIs documented in the [manual](https://stonestoryrpg.com/stonescript/manual.html). The **state3 = post-damage recovery** interpretation comes from [Eunomiac's annotated AAC](https://github.com/Eunomiac/stone-story/blob/e9921f9b141d45ab650797e03915e737a6ba3fc0/Scripts-Annotated/AttackAnimationCancelling-Annotated.txt); [Scribble](https://github.com/livercat/scribble/blob/53ad8f0712d8373f999f97a22fcde0ff2f6b049f/scribble.dev.txt) motivates excluding hammer/protected/ranged sequences. The implementation is original; no upstream script or unlicensed code bundle is imported. The manual does not guarantee state numbers mean a landed hit. HP/armor loss corroborates an event but cannot attribute damage to a particular hand, exclude every simultaneous source, or distinguish repeated instances of one foe type. Native hit preservation and ID matching still require the next test. Fail-closed gating may miss AAC opportunities; it does not justify speculative earlier cancellation.
+
+The overlay shows per-hand cancel-request counts, target-loss sample count, cumulative observed HP+armor decrease, and start frame. These are **not hand-attributed DPS** and can be affected by healing, regeneration or other damage. Existing lifecycle reset points reset counters; compare the same encounter segments. Use recorded first-hit-to-defeat frames/whole-run time and failed attempts to decide whether AAC helps. Toggle only `aacEnabled` for a matched dual-mode comparison; use `dualWieldEnabled = false` or the preserved shielded backup for survival comparison. No in-game gain is claimed from tests.
+
+### Resource stops and travel limits
+
+Source review found no harvesting branch/tool requests in current R15. The shared Star policy uses walking/full-HP requirements plus a 15-frame hold/90-frame cooldown, which may miss a pickup while native AI is paused. Native pickup targeting/interactions can therefore still cause the observed stop; that explanation is a hypothesis pending the new walking/pause/pickup diagnostic, not a proven trace of the owner's pause.
+
+The new clear-travel branch bypasses that optional pulse/window policy only on Rocky★15, does not inspect harvest targets, never waits, detours or activates resource abilities, and does not replace combat for pickups. Star uses a stable **R** slot while safe Triskelion stays in **L**; no resource-driven switching between the stones. With Star off, a distinct physical R is preferred over the movement-penalty shield where available. No target, zero nearby foes, full HP, walking and no latched boss remain Triskelion requirements; suspended AI receives no new requests. Unknown enemies still use Generic. Mandatory/native progression interactions are not disabled or globally changed.
+
+**There is no documented global disable-pickup/pathfinding command in the inspected manual.** No invented API is used. Script-directed collection waits/optional harvesting are absent, but complete suppression of native incidental pickup stops cannot be guaranteed. Stable Star is an equip-only experiment to reduce such stops; benchmark `clearTravelStarEnabled` if it worsens time. Capture `Move`, `Pause`, `Pickup` and distance if a stop remains. Do not falsely mark no-detours success until observed.
+
+### Supervised release and acceptance
+
+The authorized release must pass all tests/static checks before one scoped local commit. Five Rocky files (including the new component) now belong in the bundle; shared dependencies must match without replacement. Back up the four current installed Rocky files in **both roots** and record the new component's prior absence before adding it. Verify deployed SHA-256 and Git-filtered committed blobs. On verification failure restore those four files and remove only the newly added component after checking its exact root-contained path. B2.1/observer and all older backups stay intact. Do not push. Stop for owner feedback after deployment; no automatic logic changes/retries.
+
+Use only `import SpeedRunRocky/main` and start fresh normal★15. Check:
+
+1. No native parser errors; Scout/Bearer normally Fire + Stone (or explained unique-role fallback), and both hands actually attack.
+2. Recovery switches only the necessary weapon at<=60%, holds through the middle band and exits>=85%, without armor/immunity violations or Vigor hand stealing.
+3. AAC counters can increase on completed short-sword recovery edges; attacks continue registering HP/armor loss, no windup loop/stall, and selected normal gear returns immediately. Hammers/Wands do not cancel.
+4. Elementalist counter selection and Perfected resistance/armor handling remain correct. Transformations retain combat ownership.
+5. Record the ray: exact original23/30/90, Mind + FastGenShl retained throughout hold, no AAC during it, current dual gear recomputed after release. One prior successful avoidance is not a guarantee.
+6. Clear-travel Triskelion/Star remain stable, no optional shovel or collection waits; report any native pause with new diagnostics. Report reached phase, deaths/interventions, first-hit/phase and total-run timing, exact gear and any stalls. No full completion is currently confirmed.
+
+Deferred: Cultist Mask/debuff rotations, Poison/Burn/Chill maintenance, Quarterstaff approach, potion strategies, Bardiche burst, Heavy Hammer/two-handed handling and further boss timers. Existing weapon passive effects may occur incidentally; this release adds no effect-maintenance logic.
+
+## Duplicate Vigor recovery and inventory refresh
+
+### Root cause and native limits
+
+The earlier failed alias assertion called `SameWeapon` with ordinary Python strings. The test evaluator translates Stonescript `=` to Python equality; it implements substring semantics only on its `Text` wrapper. That direct call therefore did not model native string containment. The assertion remains intact; production alias detection now explicitly uses documented `string.IndexOf`, which behaves consistently at native/synthetic boundaries. This fixes a modeling-boundary problem without relaxing same-item safety.
+
+The [manual](https://stonestoryrpg.com/stonescript/manual.html) documents `item.GetCount(criteria)` as copy count and per-hand best-match equip criteria; it does not establish unique physical-instance handles, guaranteed allocation of identical matches across hands or stack-unit equivalence. `item.left.id`/`right.id` are not assumed to be unique instance IDs. Two save records, two matching selectors, matching names, or count>=2 alone cannot prove independent equipping. Native duplicate allocation remains unverified here.
+
+### Recovery modes
+
+Default `dualVigorVerified = false`. Preparation queries the current native inventory using the existing one-handed `vigor sword dL -big +21` criteria; it does not use normalized-save positions. One or more matches can supply **one** hand safely. Broad offensive/dummy roles still use the existing strict availability rules; the recovery role intentionally permits multiple qualifying matches for a single hand.
+
+- No qualifying match: ordinary dual offense remains.
+- One suitable copy, or multiple unverified/stack-like matches: one Vigor + compatible offense, with existing <=60% / >=85% hysteresis.
+- Two copies whose native simultaneous allocation has actually been observed: set `dualVigorVerified = true` for that configuration. With `vigorRecoveryNameA = ""` and `vigorRecoveryNameB = ""`, count>=2 then permits the **same criteria in both hands**. Identical names/attributes are not categorically prohibited. This mode is never enabled merely because a save or count suggests two copies.
+- Prefer distinguishable native criteria where possible: after crafting, optionally assign real nicknames and set `vigorRecoveryNameA`/`vigorRecoveryNameB`. Names are appended to the known family/lifesteal/enchantment criteria, not used as item IDs. Each must match exactly one; their AND-combined criteria must match zero; simultaneous native equipping must still be confirmed before enabling the flag. Overlapping, aliased, missing or ambiguous sets fall back to one healer. Blank names are defaults, not fabricated ownership.
+
+`SameWeapon` is a conservative **pair-conflict guard**, not a physical identity oracle. Only the explicitly verified cached recovery pair is exempted. Other Vigor aliases remain conflicting, including generic selectors that overlap a named role. AAC dummies remain outside the requested pair; recovery swaps preempt cancellation on the change frame. Elemental immunity, blocked Vigor, armor, boss transitions and the unchanged Mind Stone defense still outrank both recovery modes.
+
+Native counts refresh at existing preparation points (fresh entry/attachment), not every frame. Start a fresh run after crafting/upgrading/renaming. If matches disappear, overlap or drop below the required copy count, the cached dual mode is revoked on preparation. Reset `dualVigorVerified` after changing the qualifying configuration/selectors until simultaneous allocation is checked again. The diagnostics show native base count and one/two-copy status. There is no loop trying to steal an indistinguishable item between hands.
+
+The first playable deployment keeps the flag **false**: no second copy or independent allocation has been confirmed. Crafting a second Sword does not require duplicating gear-stat CSV rows. See [private inventory refresh](../gear/PRIVATE_INVENTORY_IMPORT.md#refresh-after-crafting-upgrading-or-renaming) for the offline evidence update; native runtime selection does not require private data deployment.
+
+Release validation: the previously failing alias test passes independently with its assertion intact; full suite **122 PASS**, Rocky-specific **71 PASS**; source/import, packaging preparation, shared B2 static checks, documentation links and diff checks PASS. The raw configuration CSVs/screenshots, private data/importer, both current game deployments and unrelated edits remain unchanged before release. The complete ray function matches shielded commit `f0bd449`. Native AAC, duplicate allocation and faster clear times remain unverified. Release is explicitly authorized for a single local commit/deployment, subject to final staged-tree checks; receipt records the exact commit/bundle/backup/outcome.

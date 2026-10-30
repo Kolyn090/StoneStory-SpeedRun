@@ -12,6 +12,7 @@ var unknownAdaptive = false
 var lastWeapon = ""
 var lastElement = -1
 var lastKind = ""
+var lastOffhand = ""
 var bearerRecoveryActive = false
 var bearerRecoveryStatus = "inactive"
 
@@ -127,6 +128,7 @@ func TryPerfectedRay(gear, equipment, rockyConfig)
   return true
 
 func Reset()
+  lastOffhand = ""
   ResetRayDodge()
   bearerRecoveryActive = false
   bearerRecoveryStatus = "inactive"
@@ -194,7 +196,9 @@ func HoldTransition(gear, equipment)
     lastWeapon = equipment.FromChoices(equipment.swords, 3, blocked)
     ?string.Equals(lastWeapon, "")
       lastWeapon = equipment.physicalSword
-  gear.ApplyPair(lastWeapon, equipment.shield)
+  ?string.Equals(lastOffhand, "")
+    lastOffhand = equipment.shield
+  gear.ApplyPair(lastWeapon, lastOffhand)
 
 // Project recovery policy. Equipment availability is cached at preparation.
 func SelectBearerRecovery(weapon, kind, physicalOnly, wasRecovering, equipment, rockyConfig)
@@ -225,8 +229,76 @@ func SelectBearerRecovery(weapon, kind, physicalOnly, wasRecovering, equipment, 
     return equipment.bearerRecoverySword
   return weapon
 
+// Clear travel only: stable utility offhand, no optional resource pursuit/window.
+func TryClearTravel(gear, settings, equipment, rockyConfig, combat)
+  ?!rockyConfig.dualWieldEnabled | bossLatched | foe | foe.count > 0
+    return false
+  gear.ClearRequest()
+  strategy = "rocky-clear-travel"
+  ?gear.missing > 0 | !ai.enabled | ai.paused
+    strategy = "rocky-travel-suspended"
+    return true
+  var weaponL
+  var weaponR
+  weaponL = gear.defaultSword
+  weaponR = equipment.shield
+  ?combat.CanTravelWithTriskelion(gear, settings)
+    weaponL = gear.triskelion
+    strategy = "rocky-travel-triskelion"
+  ?rockyConfig.clearTravelStarEnabled & !string.Equals(gear.starStone, "")
+    weaponR = gear.starStone
+  :?!string.Equals(equipment.physicalSword, "") & !equipment.SameWeapon(equipment.physicalSword, weaponL)
+    weaponR = equipment.physicalSword
+  gear.ApplyPair(weaponL, weaponR)
+  return true
+
+func ApplyDualCombat(gear, equipment, rockyConfig, attacks, weapon, kind, physicalOnly, wasRecovering)
+  var weaponR
+  var dummyLeft
+  var dummyRight
+  var allowAAC
+  weaponR = equipment.Offhand(equipment.pickedKind, weapon, blocked)
+  ?physicalOnly
+    weaponR = equipment.shield
+    equipment.offhandKind = "shield"
+  ?rockyConfig.dualRecoveryEnabled & !physicalOnly & kind = "sword" & foe.armor <= 0 & !blocked[1]
+    ?rockyConfig.bearerRecoveryEnterRatio > 0 & rockyConfig.bearerRecoveryExitRatio <= 1 & rockyConfig.bearerRecoveryEnterRatio < rockyConfig.bearerRecoveryExitRatio
+      ?!string.Equals(equipment.recoverySwordL, "")
+        ?hp <= maxhp * rockyConfig.bearerRecoveryEnterRatio | (wasRecovering & hp < maxhp * rockyConfig.bearerRecoveryExitRatio)
+          bearerRecoveryActive = true
+          bearerRecoveryStatus = "one Vigor + offense"
+          ?equipment.distinctRecoveryPair
+            weapon = equipment.recoverySwordL
+            weaponR = equipment.recoverySwordR
+            equipment.offhandKind = "sword"
+            equipment.pickedKind = "sword"
+            equipment.pickedElement = 1
+            bearerRecoveryStatus = "two verified Vigor copies"
+          :?equipment.SameWeapon(weapon, equipment.recoverySwordL)
+            weapon = equipment.recoverySwordL
+          :
+            weaponR = equipment.recoverySwordL
+            equipment.offhandKind = "sword"
+          strategy = phase + "-dual-recovery"
+  lastWeapon = weapon
+  lastOffhand = weaponR
+  lastElement = equipment.pickedElement
+  lastKind = equipment.pickedKind
+  lastPhase = phase
+  dummyLeft = ""
+  dummyRight = ""
+  allowAAC = rockyConfig.aacEnabled & equipment.pickedKind = "sword" & equipment.offhandKind = "sword" & !physicalOnly
+  ?allowAAC
+    dummyLeft = equipment.CancelDummy(weapon, weaponR, "", blocked)
+    dummyRight = equipment.CancelDummy(weapon, weaponR, dummyLeft, blocked)
+  ?!bearerRecoveryActive
+    strategy = phase + "-dual-" + equipment.pickedKind
+  ?equipment.offhandKind = "shield"
+    strategy = phase + "-shield-fallback"
+  attacks.Apply(gear, weapon, weaponR, dummyLeft, dummyRight, allowAAC)
+
 // True means this module owns the frame. False means no equipment was issued.
-func Tick(gear, settings, equipment, rockyConfig, combat)
+func Tick(gear, settings, equipment, rockyConfig, combat, attacks)
   var wasRecovering
   wasRecovering = bearerRecoveryActive
   bearerRecoveryActive = false
@@ -236,6 +308,7 @@ func Tick(gear, settings, equipment, rockyConfig, combat)
   strategy = "shared"
   warning = "none"
   ?!rockyConfig.enabled | loc.stars ! rockyConfig.targetStars
+    attacks.ResetCycle()
     ResetRayDodge()
     return false
   ?foe = "acronian_scout"
@@ -261,7 +334,10 @@ func Tick(gear, settings, equipment, rockyConfig, combat)
     encounter = "dysangelos"
     phase = "transition-gap"
   :
+    attacks.ResetCycle()
     ResetRayDodge()
+    ?TryClearTravel(gear, settings, equipment, rockyConfig, combat)
+      return true
     return false
   gear.ClearRequest()
   // Do not allow a later shared fallback to mistake a boss gap for clear travel.
@@ -269,17 +345,20 @@ func Tick(gear, settings, equipment, rockyConfig, combat)
     combat.travelBossSeen = true
   combat.starUntil = 0
   ?gear.missing > 0
+    attacks.ResetCycle()
     ?rayDodgeHolding | rayDodgeSeen
       RayUnavailable("missing core gear")
     strategy = "missing-core-gear-manual"
     warning = "STOP: missing core gear"
     return true
   ?!ai.enabled | ai.paused
+    attacks.ResetCycle()
     ?rayDodgeHolding | rayDodgeSeen
       RayUnavailable("AI suspended")
     strategy = "ai-suspended"
     return true
   ?string.Equals(equipment.shield, "")
+    attacks.ResetCycle()
     ?rayDodgeHolding | rayDodgeSeen
       RayUnavailable("missing/ambiguous shield")
     strategy = "missing-rocky-shield-manual"
@@ -289,11 +368,14 @@ func Tick(gear, settings, equipment, rockyConfig, combat)
     ?item.potion ! "empty" & item.CanActivate()
       activate potion
   ?TryPerfectedRay(gear, equipment, rockyConfig)
+    attacks.ResetCycle()
     return true
   ?phase = "transition-gap"
+    attacks.ResetCycle()
     HoldTransition(gear, equipment)
     return true
   ?foe = "undamageable" | foe.hp <= 0
+    attacks.ResetCycle()
     phase = phase + "-transition"
     HoldTransition(gear, equipment)
     return true
@@ -324,11 +406,13 @@ func Tick(gear, settings, equipment, rockyConfig, combat)
   ?phase = "unknown"
     warning = "unknown Dysangelos phase; inspect native state"
   ?foe = "immune_to_physical" & foe = "immune_to_ranged"
+    attacks.ResetCycle()
     strategy = "immunity-conflict-manual"
     warning = "STOP: conflicting immunities"
     gear.ApplyPair("", equipment.shield)
     return true
   ?physicalOnly & foe = "immune_to_physical"
+    attacks.ResetCycle()
     strategy = "adaptive-immunity-manual"
     warning = "STOP: physical fallback cannot damage target"
     gear.ApplyPair("", equipment.shield)
@@ -340,7 +424,8 @@ func Tick(gear, settings, equipment, rockyConfig, combat)
   ?equipment.usedFallback
     strategy = phase + "-" + equipment.pickedKind + "-fallback-shield"
     warning = "preferred damage family unavailable; fallback"
-  weapon = SelectBearerRecovery(weapon, kind, physicalOnly, wasRecovering, equipment, rockyConfig)
+  ?!rockyConfig.dualWieldEnabled
+    weapon = SelectBearerRecovery(weapon, kind, physicalOnly, wasRecovering, equipment, rockyConfig)
   ?rockyConfig.useHealingSword & kind = "sword" & !physicalOnly & !bearerRecoveryActive
     ?hp < maxhp * settings.healingHpRatio & !blocked[1]
       ?!string.Equals(equipment.healingSword, "")
@@ -348,11 +433,16 @@ func Tick(gear, settings, equipment, rockyConfig, combat)
         equipment.pickedElement = 1
         strategy = phase + "-healing-shield"
   ?string.Equals(weapon, "")
+    attacks.ResetCycle()
     strategy = "no-safe-selector-manual"
     warning = "STOP: no strict allowed weapon; shield only, inspect manually"
     gear.ApplyPair("", equipment.shield)
     return true
+  ?rockyConfig.dualWieldEnabled
+    ApplyDualCombat(gear, equipment, rockyConfig, attacks, weapon, kind, physicalOnly, wasRecovering)
+    return true
   lastWeapon = weapon
+  lastOffhand = equipment.shield
   lastElement = equipment.pickedElement
   lastKind = equipment.pickedKind
   lastPhase = phase

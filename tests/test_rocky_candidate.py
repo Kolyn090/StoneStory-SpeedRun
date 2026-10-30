@@ -51,6 +51,8 @@ class PolicyTests(unittest.TestCase):
         self.native = dict(string=self.strings, item=self.items, foe=Foe(), hp=100, maxhp=100,
                            ai=SimpleNamespace(enabled=True, paused=False), loc=SimpleNamespace(stars=15), totaltime=0)
         self.profile = load_module(ROOT / "scripts/rocky/config/RockySettings.txt", self.native)
+        self.profile.dualWieldEnabled = False  # Preserve shielded-policy regression cases.
+        self.attacks = load_module(ROOT / "scripts/rocky/combat/AttackCycle.txt", self.native)
         # Synthetic labels keep policy assertions separate from native search claims.
         self.profile.swords = self.settings.swords
         self.profile.wands = self.settings.wands
@@ -65,13 +67,13 @@ class PolicyTests(unittest.TestCase):
         state = Foe(value, buffs, armor, hp)
         state.state, state.time = foe_state, foe_time
         # Compiled functions use their own global namespace, sharing fake native inputs.
-        for obj in (self.handler, self.equipment):
+        for obj in (self.handler, self.equipment, self.attacks, self.combat):
             for name in dir(type(obj)):
                 method = getattr(type(obj), name)
                 if hasattr(method, "__globals__"):
                     method.__globals__.update(foe=state, hp=player_hp, totaltime=total)
         self.gear.calls.clear()
-        return self.handler.Tick(self.gear, self.settings, self.equipment, self.profile, self.combat)
+        return self.handler.Tick(self.gear, self.settings, self.equipment, self.profile, self.combat, self.attacks)
 
     def test_ordinary_and_disabled_are_pure_shared_fallback(self):
         self.assertFalse(self.frame("insect"))
@@ -590,7 +592,7 @@ class PolicyTests(unittest.TestCase):
 class SourceAndBundleTests(unittest.TestCase):
     def test_static_contracts_and_no_live_paths(self):
         data = PACKAGE.inspect(ROOT)
-        self.assertEqual(len(data), 10)
+        self.assertEqual(len(data), 11)
         self.assertNotIn(b"steamapps", (ROOT / "tools/prepare_rocky_candidate.py").read_bytes())
 
     def test_bundle_determinism_and_conflicting_output_rejected(self):
@@ -603,14 +605,14 @@ class SourceAndBundleTests(unittest.TestCase):
             self.assertEqual(first, PACKAGE.prepare(root))
             self.assertEqual(files, {str(p.relative_to(first)): (p.read_bytes(), p.stat().st_mtime_ns)
                                      for p in first.rglob("*") if p.is_file()})
-            self.assertEqual(len(files), 5)  # Four candidate modules + manifest; dependencies not overwritten.
+            self.assertEqual(len(files), 6)  # Five candidate modules + manifest; shared dependencies untouched.
             (first / "SpeedRunRocky/main.txt").write_text("tampered")
             with self.assertRaises(ValueError): PACKAGE.prepare(root)
 
     def test_guard_regressions_are_rejected(self):
         for relative, before, after in [
             ("locations/RockyPlateau.txt", 'rayDodgeSpent = true', 'rayDodgeSpent = false'),
-            ("locations/RockyPlateau.txt", '?TryPerfectedRay(gear, equipment, rockyConfig)\n    return true',
+            ("locations/RockyPlateau.txt", '?TryPerfectedRay(gear, equipment, rockyConfig)\n    attacks.ResetCycle()\n    return true',
              'TryPerfectedRay(gear, equipment, rockyConfig)'),
             ("locations/RockyPlateau.txt", '?bossLatched\n    combat.travelBossSeen = true',
              '?true\n    combat.travelBossSeen = true'),
