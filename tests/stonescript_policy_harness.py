@@ -57,6 +57,8 @@ def load_module(path, native):
             original = token
             if token.startswith('"'):
                 token = "Text(" + token + ")"
+            elif token == "null":
+                token = "None"
             elif token in ("true", "false"):
                 token = token.capitalize()
             elif token in names and previous != ".":
@@ -105,6 +107,10 @@ def load_module(path, native):
             hand = "L" if code.startswith("equipL ") else "R"
             selector = code.split(" ", 1)[1].strip("@")
             body.append(prefix + "item.equips.append((" + repr(hand) + ", str(" + expr(selector) + ")))")
+        elif code.startswith("equip "):
+            selector = code.split(" ", 1)[1].strip("@")
+            body.append(prefix + "item.equips.append(('both', str(" + expr(selector) + ")))" )
+        elif code == "activate R": body.append(prefix + "item.activations.append('R')")
         elif code == "activate potion": body.append(prefix + "item.activations.append('potion')")
         elif " = " in code:
             left, right = code.split(" = ", 1)
@@ -112,6 +118,7 @@ def load_module(path, native):
         elif re.fullmatch(r"[\w.]+\(.*\)", code): body.append(prefix + expr(code))
         else: raise ValueError("Unknown test subset statement: " + code)
     namespace = dict(native, Text=Text, Array=Array)
+    namespace.setdefault("Type", lambda value: Text("null" if value is None else "object" if not isinstance(value, (str, bool, int, float)) else type(value).__name__))
     exec("\n".join(body), namespace)
     return namespace["Module"]()
 
@@ -134,11 +141,13 @@ class Items:
         self.potion = Text("empty")
         self.cooldowns = {"mind": 0}
         self.abilities_enabled = True
+        self.specific_ready = {}
         self.equips = []
         self.left = SimpleNamespace(id=Text("socketed_sword"), state=0, time=0)
         self.right = SimpleNamespace(id=Text("sword"), state=0, time=0)
     def GetCount(self, selector):
         self.queries.append(str(selector))
         return self.counts.get(str(selector), 0)
-    def CanActivate(self): return self.abilities_enabled
+    def CanActivate(self, ability=None):
+        return self.abilities_enabled and (ability is None or self.specific_ready.get(str(ability), False))
     def GetCooldown(self, ability): return self.cooldowns.get(str(ability), -1)

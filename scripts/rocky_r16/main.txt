@@ -1,0 +1,156 @@
+// R16 ONLY: future import SpeedRunRockyR16/main. Never import alongside R15.
+// Shared SpeedRunBasic modules and original observer remain unchanged.
+var config = new SpeedRunBasic/config/Settings
+var gear = new SpeedRunBasic/equipment/Catalog
+var locations = new SpeedRunBasic/locations/Dispatcher
+var combat = new SpeedRunBasic/combat/Generic
+var metrics = new SpeedRun/metrics/RunMetrics
+var rockyConfig = new SpeedRunRocky/config/RockySettings
+var equipment = new SpeedRunRocky/equipment/RockyGear
+var rocky = new SpeedRunRockyR16/locations/RockyPlateau
+var extraConfig = new SpeedRunRockyR16/config/Experiments
+var extras = new SpeedRunRockyR16/combat/Experiments
+var attacks = new SpeedRunRocky/combat/AttackCycle
+var initialized = false
+var observedLoops = 0
+var rockyHandled = false
+// Observation only: bounded trace for a recorded Perfected ray calibration.
+var rayTraceActive = false
+var rayTraceState = -1
+var rayTraceTime = 0
+var rayTraceTransition = "entry"
+var rayTraceAfter115 = false
+
+?!initialized
+  rocky.experiment = extras
+
+?loc.begin
+  observedLoops = 0
+  metrics.ResetSession()
+  metrics.Begin("entry", true)
+  gear.Prepare(config)
+  equipment.Prepare(config, rockyConfig)
+  extras.Prepare(extraConfig)
+  combat.Reset()
+  attacks.Reset()
+  // A sub-location boundary must not erase a latched boss encounter.
+  ?!initialized
+    rocky.Reset()
+    extras.Reset()
+  initialized = true
+:?loc.loop
+  observedLoops++
+  metrics.Begin("loop", true)
+  combat.Reset()
+  attacks.Reset()
+  rocky.Reset()
+  extras.Reset()
+  ?!initialized
+    gear.Prepare(config)
+    equipment.Prepare(config, rockyConfig)
+    extras.Prepare(extraConfig)
+  initialized = true
+:?!initialized
+  metrics.Begin("attached", false)
+  gear.Prepare(config)
+  equipment.Prepare(config, rockyConfig)
+  extras.Prepare(extraConfig)
+  combat.Reset()
+  attacks.Reset()
+  rocky.Reset()
+  extras.Reset()
+  initialized = true
+
+rockyHandled = false
+locations.Update()
+?config.enabled & locations.allowed
+  ?string.Equals(locations.handler, "rocky")
+    rockyHandled = rocky.Tick(gear, config, equipment, rockyConfig, combat, attacks)
+  ?!rockyHandled
+    combat.Tick(gear, config)
+:
+  combat.strategy = "observer-only"
+  gear.ClearRequest()
+
+// No attack meaning or dodge timing is inferred from the state number.
+func ObservePerfectedTrace(isRocky)
+  ?!isRocky | !foe
+    rayTraceActive = false
+    return
+  ?foe ! "dysangelos" | (foe ! "phase3" & foe ! "dysangelos_perfected")
+    rayTraceActive = false
+    return
+  ?!rayTraceActive
+    rayTraceTransition = "entry " + foe.state + ":" + foe.time + " @" + totaltime
+    rayTraceAfter115 = false
+  :?foe.state ! rayTraceState | foe.time < rayTraceTime
+    rayTraceTransition = "prev " + rayTraceState + ":" + rayTraceTime + " -> " + foe.state + ":" + foe.time + " @" + totaltime
+    rayTraceAfter115 = false
+    ?rayTraceState = 115
+      rayTraceAfter115 = true
+  rayTraceState = foe.state
+  rayTraceTime = foe.time
+  rayTraceActive = true
+
+func DrawPerfectedTrace()
+  ?!rayTraceActive
+    return
+  ?rayTraceState = 115
+    >`0,0,#red,R15 P3 *115* s:@rayTraceState@ f:@rayTraceTime@ HP:@hp@/@maxhp@
+  :?rayTraceAfter115
+    >`0,0,#yellow,R15 P3 AFTER 115 s:@rayTraceState@ f:@rayTraceTime@ HP:@hp@/@maxhp@
+  :
+    >`0,0,#cyan,R15 P3 s:@rayTraceState@ f:@rayTraceTime@ HP:@hp@/@maxhp@
+  >`0,1,#white,Last:@rayTraceTransition@ d:@foe.distance@
+  >`0,2,#yellow,Ray EXP:@rocky.rayDodgeStatus@ tries:@rocky.rayDodgeAttempts@ cd:@rocky.rayDodgeCooldown@
+
+func DrawRockyCandidate()
+  var activeStrategy
+  var activeEncounter
+  var activePhase
+  activeStrategy = combat.strategy
+  activeEncounter = rocky.encounter
+  activePhase = rocky.phase
+  ?!string.Equals(locations.handler, "rocky")
+    activeEncounter = "shared-location"
+    activePhase = "none"
+  :?loc.stars ! rockyConfig.targetStars
+    activeEncounter = "shared-difficulty"
+    activePhase = "none"
+  ?rockyHandled
+    activeStrategy = rocky.strategy
+  >`0,0,Rocky R15 UNTESTED | @loc.id@ *@loc.stars@ -> @locations.handler@
+  >`0,1,Owner Rocky:@rockyHandled@ Encounter:@activeEncounter@ Phase:@activePhase@
+  >`0,2,Strategy:@activeStrategy@ Last phase:@rocky.lastPhase@
+  >`0,3,Want L:@gear.selectedWeapon@
+  >`0,4,Want R:@gear.selectedShield@
+  >`0,5,Have L:@item.left@
+  >`0,6,Have R:@item.right@
+  >`0,7,Warning:@rocky.warning@ Shared:@gear.notice@ Core:@gear.missingCore@
+  >`0,8,Foe:@foe.id@ state:@foe.state@ time:@foe.time@ Armor:@foe.armor@
+  >`0,9,Adaptive unknown:@rocky.unknownAdaptive@ Buffs:@foe.buffs.string@
+  >`0,10,Strict missing/ambiguous:@equipment.missingPreferred@
+  >`0,11,Shared misses:@gear.unavailableBase@ Move frames:@player.framesPerMove@
+  >`0,12,@metrics.startKind@ t:@totaltime@ done:@metrics.currentCompletion@ loops:@observedLoops@
+  >`0,13,Last:@metrics.lastCompletion@ count:@metrics.completedCount@ Tab=native errors
+  >`0,14,Shield:@equipment.shieldStatus@
+  >`0,15,Recovery:@rocky.bearerRecoveryActive@ @rocky.bearerRecoveryStatus@ HP:@hp@/@maxhp@
+  >`0,16,Ray EXP:@rocky.rayDodgeStatus@ tries:@rocky.rayDodgeAttempts@ cd:@rocky.rayDodgeCooldown@
+  >`0,17,@rocky.rayDodgeReason@ at:@rocky.rayDodgeTriggeredAt@ until:@rocky.rayDodgeUntil@
+  >`0,18,AAC:@attacks.status@ L/R:@attacks.cancelsL@/@attacks.cancelsR@ loss:@attacks.observedLoss@ samples:@attacks.lossSamples@ since:@attacks.startedAt@
+  >`0,19,Move:@ai.walking@ Pause:@ai.paused@ Pickup:@pickup@ d:@pickup.distance@
+  >`0,20,Vigor matches:@equipment.recoveryCount@ @equipment.recoveryPairStatus@
+
+metrics.Observe()
+?config.showDiagnostics & rockyConfig.showDiagnostics
+  ObservePerfectedTrace(string.Equals(locations.handler, "rocky") & loc.stars = rockyConfig.targetStars & rockyConfig.enabled)
+  DrawRockyCandidate()
+  DrawPerfectedTrace()
+:
+  rayTraceActive = false
+
+?extraConfig.showDiagnostics
+  >`0,0,#yellow,R16 EXP @rocky.phase@ @rocky.strategy@ | @extras.status@
+  >`0,1,Mask:@extras.mask@ Dash:@extras.dash@
+  >`0,2,Attempts M/D:@extras.maskAttempts@/@extras.dashAttempts@ CD:@item.GetCooldown("mask")@/@item.GetCooldown("quarterstaff")@
+  >`0,3,Have L:@item.left@ R:@item.right@

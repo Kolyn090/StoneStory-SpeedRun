@@ -1,6 +1,8 @@
 // Original phase policy informed by the pinned sources in ROCKY_PLATEAU_RESEARCH.
 // Ray timing below is EXPERIMENTAL; no AAC or other attack timing is added.
 var bossLatched = false
+// Optional R16 object; null keeps R15 behavior and ownership unchanged.
+var experiment = null
 var encounter = "ordinary"
 var phase = "none"
 var lastPhase = "none"
@@ -285,6 +287,11 @@ func ApplyDualCombat(gear, equipment, rockyConfig, attacks, weapon, kind, physic
   lastElement = equipment.pickedElement
   lastKind = equipment.pickedKind
   lastPhase = phase
+  ?Type(experiment) = "object"
+    ?experiment.TryCombat(gear, equipment, bearerRecoveryActive, physicalOnly, phase)
+      attacks.ResetCycle()
+      strategy = experiment.status
+      return
   dummyLeft = ""
   dummyRight = ""
   allowAAC = (rockyConfig.aacEnabled & (equipment.pickedKind = "sword") & (equipment.offhandKind = "sword") & !physicalOnly)

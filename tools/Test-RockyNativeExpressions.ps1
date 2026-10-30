@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$ManagedDirectory)
+param([Parameter(Mandatory=$true)][string]$ManagedDirectory, [switch]$R16)
 # Offline native LANGUAGE regression only. No Unity component, imports, storage,
 # combat commands, primary save or live-process access. Never distribute game DLLs.
 $ErrorActionPreference='Stop'
@@ -97,3 +97,32 @@ if($result.Errors.Count -ne 1){throw 'Missing equipment object must fail explici
 $checks++
 Write-Output "PASS: $checks offline native parser/runtime checks; original bug reproduced, current source gate verified."
 Write-Output 'LIMIT: synthetic language-only execution; no live combat, gear timing or completion test.'
+
+if($R16){
+    $syntaxChecks=0
+    foreach($relative in @('scripts/rocky_r16/main.txt','scripts/rocky_r16/config/Experiments.txt',
+                           'scripts/rocky_r16/combat/Experiments.txt','scripts/rocky/locations/RockyPlateau.txt')){
+        $source=Get-Content -LiteralPath (Join-Path $scriptRoot $relative) -Raw
+        # The standalone grammar has no game's native command registration step.
+        # Check only these documented commands separately in source/policy tests;
+        # substitute a simple assignment for grammar checking of the surrounding flow.
+        $source=[regex]::Replace($source,'(?m)^(\s*)(equip @selector@|activate R|activate potion)\s*$', '$1r16CommandProbe = 0')
+        $inputText=[Antlr4.Runtime.AntlrInputStream]::new($source)
+        $lexer=[Activator]::CreateInstance($assembly.GetType('Stonescript.Compiler.StonescriptLexer'),@($inputText))
+        $tokens=[Antlr4.Runtime.CommonTokenStream]::new($lexer)
+        $parser=[Activator]::CreateInstance($assembly.GetType('Stonescript.Compiler.StonescriptParser'),@($tokens))
+        [void]$parser.program()
+        if($parser.NumberOfSyntaxErrors -ne 0){throw "Native R16 syntax errors in $relative"}
+        $syntaxChecks++
+    }
+    # Execute only flag declarations; no action body, command, import or game state.
+    $machine=[Activator]::CreateInstance($machineType)
+    $source=Get-Content -LiteralPath (Join-Path $scriptRoot 'scripts/rocky_r16/config/Experiments.txt') -Raw
+    $exe=$machine.Compile($source,'OfflineR16Defaults',$true)
+    if(!$exe){throw 'Native R16 configuration compile failed'}
+    [void]$machine.Execute($exe,$machine.CreateExecutionContext())
+    if($machine.Results.Count -ne 0 -or $exe.Target.GetVariable('maskEnabled') -ne $false -or $exe.Target.GetVariable('dashEnabled') -ne $false){
+        throw 'R16 native defaults must disable experiments'
+    }
+    Write-Output "PASS: $syntaxChecks R16 control-flow sources parsed (equip/activate excluded); disabled config executed offline. No gameplay actions executed."
+}

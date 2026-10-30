@@ -1,0 +1,20 @@
+// R16 experiments. Disabled until separately authorized in-game trials.
+var maskEnabled = false
+var dashEnabled = false
+var showDiagnostics = false
+// Screenshot/save family evidence; native count must be exactly one. No broad fallback.
+var maskSelector = "cultist mask"
+var dashSelector = "quarterstaff DashStaff"
+// Scout-only trials. No assumption about any Dysangelos susceptibility/safe window.
+var minHpRatio = 0.95
+var maskMaxDistance = 5
+var maskMinEnemyHp = 100
+var maskMaxAttempts = 1
+var maskRetryFrames = 600
+var dashMinDistance = 17
+var dashMaxDistance = 28
+var dashMaxAttempts = 1
+var dashRetryFrames = 132
+// Experimental equip-settle/hold bounds, NOT observed ability durations.
+var equipTimeoutFrames = 6
+var postActivationHoldFrames = 1

@@ -53,3 +53,7 @@ The [archive index](archive/README.md) covers R1, earlier plans/crosswalk/tests,
 Run commands from the repository root unless a page explicitly says otherwise. Update current guides first; link instead of copying equipment rules, status narratives or install procedures. Keep imported private notes and backup snapshots immutable. The two old-path redirects exist only for those preserved references.
 
 Validate local Markdown links, anchors and explicit documentation path references with `python -B tools/check_documentation_links.py`. This check does not fetch external sites or validate in-game behavior. See [the organization audit](DOCUMENTATION_AUDIT.md) for moves, retained evidence and remaining uncertainties.
+
+## R16 independent experiment
+
+[Scout Mask/dash experiment](rocky/ROCKY_R16.md) is local, disabled by default and undeployed on its own branch, based on successful R15 `1c696fe` plus documentation `5d57ccf`. It does not replace the deployed baseline; other effect rotations and Berserk remain deferred.

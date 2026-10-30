@@ -121,3 +121,7 @@ adds an explicit offline native check using locally installed assemblies, withou
 game imports/commands, saves or deployment. Missing real objects/config fields
 remain errors; do not hide them with arbitrary null guards. Custom overlay flags
 must not disable native Tab errors, combat or measurement.
+
+## R16 ability evidence boundary
+
+[The R16 guide](rocky/ROCKY_R16.md) records the original Mask/DashStaff image review and owned-record limits. Mask's displayed 10-HP loss affects foes, not the player. Native count uniqueness is not exact-variant confirmation. Use documented `mask`/`quarterstaff` cooldown IDs and specific activation eligibility after equipping; -1 cooldown alone proves nothing. Bounded attempts/timeouts replace an invented Feeble-active query. New sequences are Scout-only and default off; current-target IDs do not prove per-instance identity. Actual cast/hold, stun, susceptibility and speed remain unverified. Other statuses and Berserk are deferred instead of inventing UIDs, potion charges or attack windows.

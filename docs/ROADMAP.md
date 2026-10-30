@@ -17,3 +17,7 @@ The approximate owner timing improvement is an informal whole-strategy observati
 R16 advanced-combat research and R17 recording remain independent experimental branches; this milestone does not merge or deploy them. Heavy Hammer sequences, new active abilities and additional boss timing remain deferred. Short-sword AAC remains part of the successful Rocky baseline, with its detailed throughput unverified.
 
 The [earlier working plan](archive/ROCKY_PLATEAU_WORKING_PLAN.md) and [foundation roadmap](archive/FOUNDATION_ROADMAP.md) preserve historical design and milestone evidence. See [architecture](ARCHITECTURE.md) for implemented ownership. Preserve working scripts and rollback files; documentation work alone authorizes no gameplay deployment.
+
+## R16 opt-in gate (independent branch)
+
+[R16](rocky/ROCKY_R16.md) adds disabled Scout-only Mask/dash trials with exclusive ownership. Next gates are all-off equivalence, exact scoped selectors, one dash approach and one Mask activation tested separately; only then combine and compare measured runs. Debuff IDs, boss susceptibility, additional status rotations and potion availability remain unresolved. No R16 deployment or merge into the successful R15 baseline is implied.
