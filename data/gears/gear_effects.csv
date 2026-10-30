@@ -1,0 +1,259 @@
+﻿gear_id,effect_order,effect_text,source_image,review_status
+screenshot_0010,1,Attackers receive Stun,cropped/page_002/item_0010.png,visual_transcription_review_recommended
+screenshot_0010,2,Stun prevents attacks and movement for 1.4s,cropped/page_002/item_0010.png,visual_transcription_review_recommended
+screenshot_0011,1,Mini-dash attack applies Stun,cropped/page_002/item_0011.png,visual_transcription_review_recommended
+screenshot_0011,2,Stun briefly prevents attacks and movement,cropped/page_002/item_0011.png,visual_transcription_review_recommended
+screenshot_0011,3,Cooldown 4.4 seconds,cropped/page_002/item_0011.png,visual_transcription_review_recommended
+screenshot_0015,1,Pierce 2,cropped/page_002/item_0015.png,visual_transcription_review_recommended
+screenshot_0015,2,Critical chance 75%,cropped/page_002/item_0015.png,visual_transcription_review_recommended
+screenshot_0015,3,Critical multiplier x12,cropped/page_002/item_0015.png,visual_transcription_review_recommended
+screenshot_0015,4,+6 damage against Vigor foes,cropped/page_002/item_0015.png,visual_transcription_review_recommended
+screenshot_0015,5,Attacks apply Weaken,cropped/page_002/item_0015.png,visual_transcription_review_recommended
+screenshot_0015,6,Weaken -4 damage penalty for 3 seconds,cropped/page_002/item_0015.png,visual_transcription_review_recommended
+screenshot_0016,1,Pierce 2,cropped/page_002/item_0016.png,visual_transcription_review_recommended
+screenshot_0016,2,Critical chance 33%,cropped/page_002/item_0016.png,visual_transcription_review_recommended
+screenshot_0016,3,Critical multiplier x6,cropped/page_002/item_0016.png,visual_transcription_review_recommended
+screenshot_0016,4,+93 damage against Vigor foes,cropped/page_002/item_0016.png,visual_transcription_review_recommended
+screenshot_0017,1,Pierce 2,cropped/page_003/item_0017.png,visual_transcription_review_recommended
+screenshot_0017,2,Critical chance 75%,cropped/page_003/item_0017.png,visual_transcription_review_recommended
+screenshot_0017,3,Critical multiplier x12,cropped/page_003/item_0017.png,visual_transcription_review_recommended
+screenshot_0017,4,+6 damage against Æther foes,cropped/page_003/item_0017.png,visual_transcription_review_recommended
+screenshot_0017,5,Lifesteal chance 24%,cropped/page_003/item_0017.png,visual_transcription_review_recommended
+screenshot_0018,1,Pierce 2,cropped/page_003/item_0018.png,visual_transcription_review_recommended
+screenshot_0018,2,Critical chance 33%,cropped/page_003/item_0018.png,visual_transcription_review_recommended
+screenshot_0018,3,Critical multiplier x6,cropped/page_003/item_0018.png,visual_transcription_review_recommended
+screenshot_0018,4,+93 damage against Æther foes,cropped/page_003/item_0018.png,visual_transcription_review_recommended
+screenshot_0019,1,Pierce 2,cropped/page_003/item_0019.png,visual_transcription_review_recommended
+screenshot_0019,2,Critical chance 33%,cropped/page_003/item_0019.png,visual_transcription_review_recommended
+screenshot_0019,3,Critical multiplier x6,cropped/page_003/item_0019.png,visual_transcription_review_recommended
+screenshot_0019,4,+93 damage against Fire foes,cropped/page_003/item_0019.png,visual_transcription_review_recommended
+screenshot_0020,1,Pierce 2,cropped/page_003/item_0020.png,visual_transcription_review_recommended
+screenshot_0020,2,Critical chance 33%,cropped/page_003/item_0020.png,visual_transcription_review_recommended
+screenshot_0020,3,Critical multiplier x6,cropped/page_003/item_0020.png,visual_transcription_review_recommended
+screenshot_0020,4,+6 damage against Ice foes,cropped/page_003/item_0020.png,visual_transcription_review_recommended
+screenshot_0020,5,Attacks apply Burn,cropped/page_003/item_0020.png,visual_transcription_review_recommended
+screenshot_0020,6,Burn deals 195 damage over time,cropped/page_003/item_0020.png,visual_transcription_review_recommended
+screenshot_0021,1,Pierce 2,cropped/page_003/item_0021.png,visual_transcription_review_recommended
+screenshot_0021,2,Critical chance 33%,cropped/page_003/item_0021.png,visual_transcription_review_recommended
+screenshot_0021,3,Critical multiplier x6,cropped/page_003/item_0021.png,visual_transcription_review_recommended
+screenshot_0021,4,+93 damage against Ice foes,cropped/page_003/item_0021.png,visual_transcription_review_recommended
+screenshot_0022,1,Pierce 2,cropped/page_003/item_0022.png,visual_transcription_review_recommended
+screenshot_0022,2,Critical chance 33%,cropped/page_003/item_0022.png,visual_transcription_review_recommended
+screenshot_0022,3,Critical multiplier x6,cropped/page_003/item_0022.png,visual_transcription_review_recommended
+screenshot_0022,4,+6 damage against Poison foes,cropped/page_003/item_0022.png,visual_transcription_review_recommended
+screenshot_0022,5,Attacks apply Chill,cropped/page_003/item_0022.png,visual_transcription_review_recommended
+screenshot_0022,6,Chill reduces attack speed for 18.6 seconds,cropped/page_003/item_0022.png,visual_transcription_review_recommended
+screenshot_0023,1,Pierce 2,cropped/page_003/item_0023.png,visual_transcription_review_recommended
+screenshot_0023,2,Critical chance 33%,cropped/page_003/item_0023.png,visual_transcription_review_recommended
+screenshot_0023,3,Critical multiplier x6,cropped/page_003/item_0023.png,visual_transcription_review_recommended
+screenshot_0023,4,+93 damage against Poison foes,cropped/page_003/item_0023.png,visual_transcription_review_recommended
+screenshot_0024,1,Attacks apply Stun,cropped/page_003/item_0024.png,visual_transcription_review_recommended
+screenshot_0024,2,Stun duration 0.4s,cropped/page_003/item_0024.png,visual_transcription_review_recommended
+screenshot_0024,3,6.6x damage to armored foes,cropped/page_003/item_0024.png,visual_transcription_review_recommended
+screenshot_0024,4,+105 damage against Vigor foes,cropped/page_003/item_0024.png,visual_transcription_review_recommended
+screenshot_0025,1,Attacks apply Stun,cropped/page_004/item_0025.png,visual_transcription_review_recommended
+screenshot_0025,2,Stun duration 1.03s,cropped/page_004/item_0025.png,visual_transcription_review_recommended
+screenshot_0025,3,2.4x damage to armored foes,cropped/page_004/item_0025.png,visual_transcription_review_recommended
+screenshot_0025,4,+24 damage against Æther foes,cropped/page_004/item_0025.png,visual_transcription_review_recommended
+screenshot_0026,1,Attacks apply Stun,cropped/page_004/item_0026.png,visual_transcription_review_recommended
+screenshot_0026,2,Stun duration 0.4s,cropped/page_004/item_0026.png,visual_transcription_review_recommended
+screenshot_0026,3,6.6x damage to armored foes,cropped/page_004/item_0026.png,visual_transcription_review_recommended
+screenshot_0026,4,+105 damage against Fire foes,cropped/page_004/item_0026.png,visual_transcription_review_recommended
+screenshot_0027,1,Attacks apply Stun,cropped/page_004/item_0027.png,visual_transcription_review_recommended
+screenshot_0027,2,Stun duration 0.4s,cropped/page_004/item_0027.png,visual_transcription_review_recommended
+screenshot_0027,3,6.6x damage to armored foes,cropped/page_004/item_0027.png,visual_transcription_review_recommended
+screenshot_0027,4,+24 damage against Ice foes,cropped/page_004/item_0027.png,visual_transcription_review_recommended
+screenshot_0028,1,Attacks apply Stun,cropped/page_004/item_0028.png,visual_transcription_review_recommended
+screenshot_0028,2,Stun duration 0.4s,cropped/page_004/item_0028.png,visual_transcription_review_recommended
+screenshot_0028,3,6.6x damage to armored foes,cropped/page_004/item_0028.png,visual_transcription_review_recommended
+screenshot_0028,4,+105 damage against Poison foes,cropped/page_004/item_0028.png,visual_transcription_review_recommended
+screenshot_0029,1,Splash chance 100%,cropped/page_004/item_0029.png,visual_transcription_review_recommended
+screenshot_0029,2,+9 damage against Æther foes,cropped/page_004/item_0029.png,visual_transcription_review_recommended
+screenshot_0029,3,Lifesteal chance 109%,cropped/page_004/item_0029.png,visual_transcription_review_recommended
+screenshot_0030,1,Splash chance 100%,cropped/page_004/item_0030.png,visual_transcription_review_recommended
+screenshot_0030,2,+9 damage against Fire foes,cropped/page_004/item_0030.png,visual_transcription_review_recommended
+screenshot_0030,3,Instantly unmake chance 65%,cropped/page_004/item_0030.png,visual_transcription_review_recommended
+screenshot_0031,1,Splash chance 100%,cropped/page_004/item_0031.png,visual_transcription_review_recommended
+screenshot_0031,2,+9 damage against Poison foes,cropped/page_004/item_0031.png,visual_transcription_review_recommended
+screenshot_0031,3,Attacks apply Chill,cropped/page_004/item_0031.png,visual_transcription_review_recommended
+screenshot_0031,4,Chill reduces attack speed for 18.6 seconds,cropped/page_004/item_0031.png,visual_transcription_review_recommended
+screenshot_0032,1,Dash into nearby foes applying Stun,cropped/page_004/item_0032.png,visual_transcription_review_recommended
+screenshot_0032,2,Gain 3.3 armor per foe stunned,cropped/page_004/item_0032.png,visual_transcription_review_recommended
+screenshot_0032,3,Stun duration 3.3s,cropped/page_004/item_0032.png,visual_transcription_review_recommended
+screenshot_0032,4,Cooldown 9 seconds,cropped/page_004/item_0032.png,visual_transcription_review_recommended
+screenshot_0033,1,Critical chance 100%,cropped/page_005/item_0033.png,visual_transcription_review_recommended
+screenshot_0033,2,Critical multiplier x6,cropped/page_005/item_0033.png,visual_transcription_review_recommended
+screenshot_0034,1,Summon Voidweaver,cropped/page_005/item_0034.png,visual_transcription_review_recommended
+screenshot_0034,2,Cooldown 5 seconds,cropped/page_005/item_0034.png,visual_transcription_review_recommended
+screenshot_0034,3,Voidweaver deals 22 damage to all nearby foes and applies Unstable,cropped/page_005/item_0034.png,visual_transcription_review_recommended
+screenshot_0034,4,Unstable foes have 20% chance to be unmade when damaged,cropped/page_005/item_0034.png,visual_transcription_review_recommended
+screenshot_0034,5,Gain 2.05 armor if foe unmade,cropped/page_005/item_0034.png,visual_transcription_review_recommended
+screenshot_0034,6,Voidweaver devours Æther rune and armor to unmake nearby foes,cropped/page_005/item_0034.png,visual_transcription_review_recommended
+screenshot_0034,7,Cooldown 90 seconds,cropped/page_005/item_0034.png,visual_transcription_review_recommended
+screenshot_0034,8,-4 damage from Fire foes,cropped/page_005/item_0034.png,visual_transcription_review_recommended
+screenshot_0035,1,Summon Cinderwisp,cropped/page_005/item_0035.png,visual_transcription_review_recommended
+screenshot_0035,2,Cooldown 5 seconds,cropped/page_005/item_0035.png,visual_transcription_review_recommended
+screenshot_0035,3,Cinderwisp applies Ignition every 0.5 seconds,cropped/page_005/item_0035.png,visual_transcription_review_recommended
+screenshot_0035,4,Ignition deals 4 damage per second,cropped/page_005/item_0035.png,visual_transcription_review_recommended
+screenshot_0035,5,Max debuffs 20,cropped/page_005/item_0035.png,visual_transcription_review_recommended
+screenshot_0035,6,Cinderwisp devours Fire rune dealing 40 damage per Ignition,cropped/page_005/item_0035.png,visual_transcription_review_recommended
+screenshot_0035,7,Cooldown 90 seconds,cropped/page_005/item_0035.png,visual_transcription_review_recommended
+screenshot_0035,8,-4 damage from Ice foes,cropped/page_005/item_0035.png,visual_transcription_review_recommended
+screenshot_0036,1,+1.8 armor per engaging Vigor foe,cropped/page_005/item_0036.png,visual_transcription_review_recommended
+screenshot_0036,2,When attacked gain Empower,cropped/page_005/item_0036.png,visual_transcription_review_recommended
+screenshot_0036,3,Empower +1 damage for 4.1 seconds,cropped/page_005/item_0036.png,visual_transcription_review_recommended
+screenshot_0037,1,+7.2 armor per engaging Vigor foe,cropped/page_005/item_0037.png,visual_transcription_review_recommended
+screenshot_0038,1,+1.8 armor per engaging Æther foe,cropped/page_005/item_0038.png,visual_transcription_review_recommended
+screenshot_0038,2,70% chance to heal 2 health when attacked,cropped/page_005/item_0038.png,visual_transcription_review_recommended
+screenshot_0039,1,+7.2 armor per engaging Æther foe,cropped/page_005/item_0039.png,visual_transcription_review_recommended
+screenshot_0040,1,+1.8 armor per engaging Fire foe,cropped/page_005/item_0040.png,visual_transcription_review_recommended
+screenshot_0040,2,Attackers 100% chance to be instantly unmade,cropped/page_005/item_0040.png,visual_transcription_review_recommended
+screenshot_0041,1,+7.2 armor per engaging Fire foe,cropped/page_006/item_0041.png,visual_transcription_review_recommended
+screenshot_0042,1,+1.8 armor per engaging Ice foe,cropped/page_006/item_0042.png,visual_transcription_review_recommended
+screenshot_0042,2,Attackers receive Burn,cropped/page_006/item_0042.png,visual_transcription_review_recommended
+screenshot_0042,3,Burn deals 260 damage over time,cropped/page_006/item_0042.png,visual_transcription_review_recommended
+screenshot_0043,1,+7.2 armor per engaging Ice foe,cropped/page_006/item_0043.png,visual_transcription_review_recommended
+screenshot_0044,1,+1.8 armor per engaging Poison foe,cropped/page_006/item_0044.png,visual_transcription_review_recommended
+screenshot_0044,2,Engaging foes receive Chill,cropped/page_006/item_0044.png,visual_transcription_review_recommended
+screenshot_0044,3,Chill reduces attack speed for 31.8 seconds,cropped/page_006/item_0044.png,visual_transcription_review_recommended
+screenshot_0045,1,+7.2 armor per engaging Poison foe,cropped/page_006/item_0045.png,visual_transcription_review_recommended
+screenshot_0046,1,Splash chance 50%,cropped/page_006/item_0046.png,visual_transcription_review_recommended
+screenshot_0046,2,+0.75 armor per engaging Poison foe,cropped/page_006/item_0046.png,visual_transcription_review_recommended
+screenshot_0046,3,Engaging foes receive Chill,cropped/page_006/item_0046.png,visual_transcription_review_recommended
+screenshot_0046,4,Chill reduces attack speed for 31.8 seconds,cropped/page_006/item_0046.png,visual_transcription_review_recommended
+screenshot_0047,1,Active: increase range by 10 (22 max),cropped/page_006/item_0047.png,visual_transcription_review_recommended
+screenshot_0047,2,Buff duration 25s,cropped/page_006/item_0047.png,visual_transcription_review_recommended
+screenshot_0047,3,Cooldown 30s,cropped/page_006/item_0047.png,visual_transcription_review_recommended
+screenshot_0047,4,Splash chance 50%,cropped/page_006/item_0047.png,visual_transcription_review_recommended
+screenshot_0047,5,+0.75 armor per engaging Fire foe,cropped/page_006/item_0047.png,visual_transcription_review_recommended
+screenshot_0047,6,Attackers 39% chance to be instantly unmade,cropped/page_006/item_0047.png,visual_transcription_review_recommended
+screenshot_0048,1,Active: envelop yourself with infernal fire,cropped/page_006/item_0048.png,visual_transcription_review_recommended
+screenshot_0048,2,Gain 4 attack speed and Burn,cropped/page_006/item_0048.png,visual_transcription_review_recommended
+screenshot_0048,3,Burn deals 5 damage every 2 seconds,cropped/page_006/item_0048.png,visual_transcription_review_recommended
+screenshot_0048,4,Buff duration 10s,cropped/page_006/item_0048.png,visual_transcription_review_recommended
+screenshot_0048,5,Cooldown 30s,cropped/page_006/item_0048.png,visual_transcription_review_recommended
+screenshot_0048,6,Splash chance 50%,cropped/page_006/item_0048.png,visual_transcription_review_recommended
+screenshot_0048,7,+9 damage against Ice foes,cropped/page_006/item_0048.png,visual_transcription_review_recommended
+screenshot_0048,8,Attackers receive Burn,cropped/page_006/item_0048.png,visual_transcription_review_recommended
+screenshot_0048,9,Burn deals 92 damage over time,cropped/page_006/item_0048.png,visual_transcription_review_recommended
+screenshot_0049,1,Active: encase yourself in Ice making you immune to damage but unable to move/change weapon/attack for 0.2s,cropped/page_007/item_0049.png,visual_transcription_review_recommended
+screenshot_0049,2,Cooldown 10s,cropped/page_007/item_0049.png,visual_transcription_review_recommended
+screenshot_0049,3,Splash chance 50%,cropped/page_007/item_0049.png,visual_transcription_review_recommended
+screenshot_0049,4,+9 damage against Poison foes,cropped/page_007/item_0049.png,visual_transcription_review_recommended
+screenshot_0049,5,Engaging foes receive Chill,cropped/page_007/item_0049.png,visual_transcription_review_recommended
+screenshot_0049,6,Chill reduces attack speed for 15 seconds,cropped/page_007/item_0049.png,visual_transcription_review_recommended
+screenshot_0050,1,Active: damage dealt to and from you increased by 30%,cropped/page_007/item_0050.png,visual_transcription_review_recommended
+screenshot_0050,2,Buff duration 5s,cropped/page_007/item_0050.png,visual_transcription_review_recommended
+screenshot_0050,3,Cooldown 30s,cropped/page_007/item_0050.png,visual_transcription_review_recommended
+screenshot_0050,4,Splash chance 50%,cropped/page_007/item_0050.png,visual_transcription_review_recommended
+screenshot_0050,5,+9 damage against Vigor foes,cropped/page_007/item_0050.png,visual_transcription_review_recommended
+screenshot_0050,6,Attacks apply Weaken,cropped/page_007/item_0050.png,visual_transcription_review_recommended
+screenshot_0050,7,Weaken -4 damage penalty for 3 seconds,cropped/page_007/item_0050.png,visual_transcription_review_recommended
+screenshot_0051,1,Active: prevent next debuff received within 2 seconds,cropped/page_007/item_0051.png,visual_transcription_review_recommended
+screenshot_0051,2,Cooldown 10s,cropped/page_007/item_0051.png,visual_transcription_review_recommended
+screenshot_0051,3,Splash chance 50%,cropped/page_007/item_0051.png,visual_transcription_review_recommended
+screenshot_0051,4,+9 damage against Æther foes,cropped/page_007/item_0051.png,visual_transcription_review_recommended
+screenshot_0051,5,70% chance to heal 2 health when attacked,cropped/page_007/item_0051.png,visual_transcription_review_recommended
+screenshot_0052,1,Critical chance 13%,cropped/page_007/item_0052.png,visual_transcription_review_recommended
+screenshot_0052,2,Critical multiplier x4,cropped/page_007/item_0052.png,visual_transcription_review_recommended
+screenshot_0052,3,+85 damage against Vigor foes,cropped/page_007/item_0052.png,visual_transcription_review_recommended
+screenshot_0053,1,Critical chance 13%,cropped/page_007/item_0053.png,visual_transcription_review_recommended
+screenshot_0053,2,Critical multiplier x4,cropped/page_007/item_0053.png,visual_transcription_review_recommended
+screenshot_0053,3,+9 damage against Æther foes,cropped/page_007/item_0053.png,visual_transcription_review_recommended
+screenshot_0053,4,Lifesteal chance 109%,cropped/page_007/item_0053.png,visual_transcription_review_recommended
+screenshot_0054,1,Critical chance 13%,cropped/page_007/item_0054.png,visual_transcription_review_recommended
+screenshot_0054,2,Critical multiplier x4,cropped/page_007/item_0054.png,visual_transcription_review_recommended
+screenshot_0054,3,+9 damage against Fire foes,cropped/page_007/item_0054.png,visual_transcription_review_recommended
+screenshot_0054,4,Instantly unmake chance 65%,cropped/page_007/item_0054.png,visual_transcription_review_recommended
+screenshot_0055,1,Critical chance 13%,cropped/page_007/item_0055.png,visual_transcription_review_recommended
+screenshot_0055,2,Critical multiplier x4,cropped/page_007/item_0055.png,visual_transcription_review_recommended
+screenshot_0055,3,+85 damage against Ice foes,cropped/page_007/item_0055.png,visual_transcription_review_recommended
+screenshot_0056,1,Critical chance 13%,cropped/page_007/item_0056.png,visual_transcription_review_recommended
+screenshot_0056,2,Critical multiplier x4,cropped/page_007/item_0056.png,visual_transcription_review_recommended
+screenshot_0056,3,+85 damage against Poison foes,cropped/page_007/item_0056.png,visual_transcription_review_recommended
+screenshot_0057,1,Active powerful single-target attack,cropped/page_008/item_0057.png,visual_transcription_review_recommended
+screenshot_0057,2,Cooldown 30 seconds,cropped/page_008/item_0057.png,visual_transcription_review_recommended
+screenshot_0057,3,Splash chance 100%,cropped/page_008/item_0057.png,visual_transcription_review_recommended
+screenshot_0057,4,Critical chance 35%,cropped/page_008/item_0057.png,visual_transcription_review_recommended
+screenshot_0057,5,Critical multiplier x13.5,cropped/page_008/item_0057.png,visual_transcription_review_recommended
+screenshot_0058,1,Active deal 250 damage to all foes and gain Smite per foe hit,cropped/page_008/item_0058.png,visual_transcription_review_recommended
+screenshot_0058,2,4 Smite buffs per foe hit,cropped/page_008/item_0058.png,visual_transcription_review_recommended
+screenshot_0058,3,Smite applies 155 damage each time you apply a debuff,cropped/page_008/item_0058.png,visual_transcription_review_recommended
+screenshot_0058,4,Max buffs 93,cropped/page_008/item_0058.png,visual_transcription_review_recommended
+screenshot_0058,5,Cooldown 80 seconds,cropped/page_008/item_0058.png,visual_transcription_review_recommended
+screenshot_0058,6,Splash chance 100%,cropped/page_008/item_0058.png,visual_transcription_review_recommended
+screenshot_0059,1,Increases duration of debuffs applied to foes by 150%,cropped/page_008/item_0059.png,visual_transcription_review_recommended
+screenshot_0059,2,Active apply 6 Feeble debuffs to random foes,cropped/page_008/item_0059.png,visual_transcription_review_recommended
+screenshot_0059,3,Feeble foes lose 10 hitpoints and have -2 damage penalty,cropped/page_008/item_0059.png,visual_transcription_review_recommended
+screenshot_0059,4,Feeble duration 1.5 seconds,cropped/page_008/item_0059.png,visual_transcription_review_recommended
+screenshot_0059,5,Cooldown 20 seconds,cropped/page_008/item_0059.png,visual_transcription_review_recommended
+screenshot_0060,1,Dashes to nearby foes,cropped/page_008/item_0060.png,visual_transcription_review_recommended
+screenshot_0061,1,Active powerful attack applies Armor Fatigue,cropped/page_008/item_0061.png,visual_transcription_review_recommended
+screenshot_0061,2,Armor Fatigue reduces armor gain by 75%,cropped/page_008/item_0061.png,visual_transcription_review_recommended
+screenshot_0061,3,Debuff duration 25s,cropped/page_008/item_0061.png,visual_transcription_review_recommended
+screenshot_0061,4,Cooldown 22s,cropped/page_008/item_0061.png,visual_transcription_review_recommended
+screenshot_0061,5,Splash chance 100%,cropped/page_008/item_0061.png,visual_transcription_review_recommended
+screenshot_0061,6,Attacks apply Stun,cropped/page_008/item_0061.png,visual_transcription_review_recommended
+screenshot_0061,7,Stun duration 0.4s,cropped/page_008/item_0061.png,visual_transcription_review_recommended
+screenshot_0061,8,2.8x damage to armored foes,cropped/page_008/item_0061.png,visual_transcription_review_recommended
+screenshot_0062,1,Splash chance 100%,cropped/page_008/item_0062.png,visual_transcription_review_recommended
+screenshot_0062,2,Shoots candy,cropped/page_008/item_0062.png,visual_transcription_review_recommended
+screenshot_0062,3,Active 50% chance Trick or Treat,cropped/page_008/item_0062.png,visual_transcription_review_recommended
+screenshot_0062,4,Trick: Take 0 damage,cropped/page_008/item_0062.png,visual_transcription_review_recommended
+screenshot_0062,5,Treat: Gain 20 armor,cropped/page_008/item_0062.png,visual_transcription_review_recommended
+screenshot_0062,6,Cooldown 30 seconds,cropped/page_008/item_0062.png,visual_transcription_review_recommended
+screenshot_0063,1,Attacks give Pick-pocket buff,cropped/page_008/item_0063.png,visual_transcription_review_recommended
+screenshot_0063,2,+5% evasion per Pick-pocket,cropped/page_008/item_0063.png,visual_transcription_review_recommended
+screenshot_0063,3,Buff duration 20s,cropped/page_008/item_0063.png,visual_transcription_review_recommended
+screenshot_0063,4,Max buffs 6,cropped/page_008/item_0063.png,visual_transcription_review_recommended
+screenshot_0063,5,Active lose all Pick-pocket buffs and steal item from nearest foe,cropped/page_008/item_0063.png,visual_transcription_review_recommended
+screenshot_0063,6,Stolen item improves with buff count,cropped/page_008/item_0063.png,visual_transcription_review_recommended
+screenshot_0063,7,Cooldown 30 seconds,cropped/page_008/item_0063.png,visual_transcription_review_recommended
+screenshot_0064,1,Critical chance 25%,cropped/page_008/item_0064.png,visual_transcription_review_recommended
+screenshot_0064,2,Critical multiplier x12,cropped/page_008/item_0064.png,visual_transcription_review_recommended
+screenshot_0065,1,-2 movement speed,cropped/page_009/item_0065.png,visual_transcription_review_recommended
+screenshot_0065,2,-8 damage to your armor,cropped/page_009/item_0065.png,visual_transcription_review_recommended
+screenshot_0066,1,Splash chance 100%,cropped/page_009/item_0066.png,visual_transcription_review_recommended
+screenshot_0066,2,+100 damage against Vigor foes,cropped/page_009/item_0066.png,visual_transcription_review_recommended
+screenshot_0067,1,Splash chance 100%,cropped/page_009/item_0067.png,visual_transcription_review_recommended
+screenshot_0067,2,+100 damage against Æther foes,cropped/page_009/item_0067.png,visual_transcription_review_recommended
+screenshot_0068,1,Splash chance 100%,cropped/page_009/item_0068.png,visual_transcription_review_recommended
+screenshot_0068,2,+100 damage against Fire foes,cropped/page_009/item_0068.png,visual_transcription_review_recommended
+screenshot_0069,1,Splash chance 100%,cropped/page_009/item_0069.png,visual_transcription_review_recommended
+screenshot_0069,2,+100 damage against Ice foes,cropped/page_009/item_0069.png,visual_transcription_review_recommended
+screenshot_0070,1,Splash chance 100%,cropped/page_009/item_0070.png,visual_transcription_review_recommended
+screenshot_0070,2,+100 damage against Poison foes,cropped/page_009/item_0070.png,visual_transcription_review_recommended
+screenshot_0071,1,Active reduce current hitpoints of nearby foes by 62.5%,cropped/page_009/item_0071.png,visual_transcription_review_recommended
+screenshot_0071,2,Cooldown 30 seconds,cropped/page_009/item_0071.png,visual_transcription_review_recommended
+screenshot_0071,3,Splash chance 100%,cropped/page_009/item_0071.png,visual_transcription_review_recommended
+screenshot_0071,4,+6 damage against Fire foes,cropped/page_009/item_0071.png,visual_transcription_review_recommended
+screenshot_0071,5,Instantly unmake chance 13%,cropped/page_009/item_0071.png,visual_transcription_review_recommended
+screenshot_0072,1,Active cause explosion in middle of nearby foes for 250 damage,cropped/page_009/item_0072.png,visual_transcription_review_recommended
+screenshot_0072,2,Cooldown 30 seconds,cropped/page_009/item_0072.png,visual_transcription_review_recommended
+screenshot_0072,3,Splash chance 100%,cropped/page_009/item_0072.png,visual_transcription_review_recommended
+screenshot_0072,4,+6 damage against Ice foes,cropped/page_009/item_0072.png,visual_transcription_review_recommended
+screenshot_0072,5,Attacks apply Burn,cropped/page_009/item_0072.png,visual_transcription_review_recommended
+screenshot_0072,6,Burn deals 69 damage over time,cropped/page_009/item_0072.png,visual_transcription_review_recommended
+screenshot_0073,1,Active create icy wind stunning foes for 4s,cropped/page_010/item_0073.png,visual_transcription_review_recommended
+screenshot_0073,2,Cooldown 30 seconds,cropped/page_010/item_0073.png,visual_transcription_review_recommended
+screenshot_0073,3,Splash chance 100%,cropped/page_010/item_0073.png,visual_transcription_review_recommended
+screenshot_0073,4,+6 damage against Poison foes,cropped/page_010/item_0073.png,visual_transcription_review_recommended
+screenshot_0073,5,Attacks apply Chill,cropped/page_010/item_0073.png,visual_transcription_review_recommended
+screenshot_0073,6,Chill reduces attack speed for 6 seconds,cropped/page_010/item_0073.png,visual_transcription_review_recommended
+screenshot_0074,1,Active create wave of poison applying Weaken -6,cropped/page_010/item_0074.png,visual_transcription_review_recommended
+screenshot_0074,2,Debuff duration 3s,cropped/page_010/item_0074.png,visual_transcription_review_recommended
+screenshot_0074,3,Cooldown 30s,cropped/page_010/item_0074.png,visual_transcription_review_recommended
+screenshot_0074,4,Splash chance 100%,cropped/page_010/item_0074.png,visual_transcription_review_recommended
+screenshot_0074,5,+6 damage against Vigor foes,cropped/page_010/item_0074.png,visual_transcription_review_recommended
+screenshot_0074,6,Attacks apply Weaken,cropped/page_010/item_0074.png,visual_transcription_review_recommended
+screenshot_0074,7,Weaken -4 damage penalty for 3 seconds,cropped/page_010/item_0074.png,visual_transcription_review_recommended
+screenshot_0075,1,Active cleanse nearby foes of cleansable buffs and debuffs,cropped/page_010/item_0075.png,visual_transcription_review_recommended
+screenshot_0075,2,Cooldown 19.5 seconds,cropped/page_010/item_0075.png,visual_transcription_review_recommended
+screenshot_0075,3,Splash chance 100%,cropped/page_010/item_0075.png,visual_transcription_review_recommended
+screenshot_0075,4,+6 damage against Æther foes,cropped/page_010/item_0075.png,visual_transcription_review_recommended
+screenshot_0075,5,Lifesteal chance 24%,cropped/page_010/item_0075.png,visual_transcription_review_recommended
+screenshot_0076,1,Critical chance 69%,cropped/page_010/item_0076.png,visual_transcription_review_recommended
+screenshot_0076,2,Critical multiplier x8.6,cropped/page_010/item_0076.png,visual_transcription_review_recommended
+screenshot_0077,1,Pierce 5,cropped/page_010/item_0077.png,visual_transcription_review_recommended
+screenshot_0077,2,Critical chance 8%,cropped/page_010/item_0077.png,visual_transcription_review_recommended
+screenshot_0077,3,Critical multiplier x3,cropped/page_010/item_0077.png,visual_transcription_review_recommended
